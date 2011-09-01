@@ -1,0 +1,41 @@
+﻿.baddDayActive {
+	width: 100%; height: 90px; color: #000; font-size:10px;
+}
+
+td a:link, td a:visited {
+	color: #000;
+	font-weight: normal;
+}
+
+td a:hover {
+	color: #EFBA2C;
+}
+
+td.baddDayFull {
+	background-color: #ff9999;
+}
+
+td.baddDayYours {
+	background-color: #ffffcc;
+}
+
+td.baddDayAvailable {
+	background-color: #ccffcc;
+	color: #000;
+}
+
+td.baddDayMyTrade {
+	background-color: #c7ecfd;
+	color: #000;
+}
+
+td.baddDayTheirTrade {
+	color: #000;
+	background-color: #e4c7fd;
+	
+}
+
+td.baddDayClosed, td.baddDayPast {
+	background-color: #ffffff;
+	color: #000;
+}

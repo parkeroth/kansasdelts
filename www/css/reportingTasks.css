@@ -1,0 +1,52 @@
+h3 {
+	text-align: center;
+}
+
+tr.heading {
+	font-weight: bold;
+}
+
+tr.description td {
+	padding-bottom: 20px;
+	padding-left: 20px;
+}
+
+td.task {
+	font-weight: bold;
+	color: #FDC029;
+}
+
+td.Incomplete {
+	color: #df9a99;
+}
+
+td.Complete {
+	color: #d0ffc7;
+}
+
+td.Review {
+	color: #fbff8c;
+}
+
+td.Revisit {
+	color: #df9a99;
+}
+
+#taskDetail {
+	width: 300px;
+}
+
+#fileList {
+	padding: 20px;
+}
+
+.fileDirectory {
+	display: none;
+}
+
+table.fileList th{
+	text-align: left;
+}
+
+/* CSS Document */
+

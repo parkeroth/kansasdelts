@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Untitled Document</title>
+
+<script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../js/jquery-ui-1.8.1.custom.min.js"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+	$(".mine").click(function(event) {
+		
+		var callingID = event.target.id;
+		
+		if( $('#' + callingID + ".red").length > 0)
+		{
+			if(confirm("Would you like to deselect this day?")){
+				$('#'+callingID).removeClass('red');
+			}
+		} else {
+		
+			$(".red").removeClass("red");
+			$("#" + callingID).addClass("red");				
+		}
+		
+	});
+	
+	$(".notMine").click(function(event) {
+		
+		var callingID = event.target.id;
+		var sellectedID = $('.red').attr('id');
+		
+		if(sellectedID)
+		{
+			confirm("Trade "+callingID+" for "+sellectedID+"?");
+		} else {
+			alert("Please select one of your dates you would like to trade.");
+		}
+		
+		
+		
+	});
+});
+
+</script>
+
+<style>
+	.red {
+		color: red;
+	}
+</style>
+
+
+</head>
+
+<body>
+
+<table id="testTable" width="250" border="0" cellpadding="0">
+	<tr>
+		<td class="mine" id="1A">1A</td>
+		<td class="mine" id="1B">1B</td>
+	</tr>
+	<tr>
+		<td class="mine" id="2A">2A</td>
+		<td class="mine" id="2B">2B</td>
+	</tr>
+	<tr>
+		<td class="notMine" id="3A">3A</td>
+		<td class="notMine" id="3B">3B</td>
+	</tr>
+</table>
+<p>&nbsp;</p>
+<a id="results" href="#">Results</a>
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+@charset "utf-8";
+/* CSS Document */
+
+#albuminfo {
+	position: absolute;
+	text-align: center;
+	margin-top: 50px;
+	right: 400px;
+}
+
+#album {
+	font-size: 16px;
+}
+
+#date {
+	font-size: 10px;
+}
+
+#imageselect {
+	position: absolute;
+	width: 220px;
+	height: 1000px;
+	padding-right: 50px;
+	text-align: center;
+}
+
+#curphoto {
+	position: absolute;
+	width: 400 px;
+	height: 350px;
+	padding-right: 100px;
+	text-align: center;
+	margin-top: 200px;
+	padding-left: 270px;
+}
+
+#spacer {
+	width: 2px;
+	height: 750px;
+}

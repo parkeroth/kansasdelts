@@ -1,0 +1,405 @@
+body {
+	background: #181818;
+	padding: 0px;
+	margin: 0px;
+	/*text-align: center;     ATTEMPT TO FIX IE 7     */
+	font-family: georgia, arial, sans-serif;
+	font-size: 10pt;
+	color: white;
+}
+
+* {
+	margin-top: 0px;
+	padding: 0px;
+}
+
+#container {
+	width: 734px;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+#header {
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-top: 0px;
+	padding-top: 0px;
+	height: 244px;
+	position: relative;
+}
+
+#headerimg {
+	position: relative;
+}
+
+#menuh-container
+	{
+	position: absolute;		
+	top: -53px;
+	left: 17px;
+	z-index: 10;
+	}
+
+#headerNavBarLeft {
+	position: absolute;
+	top: 13px;
+	left: 20px;
+	width: 345px;
+	text-align:left;
+}
+#headerNavBarRight {
+	position: absolute;
+	top: 13px;
+	left: 365px;
+	width: 345px;
+	text-align:right;
+}
+
+#headerNavBarLeft a:link, #headerNavBarRight a:link {
+	color: #fff;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+#headerNavBarLeft a:hover, #headerNavBarRight a:hover {
+	color: #000;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+#headerNavBarLeft a:visited, #headerNavBarRight a:visited {
+	color: #fff;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+#header p {
+	margin: 0px;
+	padding: 0px;
+}
+
+#beef {
+	position: relative;
+	background: url(../img/contentbg.jpg) repeat-y;
+	background-position: center;
+	padding-left: 40px;
+	padding-right: 40px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	text-align:left;
+}
+
+#beef #upcoming {
+	list-style: none;
+	margin: 0px;
+	width: 234px;
+	padding-bottom: 27px;
+	background: #151515 url(../img/upcomingevents_2.gif) no-repeat;
+	background-position: center bottom;
+	padding-left: 0px;
+	padding-right: 0px;
+	margin-left: 0px;
+}
+
+#beef #tickerimage {
+	width: 234px;
+	position:absolute;
+	margin: 0px;
+	margin-top: 60px;
+	padding: 0px;
+	height: 27px;
+	padding-left: 0px;
+	padding-right: 0px;
+	margin-left: 0px;
+}
+
+#beef ul li.event {
+	background: #151515;
+	margin: 0px;
+	padding: 0px;
+	border-bottom: 1px solid #5E267D;
+	padding-left: 3px;
+	padding-right: 3px;
+}
+
+#beef ul li.event b,strong {
+	font-weight: bold;
+	color: #DDAB26;
+}
+
+#upcomingcontainer {
+	float: right;
+	margin-left: 5px;
+}
+
+#footerContent {
+	position: absolute;
+	top: 109px;
+	left: 55px;
+	font-size:8pt;
+}
+
+#footer {
+	text-align: center;
+	margin: 0px;
+	padding: 0px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-top: 0px;
+	padding-top: 0px;
+	position: relative;
+	width: 734px;
+	font-size: 8pt;
+}
+
+p {
+	margin: 0px;
+	padding: 6px;
+}
+
+table, td, tr, div {
+	font-family: verdana, arial, sans-serif;
+	font-size: 10pt;
+	color: white;
+}
+
+img {
+	border: none;
+}
+
+a:link {
+	font-weight: bold;
+	color: #FDC029;
+	text-decoration: none;
+}
+
+a:visited {
+	font-weight: bold;
+	color: #CF9200;
+	text-decoration: none;
+}
+
+a:hover {
+	font-weight: bold;
+	color: #FFD46F;
+	text-decoration: none;
+}
+
+blockquote {
+	background: #000000 url(../img/blockquote.gif) no-repeat;
+	background-position: center top;
+	margin-left: 10px;
+	margin-right: 10px;
+	padding: 10px;
+}
+
+textarea, select, input {
+	
+}
+
+ol li {
+	padding-bottom: 2px;
+	margin-left: 20px;
+}
+
+ul {
+	margin-left: 20px;
+}
+
+#bullet ul li {
+	background: url(../img/bullet.gif) no-repeat;
+	background-position: 0px 4px;
+	padding-left: 21px;
+	padding-bottom: 2px;
+}
+
+h1, h2, h3 {
+	text-shadow: 2px 2px 2px #000;
+	font-family: georgia, Times New Roman;
+	font-weight: 100;
+	color: #EFBA2C;
+	margin-top: 5px;
+	margin-bottom: 10px;
+	padding: 0px;
+}
+
+h4 {
+	margin-bottom: 10px;
+	padding-top: 5px;
+}
+
+h5 {
+	font-family: georgia, Times New Roman;
+	margin-top: 5px;
+	margin-bottom: 10px;
+}
+form b{
+	color: #ffffff;
+	font-size: 16px;
+}
+#class {
+	text-align: center;
+}
+h1 {
+	font-size: 20pt;
+}
+
+h2 {
+	font-size: 16pt;
+}
+
+h3 {
+	font-size: 12pt;
+}
+
+hr {
+	border: 0;
+	height: 1px;
+	background: #EFBA2C;
+	color: #EFBA2C;
+}
+
+* html a:hover {visibility:visible}
+
+
+.home {
+	position: absolute;
+	margin-left: 11px;
+	margin-top: 201px;
+	z-index: 1000;
+	width: 74px; 
+	height: 36px; 
+	display: block;
+}
+ 
+.home img {
+	width: 74px; 
+	height: 36px; 
+	border: 0; 
+	visibility: hidden;}
+
+.home a:hover img{visibility:visible;}
+
+.aboutus {
+	position: absolute;
+	margin-left: 86px;
+	margin-top: 201px;
+	z-index: 1001;
+	width: 124px; 
+	height: 36px; 
+	display: block;
+}
+ 
+.aboutus img {
+	width: 124px; 
+	height: 36px; 
+	border: 0; 
+	visibility: hidden;}
+
+.aboutus a:hover img{visibility:visible;}
+
+.alumni {
+	position: absolute;
+	margin-left: 215px;
+	margin-top: 201px;
+	z-index: 1002;
+	width: 99px; 
+	height: 36px; 
+	display: block;
+}
+ 
+.alumni img {
+	width: 99px; 
+	height: 36px; 
+	border: 0; 
+	visibility: hidden;}
+
+.alumni a:hover img{visibility:visible;}
+
+.photos {
+	position: absolute;
+	margin-left: 315px;
+	margin-top: 201px;
+	z-index: 1003;
+	width: 98px; 
+	height: 35px; 
+	display: block;
+}
+ 
+.photos img {
+	width: 98px; 
+	height: 35px; 
+	border: 0; 
+	visibility: hidden;}
+
+.photos a:hover img{visibility:visible;}
+
+.meettheguys {
+	position: absolute;
+	margin-left: 414px;
+	margin-top: 201px;
+	z-index: 1004;
+	width: 180px; 
+	height: 35px; 
+	display: block;
+}
+ 
+.meettheguys img {
+	width: 180px; 
+	height: 35px; 
+	border: 0; 
+	visibility: hidden;}
+
+.meettheguys a:hover img{visibility:visible;}
+
+#person {
+	margin-left: 50px;
+}
+
+#name {
+	font-family: "Comic Sans MS", cursive;
+	font-weight: bold;
+	font-size: 16px;
+	color: 	#FBB117;
+}
+
+.rushdelt {
+	position: absolute;
+	margin-left: 596px;
+	margin-top: 201px;
+	z-index: 1005;
+	width: 127px; 
+	height: 36px; 
+	display: block;
+}
+ 
+.rushdelt img {
+	width: 127px; 
+	height: 36px; 
+	border: 0; 
+	visibility: hidden;}
+
+.rushdelt a:hover img{visibility:visible;}
+
+#centeredUpdate {
+	text-align: center;
+}
+
+th {
+	text-align: right;
+}
+
+.redHeading a:link {
+	color: #990000;
+}
+.redHeading a:hover {
+	color: #990000;
+}
+.redHeading a:visited {
+	color: #990000;
+}
+.redHeading {
+	color: #990000;
+}

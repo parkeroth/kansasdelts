@@ -1,0 +1,117 @@
+/* CSS Document */
+
+h3 {
+	text-align: center;
+}
+
+#generalInfo, #outstandingCalls {
+	width: 400px;
+}
+
+#details_container {
+	position: relative;
+	width: 600px;
+	padding: 20px;
+}
+
+#details_general {
+	float: right;
+	left: 40%;
+	width: 440px;
+}
+
+#details_lower {
+	clear: both;
+	padding-top: 20px;
+	width: 600px;
+	text-align:center
+}
+
+#details_name {
+	font-size: 18pt;
+	font-weight: bold;
+	color: #FBB117;
+	text-align:center;
+	padding-bottom: 20px;
+}
+
+#details_contact {
+	float: left;
+	width: 300px;
+}
+
+#details_school {
+	float: right;
+	width: 300px;
+}
+
+#details_other {
+	clear: both;
+	width: 600px;
+}
+
+#details_history {
+	clear: both;
+}
+
+#schoolInfo {
+	float: left;
+	width: 200px;
+}
+
+#contactInfo {
+	float: left;
+	width: 200px;
+}
+
+#otherInfo {
+	width: 400px;
+	clear: both;
+}
+
+#viewControls {
+	text-align: center;
+	padding-top: 20px;
+}
+
+table.eventDetails td {
+	padding: 0px;
+}
+
+tr.black {
+	background-color: #D3D3D3;
+	color:#000;
+}
+tr.white {
+	background-color: #F5F5F5;
+	color:#000;
+}
+
+tr.task {
+	font-size: 8pt;
+}
+
+td {
+	padding: 5px 10px;
+}
+
+th {
+	padding: 5px;
+}
+
+tr.task td {
+	padding: 0 10px;
+	font-style: italic;
+}
+
+tr.task td.indent {
+	padding-left: 40px;
+	background-color: #ff000;
+}
+
+tr.stats {
+	font-size: 8pt;
+}
+
+
+

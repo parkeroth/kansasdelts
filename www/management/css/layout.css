@@ -1,0 +1,88 @@
+/*
+    Document   : layout
+    Created on : Aug 3, 2011, 2:13:09 PM
+    Author     : parker
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+#overview_task {
+	width: 400px;
+	float: left;
+	text-align: center;
+}
+#overview_reports {
+	width: 200px;
+	float: right;
+	text-align: left;
+}
+
+#report_list {
+	float: left;
+	width: 60%;
+}
+
+#position_list {
+	float: left;
+	width: 70%;
+}
+
+#meeting_list {
+	float: right;
+	width: 30%;
+}
+
+#business_item_list {
+	float: right;
+	width: 40%;
+}
+
+.clear_block {
+	clear: both;
+}
+
+table.centered {
+	text-align: left;
+}
+
+#item_list li {
+	padding-bottom: 10px;
+}
+
+table.task_list th {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+tr.critical { color: #880000; font-weight:  bold; }
+tr.strong {color: #DDAB26; }
+tr.normal { }
+
+
+.left {
+	text-align: left;
+}
+
+.right {
+	text-align: right;
+}
+
+.center {
+	text-align: center;
+}
+
+.progress-green {
+	background-image: url(/img/green-dot.png);
+	background-repeat: no-repeat;
+	padding-left: 20px;
+}
+.progress-red {
+	background-image: url(/img/red-dot.png);
+	background-repeat: no-repeat;
+	padding-left: 20px;
+}
+.progress-yellow {
+	background-image: url(/img/yellow-dot.png);
+	background-repeat: no-repeat;
+	padding-left: 20px;
+}

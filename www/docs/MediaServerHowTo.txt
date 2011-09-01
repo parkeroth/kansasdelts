@@ -1,0 +1,29 @@
+HOW TO: Connect to Media Server
+
+Windows Users:
+
+0. This guide only supports Vista and Windows 7
+
+1. Click the the start button
+2. In the search box type "\\media.kansasdelts.org"
+3. You should be prompted for a username and password
+4. For the username type online user name ie: rotpar then "@kansasdelts.org"
+5. For the password use the following formula: DTD (your 10 digit phone number) ! so DTD3166485742!
+6. Now right click the "Media Server" folder and select Map Network Drive
+7. Click okay and you are done
+
+
+
+Mac Users:
+
+1.  From Finder click Go -> Connect to Server or type (Command  + K)
+2.  In the server address type "smb://media.kansasdelts.org"
+3.  You should be prompted for a username and password
+4.  For the username type online user name ie: rotpar then "@kansasdelts.org"
+5.  For the password use the following formula: DTD (your 10 digit phone number) ! so DTD3166485742!
+5.5 Be sure to save the password in your keychain
+6. 	Next click Media Server and you are done
+7.  Should you get disconnected repeat the steps above
+
+
+For additional help contact Parker @ 316.648.5742

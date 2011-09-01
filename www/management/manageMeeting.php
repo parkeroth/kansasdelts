@@ -1,0 +1,127 @@
+<?php
+session_start();
+include_once('../php/login.php');
+$authUsers = array('admin', 'secretary');
+include_once('../php/authenticate.php');
+
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Position.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Report.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/BusinessItem.php';
+
+if(isset($_GET[meeting_date])){
+	$meeting_date = date('m/d/Y', strtotime(mysql_real_escape_string($_GET[meeting_date])));
+} else {
+	$meeting_date = date('m/d/Y', strtotime('this Sunday'));
+}
+
+if(isset($_GET[board])){
+	$board = $_GET[board];
+} else {
+	header("location: /error.php");
+}
+
+include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
+?>
+
+<link type="text/css" href="css/layout.css" rel="stylesheet" />
+<link type="text/css" href="../styles/ui-lightness/jquery-ui-1.8.1.custom.css" rel="stylesheet" />
+<script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../js/jquery-ui-1.8.1.custom.min.js"></script>
+
+<script type="text/javascript">
+	$(function() {
+		$("#datepickerCurrent").datepicker();
+
+		$("#updateButtonCurrent").click(function() {
+			var date = $("#datepickerCurrent").val();
+			var month = date.substr(0,2);
+			var day = date.substr(3,2);
+			var year = date.substr(6,4);
+			var URL = 'manageMeeting.php?meeting_date=' + year + '-' + month + '-' + day;
+			URL += '&board=<?php echo $board ?>';
+
+			window.location.href=URL
+		});
+	});
+</script>
+
+<?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php");?>
+
+<h1><?php echo Position::$BOARD_ARRAY[$board]; ?> Meeting - <?php echo date('M j, Y', strtotime($meeting_date));?></h1>
+	<form>
+		<p>
+			<input name="dateMeeting" type="text" id="datepickerCurrent" size="11" value="<?php echo $meeting_date; ?>" />
+			<input id="updateButtonCurrent" type="button" value="Update" />
+			Select the date of the meeting.
+		</p>
+	</form>
+<div id="report_list">
+	<h2>Reports</h2>
+	<?php
+		$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
+		
+		$position_manager = new PositionManager($mysqli);
+		$report_manager = new ReportManager($mysqli);
+
+		$position_list = $position_manager->get_positions_by_board($board);
+
+		echo "<table>\n";
+		echo "<tr><td></td><td></td><td></td></tr>";
+
+		foreach($position_list as $position){
+			$report_list = $report_manager->get_reports_by_date_position($meeting_date, $position->id);
+
+			echo "<tr>\n";
+			echo "<th>$position->title: </th>\n";
+
+			if($report_list)
+			{
+				$report = $report_list[0];
+				echo "<td>";
+				if($report->is_late()) {
+					echo "<span class=\"redHeading\">LATE </span>";
+				}
+
+				if($report->status == 'complete'){
+					echo "<span class=\"rankGreen\">Complete</span>";
+				} else if($report->status == "incomplete"){
+					echo "<span class=\"rankRed\">Incomplete</span>";
+				} else if($report->status == 'pending'){
+					echo "<span class=\"rankYellow\">Submitted</span>";
+				}
+
+				echo "</td>";
+				echo "<td><div><a href=\"processReport.php?id=$report->id\">Edit</a></div></td>\n";
+			} else {
+				echo "<td colspan=\"3\">None</td>";
+			}
+			echo "</tr>\n";
+		}
+		echo "</table>\n";
+?>
+</div>
+<div id="business_item_list">
+	<h2>Business Items</h2>
+	<ul id="item_list">
+<?php
+	$business_item_manager = new BusinessItemManager($mysqli);
+	$item_list = $business_item_manager->get_items_by_meeting_date_type($meeting_date, $board);
+	if($item_list){
+		foreach($item_list as $item){
+			echo '<li>';
+			echo '<b>'.$item->title.'</b> <a href="#">Edit</a><br>';
+			if($item->details)
+				echo $item->details.'<br>';
+			$item->list_row();
+			echo '</li>';
+		}
+	} else {
+		echo '<p>No items for this meeting.</p>';
+	}
+	
+?>
+	</ul>
+	<p class="center"><a href="itemForm.php">Add New Item</a></p>
+</div>
+<div class="clear_block"></div>
+<?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/footer.php"); ?>
