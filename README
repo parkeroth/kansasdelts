@@ -1,1 +1,15 @@
 Website for Gamma Tau chapter of Delta Tau Delta
+
+This website serves to provide the public with information about 
+the chapter and provide its members with various organizational services.
+
+The site is currently being refactored to use OOP best practices.
+Goals of this refactoring are as follows:
+	- Abstract all SQL calls into classes
+	- Create class structures for each table in the mysql database
+	- Combine pages that offer the same functionality into the same page
+	- Break up the site into fucntional modules
+	
+Working code for review can be found in the following directories:
+	- management
+	- recruitment (in progress)
