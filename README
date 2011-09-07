@@ -7,8 +7,9 @@ The site is currently being refactored to use OOP best practices.
 Goals of this refactoring are as follows:
 	- Abstract all SQL calls into classes
 	- Create class structures for each table in the mysql database
-	- Combine pages that offer the same functionality into the same page
+	- Combine pages that offer the same functionality into shared modules
 	- Break up the site into fucntional modules
+	- Remove all "non logical" files (images, styles) from core site code
 	
 Working code for review can be found in the following directories:
 	- management
