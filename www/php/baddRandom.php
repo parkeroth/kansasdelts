@@ -47,7 +47,7 @@ while($row = mysqli_fetch_array($result, MYSQLI_ASSOC))
 				WHERE gradYear <= '$year'
 			)
 			AND residency != 'limbo'
-			ORDER BY gradYear DESC, RAND()
+			ORDER BY ID, RAND()
 			LIMIT $need";
 		$zeroResult = mysqli_query($mysqli, $zeroQuery);
 		$added=0;
@@ -72,8 +72,10 @@ while($row = mysqli_fetch_array($result, MYSQLI_ASSOC))
 					FROM members
 					JOIN baddDutyLog ON members.username = baddDutyLog.username
 					WHERE baddDutyLog.year =  '$year'
+					AND members.gradYear > '$year'
+					AND residency != 'limbo'
 					GROUP BY members.username
-					ORDER BY count, RAND()";
+					ORDER BY count, member.ID DESC, RAND()";
 				$generalResult = mysqli_query($mysqli, $generalQuery);
 				$arrayCount=0;
 				$minCount=100;			///////// CONSTANT SET //////////////
