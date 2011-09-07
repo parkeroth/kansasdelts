@@ -142,6 +142,7 @@ $position = new Position($mysqli, NULL, $userDataArray['accountType']);
 						if($position)
 						{
 							echo "<li><a href=\"management/positionOverview.php?position=$position->id\">My Position</a></li>";
+							echo "<li><a href=\"viewReportingTasks.php\">View FAAR Tasks</a></li>";
 						}?>
 					</ul>
 				</li>
