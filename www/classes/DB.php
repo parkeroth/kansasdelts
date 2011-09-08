@@ -6,6 +6,7 @@
  * @author Parker Roth
  */
 class DB {
+	
 	// TODO: Add functionality for specified environments [local, prod, test, etc]
 	private $host = 'localhost';
 	private $database = 'delt';
