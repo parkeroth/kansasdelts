@@ -108,10 +108,10 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php");
       <table width="650" border="0" id="exec">
       	<tr>
       		<?php find($members, "pres", $memberCount, $positions, $positionCount);?>
-      		<?php find($members, "vicePres", $memberCount, $positions, $positionCount);?>
+      		<?php find($members, "vpInternal", $memberCount, $positions, $positionCount);?>
       		</tr>
 		<tr>
-      		<?php find($members, "publicRel", $memberCount, $positions, $positionCount);?>
+      		<?php find($members, "vpExternal", $memberCount, $positions, $positionCount);?>
       		<?php find($members, "treasurer", $memberCount, $positions, $positionCount);?>
       		</tr>
       	<tr>
