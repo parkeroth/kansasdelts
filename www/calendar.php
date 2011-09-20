@@ -4,31 +4,20 @@ include_once('php/login.php');
 $authUsers = array('brother');
 include_once('/php/authenticate.php');
 
-$db_connection = mysql_connect ($db_host, $db_username, $db_password) OR die (mysql_error());  
-$db_select = mysql_select_db ($db_database) or die (mysql_error());
-$db_table = $TBL_PR . "events";
+require_once 'classes/Member.php';
 
-
-// Get roster info for logged in user
-// Store in $userDataArray
-$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
-$userData = "
-	SELECT * 
-	FROM members 
-	WHERE username='".$_SESSION['username']."'";
-$getUserData = mysqli_query($mysqli, $userData);
-$userDataArray = mysqli_fetch_array($getUserData, MYSQLI_ASSOC);
+$member = new Member(NULL, NULL, $session->member_id);
 
 // Set month and year GET variables
 IF(!isset($_GET['year'])){
     $_GET['year'] = date("Y");
 }
 IF(!isset($_GET['month'])){
-    $_GET['month'] = date("n")+1;
+    $_GET['month'] = date("n");
 }
 
 // Set month and year variables
-$month = addslashes($_GET['month'] - 1);
+$month = addslashes($_GET['month']);
 $year = addslashes($_GET['year']);
 
 $startDate = "$year-$month-01";

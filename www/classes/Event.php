@@ -36,4 +36,31 @@ class Event extends DB_Table {
 		parent::__destruct();
 	}
 }
+
+class EventManager
+{
+	private $connection = NULL;
+
+	public function PositionManager($mysqli) {
+		$this->connection = $mysqli;
+	}
+
+	public function get_positions_by_board($board){
+		$where = "WHERE board LIKE '%$board%'";
+		return $this->get_position_list($where);
+	}
+
+	private function get_position_list($where){
+		$list = array();
+		$query = "
+			SELECT ID FROM positions
+			$where
+			ORDER BY ID ASC"; //echo $query.'<br>';
+		$result = mysqli_query($this->connection, $query);
+		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
+			$list[] = new Position($this->connection, $data[ID]);
+		}
+		return $list;
+	}
+}
 ?>

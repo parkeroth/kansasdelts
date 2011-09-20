@@ -1,40 +1,49 @@
 <?php
-class Member
+require_once 'DB_Table.php';
+
+class Member extends DB_Table
 {
-	private $connection = NULL;
-	private $table_name = 'members';
 	public $id = NULL;
 	public $username = NULL;
-	public $accountTpe = NULL;
-	public $lastName = NULL;
-	public $firstName = NULL;
+	public $accountType = NULL;		//TODO: Uncamel Case
+	public $lastName = NULL;		//TODO: Uncamel Case
+	public $firstName = NULL;		//TODO: Uncamel Case
 
-	public function Member($mysqli, $username) {
-		$this->connection = $mysqli;
+	function __construct($mysqli = NULL, $username = NULL, $member_id = NULL) {
+		if($mysqli) { // Will remove later when I am sure no calls are made to new Member($mysqli)
+			$this->connection = $mysqli;
 
-		$memberQuery = "
-			SELECT *
-			FROM members
-			WHERE username = '$username'"; //echo $memberQuery.'<br>';
-		$getMember = mysqli_query($this->connection, $memberQuery);
-		$memberData = mysqli_fetch_array($getMember, MYSQLI_ASSOC);
+			$memberQuery = "
+				SELECT *
+				FROM members
+				WHERE username = '$username'"; //echo $memberQuery.'<br>';
+			$getMember = mysqli_query($this->connection, $memberQuery);
+			$memberData = mysqli_fetch_array($getMember, MYSQLI_ASSOC);
 
-		$this->id = $memberData[ID];
-		$this->username = $memberData[username];
-		$this->accountType = $memberData[accountType];
-		$this->lastName = $memberData[lastName];
-		$this->firstName = $memberData[firstName];
+			$this->id = $memberData[ID];
+			$this->username = $memberData[username];
+			$this->accountType = $memberData[accountType];
+			$this->lastName = $memberData[lastName];
+			$this->firstName = $memberData[firstName];
+		} else {
+			$this->table_name = 'members';
+			$this->table_mapper = array('id' => 'ID',
+								'username' => 'username',
+								'accountType' => 'accountType',
+								'lastName' => 'lastName',
+								'firstName' => 'firstName');
+			$params = array('id' => $member_id);
+			parent::__construct($params);
+		}
 	}
 	
-	public function save(){
-		$query = "
-			UPDATE $this->table_name
-			SET	username = '$this->username',
-				accountType = '$this->accountType',
-				lastName = '$this->lastName',
-				firstName = '$this->firstName'
-			WHERE ID = '$this->id'"; //echo $query.'<br>';
-		$result = mysqli_query($this->connection, $query);
+	public function is_a($position_slugs){
+		foreach($position_slugs as $slug){
+			if(strpos($this->accountType, $slug)){
+				return true;
+			}
+		}
+		return false;
 	}
 }
 
