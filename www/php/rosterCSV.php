@@ -11,7 +11,7 @@ header("Expires: 0");
 
 include_once('login.php');
 	
-	echo "Given Name,Family Name,Group Membership,E-mail 1 - Value,MobilePhone\n";
+	echo "Given Name,Family Name,Group Membership,E-mail 1 - Value,Mobile Phone\n";
 	
 	$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
 		
