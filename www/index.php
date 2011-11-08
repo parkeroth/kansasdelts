@@ -38,7 +38,7 @@ var mygallery=new fadeSlideShow({
 		<div id="slideshow" class="slideshow"></div>
     </div>
 	
-            <h3>Welcome to Delt Ah!</h3>
+            <h3>Welcome to Delt</h3>
 
 <!-- //This is where you input breaking news -->
             <p class="padded">Gamma Tau chapter of Delta Tau Delta welcomes you.  Over Delta Tau Delta’s rich history at the University of Kansas, beginning in 1912, Gamma Tau chapter of Delta Tau Delta has been enriching the lives of its members and bettering the Lawrence community.  Located off 11th Street, the Delt House provides an ideal location for football tailgating, a picturesque view of Potter Lake and the surrounding KU campus, all the while being less than a fifteen minute walk for nearly any class.  Gamma Tau's rich diversity provides multiple life perspectives and aids in the development of a responsible gentleman. Local</p>
