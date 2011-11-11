@@ -1,5 +1,40 @@
 <?php 
 	session_start();
+	include_once($_SERVER['DOCUMENT_ROOT'].'/php/login.php');
+	include_once($_SERVER['DOCUMENT_ROOT'].'/loginSystem/session.php');
+	
+	/**
+	 * close all open xhtml tags at the end of the string
+	 *
+	 * @param string $html
+	 * @return string
+	 * @author Milian Wolff <mail@milianw.de>
+	 */
+	function closetags($html) {
+	  #put all opened tags into an array
+	  preg_match_all('#<([a-z]+)(?: .*)?(?<![/|/ ])>#iU', $html, $result);
+	  $openedtags = $result[1];
+	 
+	  #put all closed tags into an array
+	  preg_match_all('#</([a-z]+)>#iU', $html, $result);
+	  $closedtags = $result[1];
+	  $len_opened = count($openedtags);
+	  # all tags are closed
+	  if (count($closedtags) == $len_opened) {
+		return $html;
+	  }
+	  $openedtags = array_reverse($openedtags);
+	  # close tags
+	  for ($i=0; $i < $len_opened; $i++) {
+		if (!in_array($openedtags[$i], $closedtags)){
+		  $html .= '</'.$openedtags[$i].'>';
+		} else {
+		  unset($closedtags[array_search($openedtags[$i], $closedtags)]);
+		}
+	  }
+	  return $html;
+	}
+	
 	include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 ?>
 
@@ -32,6 +67,16 @@ var mygallery=new fadeSlideShow({
 
 </script>
 
+<style type="text/css">
+	.blogEntry {
+		padding-top: 25px;
+		width: 500px;
+		margin-right: auto;
+		margin-left: auto;
+		border-bottom: groove;
+	}
+</style>
+
 <?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php"); ?>
 	
 	<div id="slideshow-container">
@@ -41,24 +86,56 @@ var mygallery=new fadeSlideShow({
             <h3>Welcome to Delt</h3>
 
 <!-- //This is where you input breaking news -->
-            <p class="padded">Gamma Tau chapter of Delta Tau Delta welcomes you.  Over Delta Tau Delta’s rich history at the University of Kansas, beginning in 1912, Gamma Tau chapter of Delta Tau Delta has been enriching the lives of its members and bettering the Lawrence community.  Located off 11th Street, the Delt House provides an ideal location for football tailgating, a picturesque view of Potter Lake and the surrounding KU campus, all the while being less than a fifteen minute walk for nearly any class.  Gamma Tau's rich diversity provides multiple life perspectives and aids in the development of a responsible gentleman.</p>
+            <p class="padded">Gamma Tau chapter of Delta Tau Delta welcomes you.  Over Delta Tau Delta’s rich history at the University of Kansas, beginning in 1912, Gamma Tau chapter of Delta Tau Delta has been enriching the lives of its members and bettering the Lawrence community.  Located off 11th Street, the Delt House provides an ideal location for football tailgating, a picturesque view of Potter Lake and the surrounding KU campus, all the while being less than a fifteen minute walk for nearly any class.  Gamma Tau's rich diversity provides multiple life perspectives and aids in the development of a responsible gentleman. Local</p>
 			
 <?php
-	/*
-	include("php/simple_html_dom.php");
+	// get front page blog
 	
-	$html = file_get_html('http://kansasdelts.tumblr.com/');
-		   
-	foreach($html->find('div.post') as $post) {
-		$item['title']  = $post->find('div.title', 0)->plaintext;
-		$item['body']   = $post->find('div.copy', 0)->plaintext;
-		$posts[] = $item;
-		
-		echo "<h3>".$item['title']."</h3>";
-		$snippet = substr($item['body'],0,220);
-		echo "<p class=\"padded\">".$snippet."...<a href=\"http://kansasdelts.tumblr.com\">Read More</a></p>";
-	}
-		*/   
+	$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
+	
+	//echo 'Class UName: '.$this->username.'<br />'; //this DOESN'T WORK
+	//echo 'Session UName: '.$_SESSION['username'];
+	
+	//if($_SESSION['username'] == "disnat" || $_SESSION['username'] == "rotpar" || $_SESSION['username'] == "kasgra" || $_SESSION['username'] == "waljac")
+	//{
+		echo '<h2>Gamma Tau News</a>';
+		//Select the 3 latest blog entries
+		$getEntryQ = '
+			SELECT *
+			FROM blogContent
+			ORDER BY date DESC
+			LIMIT 3
+		';
+		$getEntry = mysqli_query($mysqli, $getEntryQ);
+		$entryCount = 0;
+		while($blogData = mysqli_fetch_array($getEntry, MYSQLI_ASSOC))
+		{
+			$entryData[$entryCount]['header'] = stripslashes($blogData['header']);
+			$entryData[$entryCount]['content'] = html_entity_decode($blogData['content']);
+			$entryData[$entryCount]['category'] = stripslashes($blogData['category']);
+			$entryData[$entryCount]['date'] = $blogData['date'];
+			$entryData[$entryCount]['id'] = $blogData['id'];
+			$entryData[$entryCount]['submitter'] = $blogData['submitter'];
+			$entryCount++;
+		}
+		for($i=0;$i<$entryCount;$i++)
+		{
+			echo '
+				<div class="blogEntry">
+					<h3>
+						'.$entryData[$i]['header'].'
+					</h3>
+					<div style="float:right; font-style:italic; text-align: right; padding-right: 10px;">
+						'.$entryData[$i]['date'].'<br />
+						Filed Under: '.$entryData[$i]['category'].'
+					</div>
+					<div style="margin-top:45px;">
+						'.closetags($entryData[$i]['content']).'
+					</div>
+				</div>
+				';
+		}
+	//}
 ?>
 			
 <!-- //Stop -->
