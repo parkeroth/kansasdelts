@@ -17,7 +17,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 	$occured = strtotime($_POST[dateOccured]);
 	$dateOccured = date("Y-m-d", $occured);
 	
-	$description = mysql_real_escape_string ($_POST[description]);
+	$description = mysqli_real_escape_string($mysqli, $_POST[description]);
 	
 	$add_sql = "INSERT INTO writeUps (dateFiled, partyFiling, partyResponsible, urgency, dateOccured, description, status, category, verdict) 
 				VALUES ('$today', '".$_SESSION[username]."', '".$_POST[partyResponsible]."', '".$_POST[urgency]."', '$dateOccured', '".$description."', 'review', '".$_POST[category]."', 'innocent')";
