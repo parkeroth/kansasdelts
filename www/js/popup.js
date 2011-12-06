@@ -37,15 +37,12 @@ function centerPopup(id){
 	var windowHeight = document.documentElement.clientHeight;
 	var popupHeight = $(id).height();
 	var popupWidth = $(id).width();
-	var scrollTop = document.documentElement.scrollTop;
-	var scrollLeft = document.documentElement.scrollLeft;
-	
-	var left = 734/2 - popupWidth/2;
 	
 	//centering
 	$(id).css({
-		"margin-left": "auto",
-		"margin-right": "auto"
+		"position": "absolute",
+		"top": 0,
+		"left": 240
 	});
 	//only need force for IE6
 	
