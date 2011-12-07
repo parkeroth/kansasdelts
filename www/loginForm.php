@@ -61,7 +61,7 @@
 			/*echo '<p class="loginMessage">
 				<span style="font-size: 16px; color: #00CC33 !important;">Login Success!</span><br />
 				You\'ll be redirected in about 3 secs. If not, click <a href="'.stripslashes($postReferrer).'">here</a>.</p>';*/
-			header(stripslashes($postReferrer));
+			header("location: ".stripslashes($postReferrer));
 		} else {
 			//we have errors associated with the login, we need to echo that stuff out to 
 			//the user so he can fix it
