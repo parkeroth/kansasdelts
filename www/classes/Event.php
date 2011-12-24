@@ -1,6 +1,7 @@
 <?php
 
 require_once 'DB_Table.php';
+require_once 'DB_Manager.php';
 
 class Event extends DB_Table {
 	public $id = NULL;
@@ -27,7 +28,8 @@ class Event extends DB_Table {
 							'time' => 'time',
 							'type' => 'type',
 							'mandatory' => 'mandatory',
-							'max_attendance' => 'maxAttendance');
+							'max_attendance' => 'maxAttendance',
+							'sent_invites' => 'sentInvites');
 		$params = array('id' => $event_id);
 		parent::__construct($params);
 	}
@@ -37,30 +39,36 @@ class Event extends DB_Table {
 	}
 }
 
-class EventManager
+class EventManager extends DB_Manager
 {
-	private $connection = NULL;
-
-	public function PositionManager($mysqli) {
-		$this->connection = $mysqli;
+	function __construct() {
+		parent::__construct();
 	}
-
-	public function get_positions_by_board($board){
-		$where = "WHERE board LIKE '%$board%'";
-		return $this->get_position_list($where);
+	
+	public function get_events_by_date($date){
+		$where = "WHERE eventDate = '$date'";
+		return $this->get_list($where);
 	}
-
-	private function get_position_list($where){
+	
+	public function test(){
+		echo 'test';
+	}
+	
+	protected function get_list($where){
 		$list = array();
 		$query = "
-			SELECT ID FROM positions
+			SELECT ID FROM events
 			$where
-			ORDER BY ID ASC"; //echo $query.'<br>';
-		$result = mysqli_query($this->connection, $query);
+			ORDER BY time ASC"; //echo $query.'<br>';
+		$result = $this->connection->query($query); //echo $query;
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
-			$list[] = new Position($this->connection, $data[ID]);
+			$list[] = new Event($data[ID]);
 		}
 		return $list;
+	}
+
+	function __destruct() {
+		parent::__destruct();
 	}
 }
 ?>

@@ -31,26 +31,24 @@ a.topRightNum:hover {
 	color: #333; text-decoration: underline;
 }
 
-a.eventLinkmia:link, a.eventLinkinvited:link {
-	font-family: Verdana, Geneva, Arial, helvetica, sans-serif; font-size: 10px; color: #900; font-weight: normal;
+a.eventLink:link {
+	font-family: Verdana, Geneva, Arial, helvetica, sans-serif; 
+	font-size: 10px; 
+	font-weight: normal;
 }
-a.eventLinkattending:link {
-	font-family: Verdana, Geneva, Arial, helvetica, sans-serif; font-size: 10px; color: #060; font-weight: normal;
-}
-a.eventLinkfull:link {
-	font-family: Verdana, Geneva, Arial, helvetica, sans-serif; font-size: 10px; color:#609; font-weight: normal;
-}
-a.eventLinknotAttending:link {
-	font-family: Verdana, Geneva, Arial, helvetica, sans-serif; font-size: 10px; color: #999; font-weight: normal;
-}
-a.eventLinkexcused:link {
-	font-family: Verdana, Geneva, Arial, helvetica, sans-serif; font-size: 10px; color: #999; font-weight: normal;
-}
-a.eventLinklimbo:link {
-	font-family: Verdana, Geneva, Arial, helvetica, sans-serif; font-size: 10px; color: #C60; font-weight: normal;
-}
-a.eventLinkgeneral:link {
-	font-family: Verdana, Geneva, Arial, helvetica, sans-serif; font-size: 10px; color: #000; font-weight: normal;
+
+a.mandatory:link, a.mandatory:visited { font-weight: bold; }
+
+a.invited:link, a.invited:visited { color: #900; }
+a.mia:link, a.mia:visited { color: #900; }
+a.attending:link, a.attending:visited { color: #060; }
+a.full:link, a.full:visited { color: #609; }
+a.notAttending:link, a.notAttending:visited { color: #999; }
+a.limbo:link, a.limbo:visited { color: #999; }
+
+.eventTime {
+	font-style: italic;
+	font-size: 9px;
 }
 
 
@@ -86,15 +84,6 @@ td.afterdayboxes {
 }
 td.highlighteddayboxes {
 	background-color: #EFEFEF; color: #000000;
-}
-.event {
-	font-family: Verdana, Geneva, Arial, helvetica, sans-serif; font-size: 12px; font-weight: bold;
-}
-.eventdetail {
-	font-family: Verdana, Geneva, Arial, helvetica, sans-serif; font-size: 11px;
-}
-.eventwhen {
-	font-family: Verdana, Geneva, Arial, helvetica, sans-serif; font-size: 15px; font-weight: bold;
 }
 .addevent {
 	font-family: Verdana, Geneva, Arial, helvetica, sans-serif; font-size: 12px; font-weight: bold;

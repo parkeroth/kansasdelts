@@ -3,9 +3,7 @@ session_start();
 include_once('../php/login.php');
 $authUsers = array('brother');
 include_once('../php/authenticate.php');
-
-require_once 'classes/Calendar.php';
-
+require_once 'Event_Calendar.php';
 
 // Set month and year GET variables
 if(!isset($_GET['year']))
@@ -18,7 +16,7 @@ if(!isset($_GET['month']))
 $month = addslashes($_GET['month']);
 $year = addslashes($_GET['year']);
 
-$calendar = new Calendar($month, $year, $session->member_id);
+$calendar = new Event_Calendar($month, $year, $session->member_id);
 
 /*
 $startDate = "$year-$month-01";
@@ -142,10 +140,23 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
   window.open(theURL,winName,features);
 }
 //-->
+
+$(document).ready(function() {
+
+	$("#various1").fancybox({
+		'titlePosition'		: 'inside',
+		'transitionIn'		: 'none',
+		'transitionOut'		: 'none'
+	});
+
+});
 </script>
 
 <script type="text/javascript" src="../../js/jquery-1.4.2.min.js"></script>
 <script type="text/javascript" src="../../js/calendarFilters.js"></script>
+<script type="text/javascript" src="/js/jquery.mousewheel-3.0.4.pack.js"></script>
+<script type="text/javascript" src="/js/jquery.fancybox-1.3.4.pack.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/jquery.fancybox-1.3.4.css" media="screen" />
 
 <?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php"); ?>
 
@@ -200,7 +211,10 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 	<br>
 </div>
 
-<?php $calendar->draw_calendar('general'); ?>
+<?php	
+	$calendar->pre_draw();
+	$calendar->draw_days();
+	$calendar->post_draw(); ?>
 
 <table border="0px" cellpadding="0" cellspacing="1" style="margin-left: 25px; margin-top: 20px;">
 	<tr class="topdays"> 
