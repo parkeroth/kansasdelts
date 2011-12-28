@@ -2,7 +2,8 @@
 require_once 'DB.php';
 
 /**
- * Description of DB
+ * DEPRECATED! DON'T USE
+ * Correct version in /core/classes
  *
  * @author Parker Roth
  */

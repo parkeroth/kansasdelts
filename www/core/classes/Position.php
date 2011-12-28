@@ -14,25 +14,20 @@ class Position extends DB_Table
 	public $title = NULL;
 	public $board = NULL;
 
-	public function Position ($position_str = NULL) {
-		$this->connection = $mysqli;
+	function __construct ($position_id = NULL, $position_str = NULL) {
+		if($position_str){
+			$position_id = $this->get_position_id($position_str);
+		}
 		
-		if($position_str)
-			$id = $this->get_position_id($position_str);
-		
-		if($id){
-			$query = "
-				SELECT *
-				FROM positions
-				WHERE ID = '$id'"; //echo $query.'<br>';
-			$result = mysqli_query($this->connection, $query);
-			$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
-
-			$this->id = $data[ID];
-			$this->type = $data[type];
-			$this->title = $data[title];
-			$this->board = $data[board];
-		}	
+		$this->table_name = 'positions';
+		$this->table_mapper = array(
+			'id' => 'ID',
+			'type' => 'type',
+			'title' => 'title',
+			'board' => 'board'
+		);
+		$params = array('ID' => $position_id);
+		parent::__construct($params);
 	}
 
 	public function __toString() {

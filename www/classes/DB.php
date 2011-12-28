@@ -1,6 +1,8 @@
 <?php
-
 /**
+ * DEPRECATED! DON'T USE
+ * Correct version in /core/classes
+ * 
  * Description of DB
  *
  * @author Parker Roth
