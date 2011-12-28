@@ -1,19 +1,20 @@
 <?php
 
-class Position
+require_once 'DB_Table.php';
+
+class Position extends DB_Table
 {
 	private static $COMMITTEE_SLUGS = array('admin', 'proctor', 'honorBoard');
 	public static $BOARD_ARRAY = array(	'exec' => 'Execuitve',
 								'internal' => 'Internal Affairs',
 								'external' => 'External Affairs');
 	
-	private $connection = NULL;
 	public $id = NULL;
 	public $type = NULL;
 	public $title = NULL;
 	public $board = NULL;
 
-	public function Position($mysqli, $id = NULL, $position_str = NULL) {
+	public function Position ($position_str = NULL) {
 		$this->connection = $mysqli;
 		
 		if($position_str)

@@ -1,8 +1,9 @@
 <?php
 session_start();
-include_once('php/login.php');
 $authUsers = array('admin', 'secretary');
-include_once('php/authenticate.php');
+include_once('authenticate.php');
+
+require_once 'classes/Member.php';
 
 
 /**
@@ -11,7 +12,6 @@ include_once('php/authenticate.php');
  
 if($_SERVER['REQUEST_METHOD'] == "POST") {
 	
-	$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
 	
 	
 	// Set $year to correct time based on month
