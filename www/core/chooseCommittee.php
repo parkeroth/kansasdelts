@@ -76,8 +76,8 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 			}
 			else if(!$is_in_committee && $was_in_committee)
 			{
-				$entry = $position_log_manager->get_logs_by_member($member->id, $term, $year, $position->id);
-				echo $entry;
+				$entries = $position_log_manager->get_logs_by_member($member->id, $term, $year, $position->id);
+				echo $entries[0]->delete();
 			}
 		}
 	} else {
