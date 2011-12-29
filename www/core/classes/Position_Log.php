@@ -29,6 +29,19 @@ class Position_Log extends DB_Table
 		}
 		parent::__construct($params);
 	}
+	
+	function __destruct(){
+		parent::__destruct();
+	}
+	
+	public function is_committee(){
+		$position = new Position($this->position_id);
+		if($position->board == 'committee'){
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 }
 
@@ -36,6 +49,10 @@ class Position_Log_Manager extends DB_Manager
 {
 	function __construct() {
 		parent::__construct();
+	}
+	
+	function __destruct(){
+		parent::__destruct();
 	}
 
 	public function get_logs_by_member($member_id, $term = NULL, $year = NULL){
@@ -52,6 +69,24 @@ class Position_Log_Manager extends DB_Manager
 	public function get_logs_by_semester($term, $year, $board = NULL){
 		$where = "WHERE term = '$term' AND year = '$year'";
 		return $this->get_logs($where, $term, $year);
+	}
+	
+	public function get_current_positions($member_id){
+		$current_year = date('Y');
+		$current_month = date('n');
+		if($current_month > 8) {
+			$year = $current_year;
+			$term = 'fall';
+		} else {
+			$year = $current_year;
+			$term = 'spring';
+		}
+		$current_logs = $this->get_logs_by_member($member_id, $term, $year);
+		$current_ids = array();
+		foreach($current_logs as $entry){
+			$current_ids[] = $entry->position_id;
+		}
+		return $current_ids;
 	}
 
 	private function get_logs($where, $term, $year){

@@ -27,6 +27,14 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 		$new_position_id = $_POST[$member->id]; //TODO: escape this
 		$current_entries =	$position_log_manager->
 						get_logs_by_member($member->id, $term, $year);
+		
+		for($i=0; $i < count($current_entries); $i++){
+			if($current_entries[$i]->is_committee()){
+				unset($current_entries[$i]);
+			}
+		}
+		$current_entries = array_values($current_entries);
+		
 		if(count($current_entries) == 1){
 			$current_entry = $current_entries[0];
 		} else {
@@ -38,7 +46,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 				// Swapping positions
 				// Need to UPDATE log
 				$current_entry->position_id = $new_position_id;
-				$current_entry->save();
+				//$current_entry->save();
 			} else {
 				// Getting new position
 				// Need to INSERT new log
@@ -84,11 +92,26 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 
 include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 
+<script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+
 <script language="jscript" type="text/javascript">
 	function Confirm()
 	{
 		return confirm ("Are you sure you want want to make these changes?");
 	}
+	function RefreshPage(){
+		var term = $("#term").val();
+		var year = $("#year").val();
+		var url = window.location.href;
+		url = url.substring(0, url.indexOf('?'));
+		url = url + '?term=' + term + '&year=' + year;
+		window.location = url;
+	}
+	
+	$(document).ready(function() {
+		$("#term").change(RefreshPage);
+		$("#year").change(RefreshPage);
+	});
 </script>
 
 <?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php"); ?>
@@ -122,7 +145,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 <?php
 		  $current_year = date('Y');
 		  for ($i = $current_year - 2; $i <= $current_year + 1; $i++) {
-		  	if($i == $i){
+		  	if($i == $year){
 				$selected = "selected";
 			} else {
 				$selected = "";

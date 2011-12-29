@@ -78,6 +78,12 @@ class Position_Manager extends DB_Manager
 		return $this->get_position_list($where);
 	}
 	
+	public function get_position_by_type($type_str){
+		$where = "WHERE type = '$type_str'";
+		$list = $this->get_position_list($where);
+		return $list[0];
+	}
+	
 	public function get_all_positions($include_committees = true){
 		if(!$include_committees){
 			$where  = "WHERE board != 'committee'";
@@ -97,13 +103,7 @@ class Position_Manager extends DB_Manager
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Position($data[ID]);
 		}
-		if(count($list) == 1){
-			return $list[0];
-		} else if(count($list) == 0){
-			return NULL;
-		}  else {
-			return $list;
-		}
+		return $list;
 	}
 }
 ?>
