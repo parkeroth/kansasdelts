@@ -279,20 +279,26 @@ class Session
       return $randstr;
    }
    
-   function checkAuthType($authUsers) {
+   function isAuth($authUsers){
+	   $authorized = false;
 	   $position_manager = new Position_Manager();
-	   $this->isAuthorized = false;
 	   for($i=0; $i < count($authUsers); $i++){
 		   $position = $position_manager->get_position_by_type($authUsers[$i]);
 		   if(in_array($position->id, $this->positions)){
-			   $this->isAuthorized = true;
+			$authorized = true;
 		   } else if($authUsers[$i] == 'brother'){
-				$this->isAuthorized = true;
+			$authorized = true;
 		   } else if($authUsers[$i] == 'public'){
-				$this->isAuthorized = true;
+			$authorized = true;
 		   }
 	  }
-		
+	  return $authorized;
+   }
+   
+   function checkAuthType($authUsers) {
+	   
+	   $this->isAuthorized = $this->isAuth($authUsers);
+	   
 		//echo 'username: '.$this->username;
 		//echo 'isAuthorized value: '.$this->isAuthorized.'<br />';
 		

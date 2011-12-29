@@ -1,9 +1,12 @@
 <?php
-require_once 'classes/Position.php';
+echo '1';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';
 
-$position = new Position($mysqli, NULL, $userDataArray['accountType']);
+$user_position_ids = $session->positions;
+echo '2';
 
-	if(strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "saa") || strpos($userDataArray['accountType'], "honorBoard")){
+	$auth_list = array('admin', 'saa');
+	if($session->isAuth($auth_list)){
 		$query = "
 			SELECT status, COUNT(ID)
 			FROM writeUps 
@@ -34,7 +37,8 @@ $position = new Position($mysqli, NULL, $userDataArray['accountType']);
 			
 		}
 	}
-	if(strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "drm") ){
+	$auth_list = array('admin', 'drm');
+	if($session->isAuth($auth_list)){
 		$query = "
 			SELECT soberGentEvents.ID AS eventID, COUNT(soberGentLog.ID) AS numberOfGents
 			FROM soberGentLog
@@ -54,7 +58,8 @@ $position = new Position($mysqli, NULL, $userDataArray['accountType']);
 			}
 		}
 	}
-	if(strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "houseManager") ){
+	$auth_list = array('admin', 'houseManager');
+	if($session->isAuth($auth_list)){
 		$query = "
 			SELECT COUNT(username), type
 			FROM volunteer
@@ -81,7 +86,8 @@ $position = new Position($mysqli, NULL, $userDataArray['accountType']);
 			$numBroken++;
 		}
 	}
-	if(strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "recruitment") ){
+	$auth_list = array('admin', 'recruitment');
+	if($session->isAuth($auth_list)){
 		$query = "
 			SELECT COUNT(ID) as total
 			FROM recruits
