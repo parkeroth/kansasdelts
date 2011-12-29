@@ -1,7 +1,7 @@
 <?php
 session_start();
 $authUsers = array('admin', 'secretary');
-include_once('authenticate.php');
+include_once 'authenticate.php';
 
 require_once 'classes/Member.php';
 require_once 'classes/Position.php';

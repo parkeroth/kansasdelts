@@ -55,7 +55,7 @@ class Position_Log_Manager extends DB_Manager
 		parent::__destruct();
 	}
 
-	public function get_logs_by_member($member_id, $term = NULL, $year = NULL){
+	public function get_logs_by_member($member_id, $term = NULL, $year = NULL, $position_id = NULL){
 		$where = "WHERE member_id = '$member_id'";
 		if($term){
 			$where .= " AND term = '$term'";
@@ -63,12 +63,33 @@ class Position_Log_Manager extends DB_Manager
 		if($year){
 			$where .= " AND year = '$year'";
 		}
+		if($position_id){
+			$where .= " AND position_id = '$position_id'";
+		}
 		return $this->get_logs($where, $term, $year);
 	}
 	
 	public function get_logs_by_semester($term, $year, $board = NULL){
 		$where = "WHERE term = '$term' AND year = '$year'";
 		return $this->get_logs($where, $term, $year);
+	}
+	
+	public function member_in_committee($member_id, $position_id, $term, $year){		
+		$where = "WHERE member_id = '$member_id' 
+				AND position_id = '$position_id'
+				AND year = '$year'
+				AND term = '$term'";
+		$list = $this->get_logs($where, $term, $year);
+		
+		if($member_id == 32){
+			echo 'PARKER'.$list[0]->id;
+		}
+		
+		if(count($list) == 1){
+			return $list[0]->id;
+		} else {
+			return false;
+		}
 	}
 	
 	public function get_current_positions($member_id){
