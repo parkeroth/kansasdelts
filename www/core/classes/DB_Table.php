@@ -58,9 +58,11 @@ class DB_Table extends DB{
 		$this->connection->query($query);
 	}
 	
-	private function make_null($value){
+	private function make_null($field, $value){
 		if($value == NULL){
 			return 'NULL';
+		} if(in_array($field, $this->raw_fields)){
+			return $value;
 		} else {
 			return "'".$value."'";
 		}
@@ -88,11 +90,11 @@ class DB_Table extends DB{
 				} else {
 					$query .= ', ';
 				}
-				$query .= $this->make_null($this->{$member_var});
+				$query .= $this->make_null($table_field, $this->{$member_var});
 			}
 		}
 		$id_field = $this->table_mapper[id];
-		$query .= ' ) ';echo $query;
+		$query .= ' ) '; echo $query;
 		$this->connection->query($query);
 		$this->id = $this->connection->insert_id;
 	}

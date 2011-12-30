@@ -163,7 +163,7 @@ echo '2';
 						<li><a href="attendanceRecords.php">Attendance Records</a></li>
 						<li><a href="addUserForm.php">Add a User</a></li>
 						<li><a href="graduationUpdateForm.php">Graduation Update</a></li>
-						<li><a href="electionUpdateForm.php">Election Update</a></li>
+						<li><a href="/core/electionUpdateForm.php">Election Update</a></li>
 						<li><a href="removeUserForm.php">Remove User</a></li>
 						<li><a href="userStatusForm.php">User Status Form</a></li>
 						<li><a href="chapterContactForm.php">Send Text</a></li>
@@ -202,7 +202,7 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 							
 						<li><a href="viewCourseHours.php">View Course Hours</a></li>
 						<li><a href="changeGradesForm.php">Update Grades</a></li>
-						<li><a href="/academics/chooseProctors.php">Choose Proctors</a></li>
+						<li><a href="/core/chooseCommittee.php?committee=proctor">Choose Proctors</a></li>
 						<li><a href="/academics/addStudyHourUsers.php">Assigned Hours</a></li>
 						<li><a href="/academics/viewLogs.php">View Logs</a></li>
 						
@@ -288,7 +288,7 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 					<ul>
 						<?php if( strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "saa") ){ ?>
 							
-						<li><a href="honorBoardForm.php">Select Honor Board</a></li>
+						<li><a href="/core/chooseCommittee.php?committee=honor-board">Select Honor Board</a></li>
 						<li><a href="manageMissedDuties.php">Missed Duties <?php if($numNewMisses){ echo "<span class=\"redHeading\">(".$numNewMisses.")</span>";} ?></a></li>
 						<li><a href="missedDutyLog.php">Missed Duty Log</a></li>
 						

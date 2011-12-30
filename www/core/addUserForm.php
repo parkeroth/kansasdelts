@@ -1,18 +1,15 @@
 <?php
 session_start();
 $authUsers = array('admin', 'secretary');
-include_once('php/authenticate.php');
+include_once 'authenticate.php';
 
+require_once 'classes/Member.php';
 
 /**
  * Processing Section
  */
  
 if($_SERVER['REQUEST_METHOD'] == "POST") {
-	
-	include_once('login.php');
-
-	$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
 	
 	if(isset($_POST[username]))
 	{
@@ -23,39 +20,56 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 		$username = substr(strtolower($_POST['l_name']),0,3).substr(strtolower($_POST['f_name']),0,3);
 	}
 	
-	$check = "SELECT ID from members WHERE username='$username'";
-	$checkTable = mysqli_query($mysqli, $check);
 	
-	if(mysqli_fetch_row($checkTable))
+	$member = new Member(NULL, $username);
+	
+	if($member->id)
 	{
-		header("location: ../addUserForm.php?taken=$username?");
+		header("location: addUserForm.php?taken=$username");
 		
 	} else {
+		$member = new Member();
+		$member->first_name = $_POST['f_name'];
+		$member->last_name = $_POST['l_name'];
+		$member->username = $username;
+		$member->accountType = NULL;				//TODO: Remove is deprecated
+		$member->class = $_POST['class'];
+		$member->set_password('passwd');
+		$member->set_date_added();
+		$member->standing = 'good';
+		$member->status = 'pledge';
+		$member->residency = $_POST['residency'];
+		$member->insert();
 		
-		$add_sql = "
-			INSERT INTO members (FirstName, LastName, accountType, class, username, password, dateAdded, standing, memberStatus, residency) 
-			VALUES ('".ucwords($_POST['f_name'])."', '".ucwords($_POST['l_name'])."', '|brother', '".$_POST['class']."', '".$username."', SHA('passwd'), '".date("Y-m-d")."', 'good', 'pledge', '$_POST[residency]')";
-		
-		//echo $add_sql;
-		
-		$add_res = mysqli_query($mysqli, $add_sql);
-		
-		header("location: ../addUserForm.php");
+		header("location: addUserForm.php?status=success");
 	}
 	
+} else {
+	$status = $_GET[status];
 }
 	
 
-
- 
 /**
  * Form Section
  */
 
 
-include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
-include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php");	
-?>
+include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
+
+<link type="text/css" href="/styles/ui-lightness/jquery-ui-1.8.1.custom.css" rel="stylesheet" />
+
+ <?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php");	?>
+
+<?php if($status == 'success'){ ?>
+
+<div class="ui-widget">
+		<div class="ui-state-highlight ui-corner-all" style="padding: .3em .5em;"> 
+			<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
+			New member added successfully! </p>
+		</div>
+</div>
+
+<?php } ?>
 
 <h2>New Member Form</h2>
 

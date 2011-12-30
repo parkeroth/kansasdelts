@@ -10,7 +10,7 @@ require_once 'classes/Position.php';
 $committee_data = array(	'proctor' => array(	'title' => 'Study Hour Proctors',
 								'authUsers' => array('admin', 'academics')
 							),
-				'honor_board' => array(	'title' => 'Honor Board',
+				'honor-board' => array(	'title' => 'Honor Board',
 									'authUsers' => array('admin', 'saa')
 							)
 				);
@@ -97,9 +97,10 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 		}
 		
 		$current_committee = $_GET[committee];
-		$current_data = $committee_data[$current_committee];
 		$position = $position_manager->get_position_by_type($current_committee);
 	}
+	
+	$current_data = $committee_data[$current_committee];
 
 ?>
 

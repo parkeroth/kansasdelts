@@ -5,26 +5,52 @@ require_once 'DB_Manager.php';
 
 class Member extends DB_Table
 {
+	public $raw_fields = array('password');
+	
 	public $id = NULL;
 	public $username = NULL;
-	public $accountTpe = NULL;
+	public $accountType = NULL;
 	public $last_name = NULL;
 	public $first_name = NULL;
+	protected $password = NULL;
+	protected $date_added = NULL;
+	public $standing = NULL;
+	public $status = NULL;
+	public $residency = NULL;
 
 	function __construct($member_id = NULL, $username = NULL) {
 		$this->table_name = 'members';
 		$this->table_mapper = array(
 			'id' => 'ID',
-			'accountTpe' => 'accountTpe',	//DON'T USE THIS!
+			'accountType' => 'accountType',	//DON'T USE THIS!
 			'last_name' => 'lastName',
-			'first_name' => 'firstName'
+			'first_name' => 'firstName',
+			'username' => 'username',
+			'password' => 'password',
+			'date_added' => 'dateAdded',
+			'standing' => 'standing',
+			'status' => 'memberStatus',
+			'residency' => 'residency'
 		);
 		if($username){
 			$params = array('username' => $username);
-		} else {
+		} else if($member_id) {
 			$params = array('id' => $member_id);
+		} else {
+			$params = NULL;
 		}
 		parent::__construct($params);
+	}
+	
+	public function set_password($phrase){
+		$this->password = "SHA('$phrase')";
+	}
+	
+	public function set_date_added($date = NULL){
+		if(!$date){
+			$date = date('Y-m-d');
+		}
+		$this->date_added = $date;
 	}
 	
 	function __toString() {

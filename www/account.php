@@ -162,7 +162,7 @@ for($i=0; $i < $alertCount; $i++){ ?>
 				<?php echo $alert[$i]; ?> </p>
 			</div>
 	</div>
-	<?php } ?>
+<?php } ?>
 	
 	<?php include_once('php/login.php');
 			$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
