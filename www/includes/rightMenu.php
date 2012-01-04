@@ -1,9 +1,7 @@
 <?php
-echo '1';
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';
 
 $user_position_ids = $session->positions;
-echo '2';
 
 	$auth_list = array('admin', 'saa');
 	if($session->isAuth($auth_list)){
