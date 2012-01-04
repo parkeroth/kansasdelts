@@ -11,7 +11,7 @@
          	<div id="headerNavBarRight">
                	<a href="/account.php">my account</a> | 
                 <?php
-					if(isset($_SESSION['username'])){ ?>
+					if(isset($session->member_id)){ ?>
 						<a href="/logout.php">logout</a> <?php
 					} else { ?>
 						<a href="/loginForm.php">login</a> <?php

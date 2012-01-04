@@ -308,8 +308,7 @@ class Session
 			return $this->isAuthorized;
 			//everything's peachy, no need to do any thing
 		} else {
-			echo "<p>UNAUTHORIZED!</p>";
-			//header("Location: /loginForm.php");
+			header("Location: /loginForm.php");
 		}
    }
 };
