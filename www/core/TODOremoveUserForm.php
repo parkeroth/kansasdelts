@@ -1,8 +1,17 @@
 <?php
+
+////////////// FOR FUTURE WORK /////////////////////////////
+
 session_start();
-include_once('php/login.php');
 $authUsers = array('admin', 'secretary');
-include_once('php/authenticate.php');
+include_once 'authenticate.php';
+
+include_once 'classes/Member.php';
+include_once 'classes/DB.php';
+
+$member_manager = new Member_Manager();
+$member_list = $member_manager->get_all_members();
+
 
 /**
  * Processing Section
@@ -10,21 +19,8 @@ include_once('php/authenticate.php');
  
 if($_SERVER['REQUEST_METHOD'] == "POST") {
 	
-	$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
-	
-	$tableArray = array('members', 'classes', 'attendance', 'eventAttendance', 'grades', 'fines',
-						'notifications', 'accomplishments', 'brokenStuff', 'hourLog',
-						'studyHourRequirements', 'volunteer', 'studyHourLogs', 'soberGentsLog',
-						'baddDutyLog');
-	$userData = "
-		SELECT * 
-		FROM members";
-	
-	$getUserData = mysqli_query($mysqli, $userData);
-
-	while($userDataArray = mysqli_fetch_array($getUserData, MYSQLI_ASSOC)){
-		
-		if($_POST[$userDataArray[username]]) {
+	foreach($member_list as $member) {
+		if($_POST[$member->id] == 'alumni') {
 			
 			foreach($tableArray as $table) {
 				
@@ -59,32 +55,28 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php");
 ?>
 
 <div style="text-align:center;">
-	<?php
-	
-	echo "<h2>Graduation Update Form</h2>";
-	?>
+	<h2>Remove User Form</h2>
 </div>
 	
 	
 	<form id="gap" name="gpa" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 		<table style="text-align:center;" align="center">
 			<tr>
-				<td><strong>Member</strong></td><td width="100"px><strong>Graduating</strong></td></tr>
-			<?php 
-		include_once('php/login.php');
-		$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
-		
-		$userData = "
-			SELECT * 
-			FROM members
-			WHERE residency != 'limbo'
-			ORDER BY lastName";
-		$getUserData = mysqli_query($mysqli, $userData);
-		
-		while($userDataArray = mysqli_fetch_array($getUserData, MYSQLI_ASSOC)){
+				<td><strong>Member</strong></td>
+				<td width="100"px><strong>Keep</strong></td>
+				<td width="100"px><strong>Remove</strong></td>
+				<td width="100"px><strong>Make Alumni</strong></td>
+			</tr>
+				<?php 
 			
-			echo "<tr><td style=\"text-align: left;\"><label>".$userDataArray['firstName']." ".$userDataArray['lastName']." </td>\n";
-			echo "<td><input type=\"checkbox\" name=\"".$userDataArray['username']."\" value=\"true\" /></label></td></tr>\n";
+		foreach($member_list as $member)
+		{
+			echo '<tr>';
+			echo '<td style="text-align: left;"><label>'.$member->first_name.' '.$member->last_name.' </td>';
+			echo '<td><input type="radio" name="'.$member->id.'" value="keep" checked /></label></td>';
+			echo '<td><input type="radio" name="'.$member->id.'" value="remove" /></label></td>';
+			echo '<td><input type="radio" name="'.$member->id.'" value="alumni" /></label></td>';
+			echo '</tr>';
 		}
 	?>
 			</table>

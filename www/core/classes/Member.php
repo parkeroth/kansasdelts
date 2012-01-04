@@ -9,6 +9,7 @@ class Member extends DB_Table
 	
 	public $id = NULL;
 	public $username = NULL;
+	protected $class = NULL;
 	public $accountType = NULL;
 	public $last_name = NULL;
 	public $first_name = NULL;
@@ -43,6 +44,7 @@ class Member extends DB_Table
 			'first_name' => 'firstName',
 			'username' => 'username',
 			'password' => 'password',
+			'class' => 'class',
 			'date_added' => 'dateAdded',
 			'standing' => 'standing',
 			'status' => 'memberStatus',
@@ -96,6 +98,10 @@ class Member extends DB_Table
 		} else {
 			return false;
 		}
+	}
+	
+	public function get_class(){
+		return $this->class;
 	}
 	
 	function __toString() {
