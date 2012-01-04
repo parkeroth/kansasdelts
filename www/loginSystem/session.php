@@ -18,7 +18,7 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';
 class Session
 {
    var $member_id;
-   var $username;     //Username given on sign-up
+   var $username;     //Username given on sign-up		DONT USE THIS!
    var $userid;       //Random value generated on current login
    var $accountType;	//type of user from the members table
    var $time;         //Time user was last active (page loaded)

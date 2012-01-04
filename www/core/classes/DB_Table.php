@@ -54,7 +54,7 @@ class DB_Table extends DB{
 		}
 		$id_field = $this->table_mapper[id];
 		$query .= " WHERE $id_field = '$this->id'";
-		
+		echo $query;
 		$this->connection->query($query);
 	}
 	
