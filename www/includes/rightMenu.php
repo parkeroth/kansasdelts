@@ -141,7 +141,7 @@ echo '2';
 					<a href="#">My Account</a>
 					<ul>
 						<li><div id="notificationButton"><a href="#">Notification Settings</a></div></li>
-						<li><a href="memberInfoForm.php">Change Roster Info</a></li>
+						<li><a href="/core/memberInfo.php">Change Roster Info</a></li>
 						<li><a href="passwordChangeForm.php">Change Password</a></li>
 						<li><a href="accomplishmentForm.php">My Accomplishments</a></li>
 						<?php 
@@ -161,7 +161,7 @@ echo '2';
 					<a href="#">Manage Users</a>
 					<ul>
 						<li><a href="attendanceRecords.php">Attendance Records</a></li>
-						<li><a href="addUserForm.php">Add a User</a></li>
+						<li><a href="/core/addUserForm.php">Add a User</a></li>
 						<li><a href="graduationUpdateForm.php">Graduation Update</a></li>
 						<li><a href="/core/electionUpdateForm.php">Election Update</a></li>
 						<li><a href="removeUserForm.php">Remove User</a></li>
