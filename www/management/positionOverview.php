@@ -1,13 +1,13 @@
 <?php
 session_start();
-include_once('../php/login.php');
-$authUsers = array('brother');
-include_once('../php/authenticate.php');
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Position.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Report.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/ReportingTask.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Task.php';
+$authUsers = array('brother');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
+
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';
+require_once 'classes/Report.php';
+require_once 'classes/ReportingTask.php';
+require_once 'classes/Task.php';
 
 $position_id = $_GET[position];
 
@@ -24,12 +24,11 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 <script type="text/javascript" src="/js/jquery-ui-1.8.1.custom.min.js"></script>
 
 <?php	include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php");
-		$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
-
-		$reporting_task_manager = new ReportingTaskManager($mysqli);
-		$task_manager = new TaskManager($mysqli);
-		$report_manager = new ReportManager($mysqli);
-		$position = new Position($mysqli, $position_id);
+		
+		$reporting_task_manager = new ReportingTaskManager();
+		$task_manager = new TaskManager();
+		$report_manager = new ReportManager();
+		$position = new Position($position_id);
 ?>
 
 <h1 style="text-align: center;"><?php echo $position->title; ?> Overview</h1>
@@ -38,7 +37,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 	<h3>Current Tasks</h3>
 	<?php
 		$task_list_current = $task_manager->get_tasks_by_position($position->id, 'committed');
-
+		
 		if($task_list_current){
 			echo '<table cellspacing="0" align="center">';
 			$first = True;
@@ -107,7 +106,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 </div>
 <div id="overview_reports">
 	<h3 style="text-align: center;">Reports</h3>
-	<?php
+	<?php 
 		$report_list = $report_manager->get_reports_by_position($position->id);
 
 		if($report_list){
