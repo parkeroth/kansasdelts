@@ -190,8 +190,6 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 			$member->__destruct();
 		}
 		echo "</table>";
-		
-		echo 'END';
 ?>
 		<p>&nbsp;</p>
 		<input type="hidden" name="term" value="<?php echo $term; ?>" />
