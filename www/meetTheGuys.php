@@ -130,7 +130,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php");
 			echo '</td>';
 			echo '<td width="300"><span id="name">'.$member->first_name.' '.$member->last_name.'</span><br />';
 			echo 'Position: '.$position->title.'<br />';	
-			echo 'Class: '.ucwords($members->class).'<br />';
+			echo 'Class: '.ucwords($member->class).'<br />';
 			echo 'Major: '.$member->major.'</td>';
 		}
 		
