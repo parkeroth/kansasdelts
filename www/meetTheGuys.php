@@ -4,9 +4,9 @@ session_start();
 include_once('php/login.php');		//TODO: Remove
 $mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);		//TODO: Remove
 
-include_once '/core/classes/Position.php';
-include_once '/core/classes/Position_Log.php';
-include_once '/core/classes/Member.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position_Log.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 
 include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 ?>
