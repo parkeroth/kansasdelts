@@ -1,7 +1,12 @@
 <?php
 session_start();
-include_once('php/login.php');
-$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
+
+include_once('php/login.php');		//TODO: Remove
+$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);		//TODO: Remove
+
+include_once '/core/classes/Position.php';
+include_once '/core/classes/Position_Log.php';
+include_once '/core/classes/Member.php';
 
 include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 ?>
@@ -22,6 +27,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php");
       <h2>Executive Council</h2>
       <p>&nbsp;      </p>
 	  <?php
+			
 	  	$positionData = "SELECT * FROM positions";
 		$getPositionData = mysqli_query($mysqli, $positionData);
 		$positionCount = 0;
@@ -104,33 +110,72 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php");
 			$class[$classCount] = $classDataArray['class'];
 			$classCount++;
 		}
+		
+		function print_record($member, $position){
+			echo '<td width="127">';
+			
+			
+			echo "<img src=\"photos/composite/";
+			
+			if(file_exists("photos/composite/".$member->username.".jpg"))
+			{
+				echo $member->username.".jpg";
+			}
+			else
+			{
+				echo "mystery.png";
+			}
+			echo "\">";
+			
+			echo '</td>';
+			echo '<td width="300"><span id="name">'.$member->first_name.' '.$member->last_name.'</span><br />';
+			echo 'Position: '.$position->title.'<br />';	
+			echo 'Class: '.ucwords($members->class).'<br />';
+			echo 'Major: '.$member->major.'</td>';
+		}
+		
+		function display_positions($board, $term, $year){
+			$display_count = 0;
+			
+			$position_manager = new Position_Manager();
+			$position_list = $position_manager->get_positions_by_board($board);
+			
+			$position_log_manager = new Position_Log_Manager();
+			foreach($position_list as $position)
+			{
+				$entry_list = $position_log_manager->get_logs_by_position($position->id, $term, $year);
+				foreach($entry_list as $entry)
+				{
+					$member = new Member($entry->member_id);
+					
+					if($display_count % 2 == 0){
+						echo '<tr>';
+					}
+					
+					print_record($member, $position);
+					
+					if($display_count % 2 != 0){
+						echo '</tr>';
+					}
+					
+					$display_count++;
+				}
+			}
+		}
 	  ?>
       <table width="650" border="0" id="exec">
-      	<tr>
-      		<?php find($members, "pres", $memberCount, $positions, $positionCount);?>
-      		<?php find($members, "vpInternal", $memberCount, $positions, $positionCount);?>
-      		</tr>
-		<tr>
-      		<?php find($members, "vpExternal", $memberCount, $positions, $positionCount);?>
-      		<?php find($members, "treasurer", $memberCount, $positions, $positionCount);?>
-      		</tr>
-      	<tr>
-			<?php find($members, "recruitment1", $memberCount, $positions, $positionCount);?>
-      		<?php find($members, "recruitment2", $memberCount, $positions, $positionCount);?>
-      		</tr>
-      	<tr>
-      		<?php find($members, "drm", $memberCount, $positions, $positionCount);?>
-      		<?php find($members, "academics", $memberCount, $positions, $positionCount);?>
-      		</tr>
-      	<tr>
-			<?php find($members, "pledgeEd", $memberCount, $positions, $positionCount);?>
-      		<?php find($members, "saa", $memberCount, $positions, $positionCount);?>
-      		</tr>
-      	<tr>
-      		<?php find($members, "secretary", $memberCount, $positions, $positionCount);?>
-      		<td></td>
-      		</tr>
-      	</table>
+      	<?php
+		$month = date('n');
+		if($month < 8){
+			$term = 'spring';
+		} else {
+			$term = 'fall';
+		}
+		$year = date('Y');
+		
+		display_positions('exec', $term, $year); 
+	?>
+      </table>
 	  
 	  	<?php for($i = 0; $i < $classCount; $i++)
 	  		{

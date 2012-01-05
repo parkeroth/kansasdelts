@@ -54,6 +54,13 @@ class Position_Log_Manager extends DB_Manager
 	function __destruct(){
 		parent::__destruct();
 	}
+	
+	public function get_logs_by_position($position_id, $term, $year){
+		$where = "WHERE position_id = '$position_id'
+				AND term = '$term'
+				AND year = '$year'";
+		return $this->get_logs($where, $term, $year);
+	}
 
 	public function get_logs_by_member($member_id, $term = NULL, $year = NULL, $position_id = NULL){
 		$where = "WHERE member_id = '$member_id'";
