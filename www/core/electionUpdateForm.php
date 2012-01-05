@@ -171,13 +171,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 			}
 			
 			echo '<tr>';
-			echo '<th>'.$member->first_name.' '.$member->last_name;
-			
-			if($member->id == 38){
-				echo count($current_positions);
-			}
-			
-			echo '</th>';
+			echo '<th>'.$member->first_name.' '.$member->last_name.'</th>';
 			echo "<td><select name=\"".$member->id."\">";
 			echo '<option value="none">None</option>';
 			foreach($position_list as $position)

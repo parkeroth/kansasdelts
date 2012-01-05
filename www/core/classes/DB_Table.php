@@ -94,7 +94,7 @@ class DB_Table extends DB{
 			}
 		}
 		$id_field = $this->table_mapper[id];
-		$query .= ' ) '; echo $query;
+		$query .= ' ) '; //echo $query;
 		$this->connection->query($query);
 		$this->id = $this->connection->insert_id;
 	}
