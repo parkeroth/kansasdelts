@@ -9,7 +9,7 @@ class Member extends DB_Table
 	
 	public $id = NULL;
 	public $username = NULL;
-	protected $class = NULL;
+	public $class = NULL;
 	public $accountType = NULL;
 	public $last_name = NULL;
 	public $first_name = NULL;
