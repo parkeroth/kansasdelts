@@ -1,4 +1,10 @@
 <?php
+
+/*
+ * DEPRECATED! DON'T USE
+ * Correct version in /core/classes
+ * 
+ */
 class Member
 {
 	private $connection = NULL;

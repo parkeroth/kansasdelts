@@ -1,9 +1,10 @@
 <?php
-require_once 'classes/Position.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';
 
-$position = new Position($mysqli, NULL, $userDataArray['accountType']);
+$user_position_ids = $session->positions;
 
-	if(strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "saa") || strpos($userDataArray['accountType'], "honorBoard")){
+	$auth_list = array('admin', 'saa');
+	if($session->isAuth($auth_list)){
 		$query = "
 			SELECT status, COUNT(ID)
 			FROM writeUps 
@@ -34,7 +35,8 @@ $position = new Position($mysqli, NULL, $userDataArray['accountType']);
 			
 		}
 	}
-	if(strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "drm") ){
+	$auth_list = array('admin', 'drm');
+	if($session->isAuth($auth_list)){
 		$query = "
 			SELECT soberGentEvents.ID AS eventID, COUNT(soberGentLog.ID) AS numberOfGents
 			FROM soberGentLog
@@ -54,7 +56,8 @@ $position = new Position($mysqli, NULL, $userDataArray['accountType']);
 			}
 		}
 	}
-	if(strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "houseManager") ){
+	$auth_list = array('admin', 'houseManager');
+	if($session->isAuth($auth_list)){
 		$query = "
 			SELECT COUNT(username), type
 			FROM volunteer
@@ -81,7 +84,8 @@ $position = new Position($mysqli, NULL, $userDataArray['accountType']);
 			$numBroken++;
 		}
 	}
-	if(strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "recruitment") ){
+	$auth_list = array('admin', 'recruitment');
+	if($session->isAuth($auth_list)){
 		$query = "
 			SELECT COUNT(ID) as total
 			FROM recruits
@@ -135,7 +139,7 @@ $position = new Position($mysqli, NULL, $userDataArray['accountType']);
 					<a href="#">My Account</a>
 					<ul>
 						<li><div id="notificationButton"><a href="#">Notification Settings</a></div></li>
-						<li><a href="memberInfoForm.php">Change Roster Info</a></li>
+						<li><a href="/core/memberInfo.php">Change Roster Info</a></li>
 						<li><a href="passwordChangeForm.php">Change Password</a></li>
 						<li><a href="accomplishmentForm.php">My Accomplishments</a></li>
 						<?php 
@@ -155,9 +159,9 @@ $position = new Position($mysqli, NULL, $userDataArray['accountType']);
 					<a href="#">Manage Users</a>
 					<ul>
 						<li><a href="attendanceRecords.php">Attendance Records</a></li>
-						<li><a href="addUserForm.php">Add a User</a></li>
+						<li><a href="/core/addUserForm.php">Add a User</a></li>
 						<li><a href="graduationUpdateForm.php">Graduation Update</a></li>
-						<li><a href="electionUpdateForm.php">Election Update</a></li>
+						<li><a href="/core/electionUpdateForm.php">Election Update</a></li>
 						<li><a href="removeUserForm.php">Remove User</a></li>
 						<li><a href="userStatusForm.php">User Status Form</a></li>
 						<li><a href="chapterContactForm.php">Send Text</a></li>
@@ -196,7 +200,7 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 							
 						<li><a href="viewCourseHours.php">View Course Hours</a></li>
 						<li><a href="changeGradesForm.php">Update Grades</a></li>
-						<li><a href="/academics/chooseProctors.php">Choose Proctors</a></li>
+						<li><a href="/core/chooseCommittee.php?committee=proctor">Choose Proctors</a></li>
 						<li><a href="/academics/addStudyHourUsers.php">Assigned Hours</a></li>
 						<li><a href="/academics/viewLogs.php">View Logs</a></li>
 						
@@ -282,7 +286,7 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 					<ul>
 						<?php if( strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "saa") ){ ?>
 							
-						<li><a href="honorBoardForm.php">Select Honor Board</a></li>
+						<li><a href="/core/chooseCommittee.php?committee=honor-board">Select Honor Board</a></li>
 						<li><a href="manageMissedDuties.php">Missed Duties <?php if($numNewMisses){ echo "<span class=\"redHeading\">(".$numNewMisses.")</span>";} ?></a></li>
 						<li><a href="missedDutyLog.php">Missed Duty Log</a></li>
 						

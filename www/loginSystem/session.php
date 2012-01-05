@@ -12,10 +12,13 @@ include_once("database.php");
 //include_once("mailer.php");
 //include_once("form.php");
 
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position_Log.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';
+
 class Session
 {
    var $member_id;
-   var $username;     //Username given on sign-up
+   var $username;     //Username given on sign-up		DONT USE THIS!
    var $userid;       //Random value generated on current login
    var $accountType;	//type of user from the members table
    var $time;         //Time user was last active (page loaded)
@@ -24,6 +27,7 @@ class Session
    var $url;          //The page url current being viewed
    var $referrer;     //Last recorded site page viewed
    var $isAuthorized;
+   var $positions;		//Array of current position ID's
    /**
     * Note: referrer should really only be considered the actual
     * page referrer in process.php, any other time it may be
@@ -106,11 +110,17 @@ class Session
          }
 
          /* User is logged in, set class variables */
-         $this->userinfo  = $database->getUserInfo($_SESSION['username']);
+	$this->userinfo  = $database->getUserInfo($_SESSION['username']);
+	$member_id = $this->userinfo['ID'];
+	$position_log_manager = new Position_Log_Manager();
+	$current_positions = $position_log_manager->get_current_positions($member_id);
+		 
+         
          $this->username  = $this->userinfo['username'];
-	$this->member_id  = $this->userinfo['ID'];
+	$this->member_id  = $member_id;
          $this->userid    = $this->userinfo['userid'];
          $this->accountType = $this->userinfo['accountType'];
+	$this->positions = $current_positions;
          return true;
       }
       /* User not logged in */
@@ -269,23 +279,26 @@ class Session
       return $randstr;
    }
    
-   function checkAuthType($authUsers) {
-	   $this->isAuthorized = false;
+   function isAuth($authUsers){
+	   $authorized = false;
+	   $position_manager = new Position_Manager();
 	   for($i=0; $i < count($authUsers); $i++){
-			if(strpos($this->accountType, $authUsers[$i]) ){
-				$this->isAuthorized = true;
-			} else if($authUsers[$i] == 'brother'){
-				$this->isAuthorized = true;
-			} else if($authUsers[$i] == 'public'){
-				$this->isAuthorized = true;
-			}
-		}
-		
-		if(strpos($this->accountType, "admin"))
-		{
-			$this->isAuthorized = true;
-		}
-		
+		   $position = $position_manager->get_position_by_type($authUsers[$i]);
+		   if(in_array($position->id, $this->positions)){
+			$authorized = true;
+		   } else if($authUsers[$i] == 'brother'){
+			$authorized = true;
+		   } else if($authUsers[$i] == 'public'){
+			$authorized = true;
+		   }
+	  }
+	  return $authorized;
+   }
+   
+   function checkAuthType($authUsers) {
+	   
+	   $this->isAuthorized = $this->isAuth($authUsers);
+	   
 		//echo 'username: '.$this->username;
 		//echo 'isAuthorized value: '.$this->isAuthorized.'<br />';
 		

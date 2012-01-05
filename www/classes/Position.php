@@ -1,5 +1,10 @@
 <?php
 
+/*
+ * DEPRECATED! DON'T USE
+ * Correct version in /core/classes
+ */
+
 class Position
 {
 	private static $COMMITTEE_SLUGS = array('admin', 'proctor', 'honorBoard');
