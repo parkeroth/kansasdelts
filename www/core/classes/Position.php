@@ -75,7 +75,7 @@ class Position_Manager extends DB_Manager
 
 	public function get_positions_by_board($board){
 		$where = "WHERE board LIKE '%$board%'";
-		return $this->get_position_list($where);
+		return $this->get_position_list($where, 'ID');
 	}
 	
 	public function get_position_by_type($type_str){
@@ -93,12 +93,15 @@ class Position_Manager extends DB_Manager
 		return $this->get_position_list($where);
 	}
 
-	private function get_position_list($where){
+	private function get_position_list($where, $sort_field = NULL){
+		if($sort_field == NULL){
+			$sort_field = 'title';
+		}		
 		$list = array();
 		$query = "
 			SELECT ID FROM positions
 			$where
-			ORDER BY title ASC"; //echo $query.'<br>';
+			ORDER BY $sort_field ASC"; //echo $query.'<br>';
 		$result = $this->connection->query($query); //echo $query;
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Position($data[ID]);

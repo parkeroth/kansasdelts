@@ -134,8 +134,8 @@ class Member_Manager extends DB_Manager
 		parent::__construct();
 	}
 
-	public function get_members_by_position($position){
-		$where = "WHERE accountType LIKE '%|$position%'
+	public function get_members_by_position($position_type){
+		$where = "WHERE accountType LIKE '%|$position_type%'
 						AND memberStatus != 'limbo'";
 		return $this->get_member_list($where);
 	}
