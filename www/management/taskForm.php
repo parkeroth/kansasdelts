@@ -1,13 +1,11 @@
 <?php
+
 session_start();
-include_once($_SERVER['DOCUMENT_ROOT'].'/php/login.php');
 $authUsers = array('brother');
-include_once($_SERVER['DOCUMENT_ROOT'].'/php/authenticate.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php');
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Task.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Member.php';
-
-$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
+require_once 'classes/Task.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 
 /**
  * Processing Section
@@ -51,18 +49,20 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 
 	if($valid_input){
 		if($task_id){ //Editing existing task
-			$task = new Task($mysqli, $task_id);
-			$task->saveVal('title', $title);
-			$task->saveVal('deadline', $deadline);
-			$task->saveVal('priority', $priority);
-			$task->saveVal('notes', $notes);
+			$task = new Task($task_id);
+			$task->title = $title;
+			$task->deadline = $deadline;
+			$task->priority = $priority;
+			$task->notes = $notes;
+			$task->save();
 		} else { //Creating new task
-			$task = new Task($mysqli);
+			$task = new Task();
 			$task->title = $title;
 			$task->deadline = $deadline;
 			$task->priority = $priority;
 			$task->notes = $notes;
 			$task->position_id = $position_id;
+			$task->status = 'new';
 			$task->insert();
 		}
 		header("location: $referrer_url");
@@ -74,7 +74,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 	$task_id = $_GET[id];
 	
 	if(isset($task_id)){
-		$task = new Task($mysqli, $task_id);
+		$task = new Task($task_id);
 		$title = $task->title;
 		$deadline = date('m/d/Y', strtotime($task->deadline));
 		$priority = $task->priority;
