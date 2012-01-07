@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 $authUsers = array('brother');
 include_once($_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php');

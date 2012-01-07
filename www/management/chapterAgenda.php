@@ -2,7 +2,7 @@
 session_start();
 include_once('../php/login.php');
 $authUsers = array('admin', 'secretary');
-include_once('../php/authenticate.php');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 
 require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Position.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Report.php';

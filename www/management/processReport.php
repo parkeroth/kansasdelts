@@ -1,15 +1,13 @@
 <?php
 session_start();
-include_once($_SERVER['DOCUMENT_ROOT'].'/php/login.php');
 $authUsers = array('admin', 'secretary');
-include_once($_SERVER['DOCUMENT_ROOT'].'/php/authenticate.php');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Report.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Task.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Member.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Position.php';
+require_once 'classes/Report.php';
+require_once 'classes/Task.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';
 
-$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
 
 /**
  * Processing Section
@@ -35,7 +33,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 		$errors[] = "Please commit to at least one task for next week.<br>";
 		$valid_input = false;
 	}
-	$task_manager = new TaskManager($mysqli);
+	$task_manager = new TaskManager();
 	$previous_tasks = $task_manager->get_previous_tasks($report_id);
 	foreach($previous_tasks as $task){
 		$progress = $_POST['progress-'.$task->id];
@@ -50,23 +48,26 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 		}
 	}
 	if($valid_input){
-		$report = new Report($mysqli, $report_id);
-		$report->saveVal('agenda', $agenda);
-		$report->saveVal('status', $status);
+		$report = new Report($report_id);
+		$report->agenda = $agenda;
+		$report->status = $status;
+		$report->save();
 		
 		foreach($previous_tasks as $task){
 			$progress = $_POST['progress-'.$task->id];
-			$task->saveVal('progress', $progress);
-			$task->saveVal('notes', $_POST['notes-'.$task->id]);
+			$notes = $_POST['notes-'.$task->id];
+			$task->progress = $progress;
+			$task->notes = $notes;
 			if($progress == 'completed' || $progress == 'cancelled'){
-				$task->saveVal('status', 'closed');
+				$task->status = 'closed';
 			} else {
-				$task->saveVal('status', 'committed');
+				$task->status = 'committed';
 			}
+			$task->save();
 		}
 		$report->assign_tasks('committed', $_POST[tasks]);
 		$meeting_date = $report->meeting_date;
-		$position = new Position($mysqli, $report->position_id);
+		$position = new Position($report->position_id);
 		$board = $position->board;
 		header("location: manageMeeting.php?board=$board&meeting_date=$meeting_date");
 	} else {
@@ -75,7 +76,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 } 
 
 $report_id = $_GET[id];
-$report = new Report($mysqli, $report_id);
+$report = new Report($report_id);
 $status = $report->status;
 $discussion = $report->discussion;
 if($discussion == ''){
@@ -84,10 +85,10 @@ if($discussion == ''){
 $agenda = $report->agenda;
 $meeting_date = date('m/d/Y', strtotime($report->meeting_date));
 
-$position = new Position($mysqli, $report->position_id);
+$position = new Position($report->position_id);
 
 
-$task_manager = new TaskManager($mysqli);
+$task_manager = new TaskManager();
 
 include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 
@@ -192,7 +193,6 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 	$task_list = array();
 	$task_list = array_merge($task_list_new, $task_list);
 	$task_list = array_merge($task_list_proposed, $task_list);
-	$task_list = array_merge($task_list_committed, $task_list);
 
 	if($task_list){
 		echo '<table cellspacing="0" align="center">';
@@ -209,8 +209,12 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 			} else {
 				$checked = NULL;
 			}
-			echo '<tr class="'. get_row_class($task).'">';
-			echo '<td><input type="checkbox" name="tasks[]" value="'.$task->id.'" '.$checked.' /></td>';
+			echo '<tr class="'.$task->get_row_class().'">';
+			echo '<td>';
+			if(!in_array($task, $task_list_committed)){
+				echo '<input type="checkbox" name="tasks[]" value="'.$task->id.'" '.$checked.' />';
+			}
+			echo '</td>';
 			echo '<td class="left">'.$task->title.'</td>';
 			echo '<td>'.ucwords($task->priority).'</td>';
 			echo '<td>'.$task->get_deadline().'</td>';

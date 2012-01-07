@@ -81,8 +81,25 @@ class Task extends DB_Table
 			return 'progress-green';
 		} else if($this->progress == 'blocked') {
 			return 'progress-yellow';
-		} else if($this->progress == 'not-started'){
+		} else if($this->progress == 'not-started' || $this->progress == NULL){
 			return 'progress-red';
+		} else if($this->progress == 'cancelled') {
+			return 'progress-grey';
+		}
+	}
+	
+	public function get_row_class(){
+		$days_until_due = $this->days_until_due();
+		if($this->status == 'committed'){
+			return 'committed';
+		} else {
+			if($days_until_due < 0){
+				return 'critical';
+			} if($days_until_due <= 7){
+				return 'strong';
+			} else {
+				return 'normal';
+			}
 		}
 	}
 }
@@ -108,10 +125,10 @@ class TaskManager extends DB_Manager
 	
 	public function get_previous_tasks($report_id, $position_id = NULL){
 		if($report_id){
-			$report = new Report($this->connection, $report_id);
+			$report = new Report($report_id);
 			$previous_report_id = $report->get_previous_report_id();
 		} else {
-			$report_manager = new ReportManager($this->connection);
+			$report_manager = new ReportManager();
 			$previous_report_id = $report_manager->get_latest_report_by_position($position_id)->id;
 		}
 		$previous_tasks = $this->get_tasks_by_report_id($previous_report_id);
@@ -129,17 +146,6 @@ class TaskManager extends DB_Manager
 			$list[] = new Task($data[ID]);
 		}
 		return $list;
-	}
-}
-
-function get_row_class($task){
-	$days_until_due = $task->days_until_due();
-	if($days_until_due < 0){
-		return 'critical';
-	} if($days_until_due <= 7){
-		return 'strong';
-	} else {
-		return 'normal';
 	}
 }
 ?>

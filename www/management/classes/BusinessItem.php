@@ -68,7 +68,7 @@ class BusinessItemManager extends DB_Manager
 			$where"; //echo $query.'<br>';
 		$result = mysqli_query($this->connection, $query);
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
-			$list[] = new BusinessItem($this->connection, $data[id]);
+			$list[] = new BusinessItem($data[id]);
 		}
 		return $list;
 	}

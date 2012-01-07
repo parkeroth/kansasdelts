@@ -1,14 +1,12 @@
 <?php
 session_start();
-include_once($_SERVER['DOCUMENT_ROOT'].'/php/login.php');
 $authUsers = array('brother');
-include_once($_SERVER['DOCUMENT_ROOT'].'/php/authenticate.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php');
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Task.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Report.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Member.php';
+require_once 'classes/Task.php';
+require_once 'classes/Report.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 
-$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
 
 /**
  * Processing Section
@@ -27,7 +25,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 	} else {
 		$meeting_date = date('Y-m-d', strtotime($_POST[meeting_date]));
 	}
-	$task_manager = new TaskManager($mysqli);
+	$task_manager = new TaskManager();
 	$task_list_old = $task_manager->get_previous_tasks($report_id, $position_id);
 	foreach($task_list_old as $task){
 		if($_POST['progress-'.$task->id] == 'select'){
@@ -53,34 +51,40 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 
 	if($valid_input){
 		if($report_id){ //Editing existing report
-			$report = new Report($mysqli, $report_id);
-			$report->saveVal('discussion', $discussion);
-			$report->saveVal('agenda', $agenda);
+			$report = new Report($report_id);
+			$report->discussion = $discussion;
+			$report->agenda = $agenda;
+			$report->save();
 		} else { //Creating new report
-			$report = new Report($mysqli);
+			$report = new Report();
 			$report->meeting_date = $meeting_date;
 			$report->position_id = $position_id;
 			$report->discussion = $discussion;
 			$report->agenda = $agenda;
+			$report->status = 'pending';
 			$report->insert();
 		}
 		if($report->id){
 			$previously_committed_tasks = $task_manager->get_tasks_by_report_id($report_id);
 			if($previously_committed_tasks){
 				foreach($previously_committed_tasks as $task){
-					$task->saveVal('status', 'new');
-					$task->saveVal('reportID', NULL);
+					$task->status = 'new';
+					$task->report_id = NULL;
+					$task->save();
 				}
 			}
 			foreach($task_list_old as $task){
 				$progress = $_POST['progress-'.$task->id];
-				$task->saveVal('progress', $progress);
-				$task->saveVal('notes', $_POST['notes-'.$task->id]);
+				$notes = $_POST['notes-'.$task->id];
+				$task->progress = $progress;
+				$task->notes = $notes;
+				$task->save();
 			}
 			foreach($_POST[tasks] as $task_id){
-				$task = new Task($mysqli, $task_id);
-				$task->saveVal('report_id', $report->id);
-				$task->saveVal('status', 'proposed');
+				$task = new Task($task_id);
+				$task->report_id = $report->id;
+				$task->status = 'proposed';
+				$task->save();
 			}
 			header("location: positionOverview.php?position=$position_id");
 		} else {
@@ -95,20 +99,20 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 	$report_id = $_GET[id];
 
 	if(isset($report_id)){
-		$report = new Report($mysqli, $report_id);
+		$report = new Report($report_id);
 		$discussion = $report->discussion;
 		$agenda = $report->agenda;
 		$meeting_date = date('M j, Y', strtotime($report->meeting_date));
 	} else {
-		$report_id  = NULL;
-		$discussion = NULL;
+		$report_id  = NULL; 
+		$discussion = NULL; 
 		$agenda = NULL;
-		$report_manager = new ReportManager($mysqli);
-		$meeting_date = date('M j, Y', $report_manager->get_next_meeting_date($position_id));
+		$report_manager = new ReportManager(); 
+		$meeting_date = date('M j, Y', $report_manager->get_next_meeting_date($position_id)); 
 	}
 }
 
-$task_manager = new TaskManager($mysqli);
+$task_manager = new TaskManager();
 
 include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 
@@ -153,7 +157,8 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 		<table class="centered" align="center">
 			<tr>
 				<th>Date of meeting: </th>
-				<td class="center""><strong><?php echo $meeting_date; ?></strong></td>
+				<td><input name="deadline" type="text" id="datepicker" size="10" value="<?php 
+				echo date('m/d/Y', strtotime($meeting_date)); ?>" /></td>
 				</tr>
 			<tr>
 				<td colspan="2">&nbsp;</td>

@@ -1,13 +1,12 @@
 <?php
 session_start();
-include_once('../php/login.php');
 $authUsers = array('admin', 'secretary');
-include_once('../php/authenticate.php');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Position.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Report.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/BusinessItem.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Meeting.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';
+require_once 'classes/Report.php';
+require_once 'classes/BusinessItem.php';
+require_once 'classes/Meeting.php';
 
 if(isset($_GET[board])){
 	$board =  mysql_real_escape_string($_GET[board]);
@@ -46,10 +45,8 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 <div id="position_list">
 	<h2>Positions</h2>
 	<?php
-		$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
-		
-		$position_manager = new PositionManager($mysqli);
-		$task_maanger = new TaskManager($mysqli);
+		$position_manager = new Position_Manager();
+		$task_maanger = new TaskManager();
 
 		$position_list = $position_manager->get_positions_by_board($board);
 
@@ -66,8 +63,8 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 			{
 				echo '<td>';
 				foreach($task_list as $task){
-					echo '<span class="'.$task->get_progress_class().'">'.$task->title.'</span>';
-					echo " <a href=\"taskForm.php?id=$task->id\">Edit</a><br>";
+					echo '<div class="'.$task->get_progress_class().'">'.$task->title;
+					echo " <a href=\"taskForm.php?id=$task->id\">Edit</a></div>";
 				}
 				echo "</td>";
 			} else {
@@ -82,7 +79,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 	<h2>Meetings</h2>
 	<ul id="item_list">
 <?php
-	$meeting_manager = new MeetingManager($mysqli);
+	$meeting_manager = new MeetingManager();
 	$meeting_list = $meeting_manager->get_meetings($board);
 	if($meeting_list){
 		foreach($meeting_list as $meeting){

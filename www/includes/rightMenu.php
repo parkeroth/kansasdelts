@@ -182,7 +182,9 @@ foreach($user_position_ids as $position_ids){
 <?php
 
 foreach(Position::$BOARD_ARRAY as $code => $name){
-	echo '<li><a href="management/boardOverview.php?board='.$code.'">'.$name.'</a></li>';
+	if($name){
+		echo '<li><a href="management/boardOverview.php?board='.$code.'">'.$name.'</a></li>';
+	}
 }
 
 ?>

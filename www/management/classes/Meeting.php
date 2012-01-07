@@ -72,7 +72,7 @@ class MeetingManager extends DB
 			LIMIT 20"; //echo $query.'<br>';
 		$result = mysqli_query($this->connection, $query);
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
-			$list[] = new Meeting($this->connection, $data[meeting_date], $data[board]);
+			$list[] = new Meeting($data[meeting_date], $data[board]);
 		}
 		return $list;
 	}

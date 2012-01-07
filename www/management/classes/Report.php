@@ -92,18 +92,20 @@ class Report extends DB_Table
 	 * @param task_ids	list of ids to associate with report
 	 */
 	public function assign_tasks($status, $task_ids){
-		$task_manager = new TaskManager($this->connection);
+		$task_manager = new TaskManager();
 		$previously_committed_tasks = $task_manager->get_tasks_by_report_id($this->id);
 		if($previously_committed_tasks){
 			foreach($previously_committed_tasks as $task){
-				$task->saveVal('status', 'new');
-				$task->saveVal('report_id', NULL);
+				$task->status = 'new';
+				$task->report_id = NULL;
+				$task->save();
 			}
 		}
 		foreach($task_ids as $task_id){
-			$task = new Task($this->connection, $task_id);
-			$task->saveVal('report_id', $this->id);
-			$task->saveVal('status', $status);
+			$task = new Task($task_id);
+			$task->report_id = $this->id;
+			$task->status = $status;
+			$task->save();
 		}
 	}
 	
@@ -173,7 +175,7 @@ class ReportManager extends DB_Manager
 		$result = mysqli_query($this->connection, $query);
 		$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
 		if(isset($data[ID])){
-			return new Report($this->connection, $data[ID]);
+			return new Report($data[ID]);
 		} else {
 			return NULL;
 		}
