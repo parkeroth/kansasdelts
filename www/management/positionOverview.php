@@ -49,7 +49,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 					echo '</tr>';
 					$first = False;
 				}
-				echo '<tr class="'. get_row_class($task).'">';
+				echo '<tr class="'.$task->get_row_class().'">';
 				echo '<td class="left">'.$task->title.'</td>';
 				echo '<td>'.ucwords($task->priority).'</td>';
 				echo '<td>'.$task->get_deadline().'</td>';
@@ -85,7 +85,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 					echo '</tr>';
 					$first = False;
 				}
-				echo '<tr class="'. get_row_class($task).'">';
+				echo '<tr class="'.$task->get_row_class().'">';
 				echo '<td class="left">'.$task->title.'</td>';
 				echo '<td>'.ucwords($task->priority).'</td>';
 				echo '<td>'.$task->get_deadline().'</td>';

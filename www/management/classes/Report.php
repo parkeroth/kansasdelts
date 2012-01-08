@@ -32,6 +32,7 @@ class Report extends DB_Table
 	public $position_id = NULL;
          public $status = NULL;
          public $meeting_date = NULL;
+	public $extra = NULL;
 	public $discussion = NULL;
 	public $agenda = NULL;
 	public $minutes = NULL;
@@ -44,6 +45,7 @@ class Report extends DB_Table
 			'position_id' => 'position_id',
 			'status' => 'status',
 			'meeting_date' => 'meeting_date',
+			'extra' => 'extra',
 			'discussion' => 'discussion',
 			'agenda' => 'agenda',
 			'minutes' => 'minutes'

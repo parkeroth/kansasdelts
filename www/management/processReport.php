@@ -77,10 +77,14 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 
 $report_id = $_GET[id];
 $report = new Report($report_id);
+$extra = $report->extra;
 $status = $report->status;
 $discussion = $report->discussion;
 if($discussion == ''){
 	$discussion = 'None';
+}
+if($extra == ''){
+	$extra = 'None';
 }
 $agenda = $report->agenda;
 $meeting_date = date('m/d/Y', strtotime($report->meeting_date));
@@ -180,6 +184,11 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 ?>
 				</td>
 			</tr>
+			<tr>
+				<th>Extra work done: </th>
+				<td><?php echo $extra; ?></td>
+				</tr>
+			<tr>
 			<tr>
 				<td colspan="2">&nbsp;</td>
 			</tr>

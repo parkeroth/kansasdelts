@@ -34,6 +34,11 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 			break;
 		}
 	}
+	if($_POST[extra] == ''){
+		$extra = NULL;
+	} else {
+		$extra = mysql_real_escape_string($_POST[extra]);
+	}
 	if($_POST[discussion] == ''){
 		$discussion = NULL;
 	} else {
@@ -45,13 +50,14 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 		$agenda = mysql_real_escape_string($_POST[agenda]);
 	}
 	if(!isset($_POST[tasks])){
-		$errors[] = "Please commit to at least one task for next week.<br>";
-		$valid_input = false;
+		//$errors[] = "Please commit to at least one task for next week.<br>";
+		//$valid_input = false;
 	}
 
 	if($valid_input){
 		if($report_id){ //Editing existing report
 			$report = new Report($report_id);
+			$report->extra = $extra;
 			$report->discussion = $discussion;
 			$report->agenda = $agenda;
 			$report->save();
@@ -59,6 +65,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 			$report = new Report();
 			$report->meeting_date = $meeting_date;
 			$report->position_id = $position_id;
+			$report->extra = $extra;
 			$report->discussion = $discussion;
 			$report->agenda = $agenda;
 			$report->status = 'pending';
@@ -100,11 +107,13 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 
 	if(isset($report_id)){
 		$report = new Report($report_id);
+		$extra = $report->extra;
 		$discussion = $report->discussion;
 		$agenda = $report->agenda;
 		$meeting_date = date('M j, Y', strtotime($report->meeting_date));
 	} else {
 		$report_id  = NULL; 
+		$extra = NULL;
 		$discussion = NULL; 
 		$agenda = NULL;
 		$report_manager = new ReportManager(); 
@@ -200,6 +209,13 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 				</td>
 			</tr>
 			<tr>
+				<th>Extra work done: </th>
+				<td><textarea name="extra" cols="48" rows="5"><?php echo $extra; ?></textarea></td>
+				</tr>
+			<tr>
+				<td colspan="2">&nbsp;</td>
+			</tr>
+			<tr>
 				<td colspan="2">&nbsp;</td>
 			</tr>
 			<tr>
@@ -228,7 +244,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 			} else {
 				$checked = NULL;
 			}
-			echo '<tr class="'. get_row_class($task).'">';
+			echo '<tr class="'.$task->get_row_class().'">';
 			echo '<td><input type="checkbox" name="tasks[]" value="'.$task->id.'" '.$checked.' /></td>';
 			echo '<td class="left">'.$task->title.'</td>';
 			echo '<td>'.ucwords($task->priority).'</td>';
@@ -247,6 +263,9 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 ?>
 					<br/><a href="taskForm.php?position=<?php echo $position_id; ?>">Add New Task</a>
 				</td>
+			</tr>
+			<tr>
+				<td colspan="2">&nbsp;</td>
 			</tr>
 			<tr>
 				<td colspan="2">&nbsp;</td>
