@@ -162,7 +162,8 @@ foreach($user_position_ids as $position_ids){
 				
 			<? }
 	
-			if(strpos($userDataArray['accountType'],"admin") || strpos($userDataArray['accountType'], "secretary") ){ ?>
+			$auth_list = array('admin', 'secretary');
+			if($session->isAuth($auth_list)){ ?>
 			
 				<li>
 					<a href="#">Manage Users</a>
