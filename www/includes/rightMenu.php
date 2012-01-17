@@ -3,6 +3,15 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';
 
 $user_position_ids = $session->positions;
 
+$user_position = NULL;
+
+foreach($user_position_ids as $position_ids){
+	$position = new Position($position_ids);
+	if($position->board != 'committee'){
+		$user_position = $position;
+	}
+}
+
 	$auth_list = array('admin', 'saa');
 	if($session->isAuth($auth_list)){
 		$query = "
@@ -109,7 +118,7 @@ $user_position_ids = $session->positions;
 						<li><a href="schedule.php">View My Classes</a></li>
 						<li><a href="baddDutyDates.php">BADD Duty Calendar</a></li>
 						<?php 
-						if($_SESSION["userType"] != "|brother")
+						if($user_position)
 						{
 							echo "<li><a href=\"http://www.google.com/a/kansasdelts.org\">Check Apps Emails</a></li>";
 						}
@@ -143,9 +152,9 @@ $user_position_ids = $session->positions;
 						<li><a href="passwordChangeForm.php">Change Password</a></li>
 						<li><a href="accomplishmentForm.php">My Accomplishments</a></li>
 						<?php 
-						if($position)
+						if($user_position)
 						{
-							echo "<li><a href=\"management/positionOverview.php?position=$position->id\">My Position</a></li>";
+							echo "<li><a href=\"management/positionOverview.php?position=$user_position->id\">My Position</a></li>";
 							echo "<li><a href=\"viewReportingTasks.php\">View FAAR Tasks</a></li>";
 						}?>
 					</ul>
@@ -153,7 +162,8 @@ $user_position_ids = $session->positions;
 				
 			<? }
 	
-			if(strpos($userDataArray['accountType'],"admin") || strpos($userDataArray['accountType'], "secretary") ){ ?>
+			$auth_list = array('admin', 'secretary');
+			if($session->isAuth($auth_list)){ ?>
 			
 				<li>
 					<a href="#">Manage Users</a>
@@ -173,7 +183,9 @@ $user_position_ids = $session->positions;
 <?php
 
 foreach(Position::$BOARD_ARRAY as $code => $name){
-	echo '<li><a href="management/boardOverview.php?board='.$code.'">'.$name.'</a></li>';
+	if($name){
+		echo '<li><a href="management/boardOverview.php?board='.$code.'">'.$name.'</a></li>';
+	}
 }
 
 ?>

@@ -1,13 +1,11 @@
 <?php
 session_start();
-include_once($_SERVER['DOCUMENT_ROOT'].'/php/login.php');
 $authUsers = array('admin', 'secretary');
-include_once($_SERVER['DOCUMENT_ROOT'].'/php/authenticate.php');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/BusinessItem.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Member.php';
+require_once 'classes/BusinessItem.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 
-$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
 /**
  * Processing Section
  */
@@ -63,7 +61,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 	}
 
 	if($valid_input){
-		$business_item = new BusinessItem($mysqli);
+		$business_item = new BusinessItem();
 		$business_item->title = $title;
 		$business_item->item_type = $item_type;
 		$business_item->meeting_type = $meeting_type;
@@ -77,7 +75,17 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 		
 	}
 } else {
-	$meeting_date = date('Y-m-d', strtotime('this Sunday'));
+	if(isset($_GET[meeting_date])){
+		$meeting_date = date('Y-m-d', strtotime($_GET[meeting_date]));
+	} else {
+		$meeting_date = date('Y-m-d', strtotime('this Sunday'));
+	}
+	
+	if(isset($_GET[type])){
+		$meeting_type = $_GET[type];
+	} else {
+		$meeting_type = NULL;
+	}
 }
 
 include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
@@ -108,8 +116,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 				</div>
 			</div>
 <?php }
-	}
-?>
+	} ?>
 
 	<h1>New Business Item</h1>
 

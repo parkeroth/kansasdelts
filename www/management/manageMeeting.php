@@ -1,12 +1,12 @@
 <?php
 session_start();
-include_once('../php/login.php');
+echo $session->member_id;
 $authUsers = array('admin', 'secretary');
-include_once('../php/authenticate.php');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Position.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Report.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/classes/BusinessItem.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';
+require_once 'classes/Report.php';
+require_once 'classes/BusinessItem.php';
 
 if(isset($_GET[meeting_date])){
 	$meeting_date = date('m/d/Y', strtotime(mysql_real_escape_string($_GET[meeting_date])));
@@ -57,11 +57,9 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 	</form>
 <div id="report_list">
 	<h2>Reports</h2>
-	<?php
-		$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
-		
-		$position_manager = new PositionManager($mysqli);
-		$report_manager = new ReportManager($mysqli);
+	<?php		
+		$position_manager = new Position_Manager();
+		$report_manager = new ReportManager();
 
 		$position_list = $position_manager->get_positions_by_board($board);
 
@@ -104,11 +102,12 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 	<h2>Business Items</h2>
 	<ul id="item_list">
 <?php
-	$business_item_manager = new BusinessItemManager($mysqli);
+	$business_item_manager = new BusinessItemManager();
 	$item_list = $business_item_manager->get_items_by_meeting_date_type($meeting_date, $board);
 	if($item_list){
 		foreach($item_list as $item){
 			echo '<li>';
+			// TODO: Implement Edit feature
 			echo '<b>'.$item->title.'</b> <a href="#">Edit</a><br>';
 			if($item->details)
 				echo $item->details.'<br>';
@@ -121,7 +120,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 	
 ?>
 	</ul>
-	<p class="center"><a href="itemForm.php">Add New Item</a></p>
+	<p class="center"><a href="itemForm.php?meeting_date=<?php echo $meeting_date; ?>&type=<?php echo $board; ?>">Add New Item</a></p>
 </div>
 <div class="clear_block"></div>
 <?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/footer.php"); ?>
