@@ -307,8 +307,9 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 								if($session->isAuth($auth_list)){  ?>
 							
 						<li><a href="/core/chooseCommittee.php?committee=honor-board">Select Honor Board</a></li>
-						<li><a href="manageMissedDuties.php">Missed Duties <?php if($numNewMisses){ echo "<span class=\"redHeading\">(".$numNewMisses.")</span>";} ?></a></li>
+						<li><a href="manageMissedDuties.php">Missed Duty Hopper <?php if($numNewMisses){ echo "<span class=\"redHeading\">(".$numNewMisses.")</span>";} ?></a></li>
 						<li><a href="missedDutyLog.php">Missed Duty Log</a></li>
+						<li><a href="setPunishments.php">Set Punishments</a></li>
 						
 						<?php } ?>
 						
