@@ -46,10 +46,10 @@ function confirmRevert(URL){
 			<td><div align="right"><a href="<? 
 	  		
 			if($season == "fall"){
-				echo "attendanceRecords.php?year=$year&amp;season=spring"; 
+				echo "missedDutyLog.php?year=$year&amp;season=spring"; 
 			} else {
 				$lastYear = $year-1;
-				echo "attendanceRecords.php?year=$lastYear&amp;season=fall"; 
+				echo "missedDutyLog.php?year=$lastYear&amp;season=fall"; 
 			}
 			
 			?>">&lt;&lt;</a></div></td>
@@ -58,11 +58,11 @@ function confirmRevert(URL){
 				<select name="season" id="month" onChange="MM_jumpMenu('parent',this,0)">
 					<?
 			if($season == "fall"){
-		  		echo "<option value=\"attendanceRecords.php?year=$year&amp;season=spring\" >Spring</option>\n";
-				echo "<option value=\"attendanceRecords.php?year=$year&amp;season=fall\" selected>Fall</option>\n";
+		  		echo "<option value=\"missedDutyLog.php?year=$year&amp;season=spring\" >Spring</option>\n";
+				echo "<option value=\"missedDutyLog.php?year=$year&amp;season=fall\" selected>Fall</option>\n";
 			} else {
-				echo "<option value=\"attendanceRecords.php?year=$year&amp;season=spring\" selected>Spring</option>\n";
-				echo "<option value=\"attendanceRecords.php?year=$year&amp;season=fall\" >Fall</option>\n";
+				echo "<option value=\"missedDutyLog.php?year=$year&amp;season=spring\" selected>Spring</option>\n";
+				echo "<option value=\"missedDutyLog.php?year=$year&amp;season=fall\" >Fall</option>\n";
 			}
 			?>
 					</select>
@@ -76,7 +76,7 @@ function confirmRevert(URL){
 			} else {
 				$selected = "";
 			}
-		  	echo "<option value=\"attendanceRecords.php?season=$season&amp;year=$i\" $selected>$i</option>\n";
+		  	echo "<option value=\"missedDutyLog.php?season=$season&amp;year=$i\" $selected>$i</option>\n";
 		  }
 		  ?>
 					</select>
@@ -85,9 +85,9 @@ function confirmRevert(URL){
 	  	
 		if($season == "fall"){
 				$nextYear = $year+1;
-				echo "attendanceRecords.php?year=$nextYear&amp;season=spring"; 
+				echo "missedDutyLog.php?year=$nextYear&amp;season=spring"; 
 			} else {
-				echo "attendanceRecords.php?year=$year&amp;season=fall"; 
+				echo "missedDutyLog.php?year=$year&amp;season=fall"; 
 			}
 		
 		?>">&gt;&gt;</a></div></td>
