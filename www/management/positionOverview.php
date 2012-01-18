@@ -32,7 +32,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 		});
 		
 		$("a.delete").click(function(){
-			var answer = confirm('Are you sure?');
+			var answer = confirm('Are you sure you want to remove this task?');
 			return answer;
 		})
 	});
