@@ -159,7 +159,7 @@ class ReportManager extends DB_Manager
 		$query = "
 			SELECT ID FROM reports
 			$where
-			ORDER BY ID ASC"; //echo $query.'<br>';
+			ORDER BY meeting_date DESC"; //echo $query.'<br>';
 		$result = mysqli_query($this->connection, $query);
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Report($data[ID]);
