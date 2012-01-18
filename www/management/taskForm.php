@@ -22,28 +22,28 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 		$errors[] = "Please give the task a title.<br>";
 		$valid_input = false;
 	} else {
-		$title = mysql_real_escape_string($_POST[title]);
+		$title = $_POST[title];
 	}
 
 	if($_POST[priority] == 'select'){
 		$errors[] = "Please select the priority.<br>";
 		$valid_input = false;
 	} else {
-		$priority = mysql_real_escape_string($_POST[priority]);
+		$priority = $_POST[priority];
 	}
 
 	if($_POST[deadline] == ''){
 		$errors[] = "Please provide a deadline for the task.<br>";
 		$valid_input = false;
 	} else {
-		$str = mysql_real_escape_string($_POST[deadline]);
+		$str = $_POST[deadline];
 		$deadline = date('Y-m-d', strtotime($str));
 	}
 
 	if($_POST[notes] == ''){
 		$notes = NULL;
 	} else {
-		$notes = mysql_real_escape_string($_POST[notes]);
+		$notes = $_POST[notes];
 	}
 
 	if($valid_input){
@@ -64,7 +64,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 			$task->status = 'new';
 			$task->insert();
 		}
-		header("location: $referrer_url");
+		header("location: taskForm.php?position=$position_id");
 	} else {
 		$_GET[position] = $position_id;
 	}
