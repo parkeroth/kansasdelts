@@ -203,7 +203,8 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 				
 			<?php }
 			
-			if(strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "academics") || strpos($userDataArray['accountType'], "proctor") ){ ?>
+			$auth_list = array('admin', 'academics', 'proctor');
+			if($session->isAuth($auth_list)){ ?>
 				
 				<li>
 					<a href="#">Manage Academics</a>
@@ -225,7 +226,8 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 				
 			<?php }
 			
-			if(strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "treasurer") ){ ?>
+			$auth_list = array('admin', 'treasurer');
+			if($session->isAuth($auth_list)){  ?>
 				
 				<li>
 					<a href="#">Manage Finances</a>
@@ -238,7 +240,8 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 				
 			<?php }
 			
-			if(strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "communityService") ){ ?>
+			$auth_list = array('admin', 'communityService');
+			if($session->isAuth($auth_list)){  ?>
 				
 				<li>
 					<a href="#">Manage Community Service</a>
@@ -251,7 +254,8 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 				
 			<?php }
 			
-			if(strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "publicRel") || strpos($userDataArray['accountType'], "philanthropy") ){ ?>
+			$auth_list = array('admin', 'publicRel', 'philanthropy');
+			if($session->isAuth($auth_list)){ ?>
 				
 				<li>
 					<a href="#">Manage Philanthopies</a>
@@ -264,7 +268,8 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 				
 			<?php }
 			
-			if(strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "brotherhood") ){ ?>
+			$auth_list = array('admin', 'brotherhood');
+			if($session->isAuth($auth_list)){ ?>
 				
 				<li>
 					<a href="#">Manage Brotherhood</a>
@@ -276,7 +281,8 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 				
 			<?php }
 			
-			if(strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "houseManager") ){ ?>
+			$auth_list = array('admin', 'houseManager');
+			if($session->isAuth($auth_list)){ ?>
 			
 				<li>
 					<a <?php if($numBroken){ echo "class=\"notify\""; } ?> href="#">Manage House Work</a>
@@ -291,12 +297,14 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 				
 			<?php } 
 			
-			if(strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "saa") || strpos($userDataArray['accountType'], "honorBoard") ){ ?>
+			$auth_list = array('admin', 'saa', 'honorBoard');
+			if($session->isAuth($auth_list)){  ?>
 			
 				<li>
 					<a <?php if($numNewWriteUps || $numNewMisses){ echo "class=\"notify\""; } ?> href="#">Manage Honor Board</a>
 					<ul>
-						<?php if( strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "saa") ){ ?>
+						<?php	$auth_list = array('admin', 'saa');
+								if($session->isAuth($auth_list)){  ?>
 							
 						<li><a href="/core/chooseCommittee.php?committee=honor-board">Select Honor Board</a></li>
 						<li><a href="manageMissedDuties.php">Missed Duties <?php if($numNewMisses){ echo "<span class=\"redHeading\">(".$numNewMisses.")</span>";} ?></a></li>
@@ -314,7 +322,8 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 			
 			//include_once($_SERVER['DOCUMENT_ROOT'].'/recruitment/menu.php');
 			
-			if(strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "drm") ){ ?>
+			$auth_list = array('admin', 'drm');
+			if($session->isAuth($auth_list)){  ?>
 			
 				<li>
 					<a <?php if($numSober){ echo "class=\"notify\""; } ?> href="#">Manage DRM Stuff</a>
@@ -327,7 +336,8 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 				
 			<?php }
 			
-			if(strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "scholarship") ){ ?>
+			$auth_list = array('admin', 'scholarship');
+			if($session->isAuth($auth_list)){  ?>
 			
 				<li>
 					<a href="#">Manage Scholarship</a>
@@ -338,7 +348,8 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 				
 			<?php }
 			
-			if(strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "publicRel") ){ ?>
+			$auth_list = array('admin', 'publicRel');
+			if($session->isAuth($auth_list)){ ?>
 			
 				<li>
 					<a href="#">Manage External Affairs</a>
