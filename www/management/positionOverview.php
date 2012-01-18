@@ -108,7 +108,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 				echo '<td>';
 				echo '<a href="taskForm.php?id='.$task->id.'">Edit</a>';
 				echo '<strong> | </strong>';
-				echo '<a class="delete" href="removeTask.php?id='.$task->id.'">Delete</a>';
+				echo '<a class="delete" href="removeTask.php?id='.$task->id.'">X</a>';
 				echo '</td>';
 				echo '</tr>';
 			}
