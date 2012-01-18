@@ -9,7 +9,7 @@ require_once 'classes/Report.php';
 require_once 'classes/BusinessItem.php';
 
 if(isset($_GET[meeting_date])){
-	$meeting_date = date('m/d/Y', strtotime(mysql_real_escape_string($_GET[meeting_date])));
+	$meeting_date = date('m/d/Y', strtotime($_GET[meeting_date]));
 } else {
 	$meeting_date = date('m/d/Y', strtotime('this Sunday'));
 }
