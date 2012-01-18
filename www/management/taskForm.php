@@ -64,7 +64,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 			$task->status = 'new';
 			$task->insert();
 		}
-		header("location: taskForm.php?position=$position_id");
+		header("location: positionOverview.php?position=$position_id");
 	} else {
 		$_GET[position] = $position_id;
 	}
@@ -74,6 +74,11 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 	
 	if(isset($task_id)){
 		$task = new Task($task_id);
+		
+		if(!$task->can_edit($session->member_id)){
+			header('location: ../error.php?page=unauthorized');
+		}
+		
 		$title = $task->title;
 		$deadline = date('m/d/Y', strtotime($task->deadline));
 		$priority = $task->priority;
@@ -160,7 +165,8 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 				<td><input type="hidden" name="position_id" value="<?php echo $position_id; ?>" />
 					<input type="hidden" name="task_id" value="<?php echo $task_id; ?>" />
 					<input type="hidden" name="referrer_url" value="<?php echo $_SERVER[HTTP_REFERER]; ?>" />
-					<input type="submit" value="Submit" /></td>
+					<input type="submit" value="Save" />
+					<input type="button" value="Remove" /></td></td>
 				</tr>
 			</table>
 

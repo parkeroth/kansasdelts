@@ -14,7 +14,14 @@
 			echo "<p style=\"text-align: center;\">Report already submitted for that meeting!</p>";
 			echo "</strong>";
 
-		}else {
+		} if($_GET['page'] == "unauthorized"){ //If from alumni referal
+
+			echo "<p>&nbsp;</p>";
+			echo "<strong>";
+			echo "<p style=\"text-align: center;\">Were you trying to look at something you weren't supposed to?</p>";
+			echo "</strong>";
+
+		} else {
 			echo "<p>&nbsp;</p>";
 			echo '<p style="text-align: center;">How did you get here?</p>';
 		}
