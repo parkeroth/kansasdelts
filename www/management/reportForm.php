@@ -37,17 +37,17 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 	if($_POST[extra] == ''){
 		$extra = NULL;
 	} else {
-		$extra = mysql_real_escape_string($_POST[extra]);
+		$extra = $_POST[extra];
 	}
 	if($_POST[discussion] == ''){
 		$discussion = NULL;
 	} else {
-		$discussion = mysql_real_escape_string($_POST[discussion]);
+		$discussion = $_POST[discussion];
 	}
 	if($_POST[agenda] == ''){
 		$agenda = NULL;
 	} else {
-		$agenda = mysql_real_escape_string($_POST[agenda]);
+		$agenda = $_POST[agenda];
 	}
 	if(!isset($_POST[tasks])){
 		//$errors[] = "Please commit to at least one task for next week.<br>";
@@ -166,7 +166,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 		<table class="centered" align="center">
 			<tr>
 				<th>Date of meeting: </th>
-				<td><input name="deadline" type="text" id="datepicker" size="10" value="<?php 
+				<td><input name="meeting_date" type="text" id="datepicker" size="10" value="<?php 
 				echo date('m/d/Y', strtotime($meeting_date)); ?>" /></td>
 				</tr>
 			<tr>
@@ -282,7 +282,6 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 				<th></th>
 				<td>	<input type="hidden" name="position_id" value="<?php echo $position_id; ?>" />
 					<input type="hidden" name="report_id" value="<?php echo $report_id; ?>" />
-					<input type="hidden" name="meeting_date" value="<?php echo $meeting_date; ?>" />
 					<input type="submit" value="Submit" /></td>
 				</tr>
 			</table>
