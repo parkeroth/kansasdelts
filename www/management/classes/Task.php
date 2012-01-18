@@ -1,6 +1,7 @@
 <?php
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/DB_Table.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/DB_Manager.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position_Log.php';
 include_once($_SERVER['DOCUMENT_ROOT'].'/recruitment/util.php');
 require_once 'Report.php';
 require_once 'Task.php';
@@ -100,6 +101,28 @@ class Task extends DB_Table
 			} else {
 				return 'normal';
 			}
+		}
+	}
+	
+	public function can_edit($member_id, $term = NULL, $year = NULL){
+		$position_log_manager = new Position_Log_Manager();
+		if(!$term){
+			$month = date('n');
+			if($month < 8){
+				$term = 'spring';
+			} else {
+				$term = 'fall';
+			}
+		}
+		if(!$year){
+			$year = date('Y');
+		}
+		
+		if($position_log_manager->member_in_committee($member_id, $this->position_id, $term, $year) ||
+		   $position_log_manager->member_in_committee($member_id, 33, $term, $year)){
+			return true;
+		} else {
+			return false;
 		}
 	}
 }

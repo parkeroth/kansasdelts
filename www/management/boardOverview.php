@@ -9,7 +9,7 @@ require_once 'classes/BusinessItem.php';
 require_once 'classes/Meeting.php';
 
 if(isset($_GET[board])){
-	$board =  mysql_real_escape_string($_GET[board]);
+	$board =  $_GET[board];
 } else {
 	header("location: /error.php");
 }

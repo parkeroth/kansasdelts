@@ -23,6 +23,21 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
 <script type="text/javascript" src="/js/jquery-ui-1.8.1.custom.min.js"></script>
 
+<script type="text/javascript">
+	$(document).ready(function() {
+		// Fill start time with current time string
+		$("#start_button").click(function() {
+			var now = new Date();
+			$("#start_time").val(date_string(now));
+		});
+		
+		$("a.delete").click(function(){
+			var answer = confirm('Are you sure?');
+			return answer;
+		})
+	});
+</script>
+
 <?php	include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php");
 		
 		$reporting_task_manager = new ReportingTaskManager();
@@ -92,6 +107,8 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 
 				echo '<td>';
 				echo '<a href="taskForm.php?id='.$task->id.'">Edit</a>';
+				echo '<strong> | </strong>';
+				echo '<a class="delete" href="removeTask.php?id='.$task->id.'">Delete</a>';
 				echo '</td>';
 				echo '</tr>';
 			}
