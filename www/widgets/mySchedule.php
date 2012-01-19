@@ -6,6 +6,7 @@
 	
 	// Types of events that have no attendance settings 
 	$generalEvents = array(
+		'social',
 		'general',
 		'education',
 		'recruitment',

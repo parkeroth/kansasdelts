@@ -167,7 +167,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 			<tr>
 				<th>Date of meeting: </th>
 				<td><input name="meeting_date" type="text" id="datepicker" size="10" value="<?php 
-				echo date('m/d/Y', strtotime($meeting_date)); ?>" /></td>
+				echo date('m/d/Y', strtotime('this Sunday')); ?>" /></td>
 				</tr>
 			<tr>
 				<td colspan="2">&nbsp;</td>
