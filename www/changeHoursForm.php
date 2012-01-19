@@ -1,7 +1,7 @@
 <?php
 session_start();
 include_once('php/login.php');
-$authUsers = array('admin', 'communityService', 'house');
+$authUsers = array('admin', 'communityService', 'houseManager');
 include_once('php/authenticate.php');
 
 /**
