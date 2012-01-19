@@ -150,27 +150,14 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 
 <link href="/styles/cal.css" rel="stylesheet" type="text/css">
 
-<script language="JavaScript" type="text/JavaScript">
-<!--
-function MM_jumpMenu(targ,selObj,restore){ //v3.0
-  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
-  if (restore) selObj.selectedIndex=0;
-}
-function MM_openBrWindow(theURL,winName,features) { //v2.0
-  window.open(theURL,winName,features);
-}
-//-->
-</script>
-
-<script type="text/javascript" src="../../js/jquery-1.4.2.min.js"></script>
 <script type="text/javascript" src="../../js/calendarFilters.js"></script>
 
 <?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php"); ?>
 
 <div align="center"><span class="currentdate"><? echo date ("F Y", mktime(0,0,0,$_GET['month']-1,1,$_GET['year'])); ?></span><br>
-	<br>
+	<br />
 </div>
-<div align="center"><br>
+<div align="center"><br />
 
 	<!-- Start Shuttle Menu -->
 
@@ -218,7 +205,7 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 	
 	<!-- Start Shuttle Menu -->
 		
-	<br>
+	<br />
 </div>
 <table width="600" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#000000">
 	<tr>
@@ -245,7 +232,7 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 		// Fill calendar with boxes for each day
 		for ($i = 1; $i <= $days_in_month; $i++) {
    			$days_so_far = $days_so_far + 1;
-    		$count_boxes = $count_boxes + 1;
+                        $count_boxes = $count_boxes + 1;
 			
 			// If box is for today  set class
 			if($_GET['month'] == $todays_month+1 && $i == $todays_date){
@@ -292,15 +279,11 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 					// Set event link
 					if($event_info[$value]['3'] == "general" || $event_info[$value]['3'] == "social" || $event_info[$value]['3'] == "pr")
 					{
-						echo "<a class=\"eventLinkgeneral ".$type[$value]."Filter\"";
-						echo "href=\"javascript:MM_openBrWindow('viewCalEvent.php?ID=$value";
-						echo "', '', 'width=500, height=200');\">";
+						echo '<a class="popOut" href="viewCalEvent.php?ID='.$value.'"  title="Event Details">';
 					}
 					else if($event_info[$value]['3'] != "notInvited")
 					{
-						echo "<a class=\"eventLink".$event_info[$value]['3']." ".$type[$value]."Filter\"";
-						echo "href=\"javascript:MM_openBrWindow('viewCalEvent.php?ID=$value&amp;";
-						echo "status=".$event_info[$value]['3']."','','width=500,height=220');\">";
+						echo '<a class="popOut" href="viewCalEvent.php?ID='.$value.'&amp;status='.$event_info[$value]['3'].' title="Event Details">';
 					}
 					
 					// If Mandatory

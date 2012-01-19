@@ -492,3 +492,47 @@ tr.tableHeader td {
 td.center {
 	text-align: center;
 }
+
+/*  Styles for the jQuery dropdown login panel */
+
+#login {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  background: #606060 ;
+  padding: 5px;
+  -moz-border-radius: 4px;
+  width: 155px;
+  border: 2px solid #000000;
+}
+
+#login form {
+  margin-top: 10px;
+}
+
+#login form label, #login form input {
+  display: block;
+}
+
+#login form button {
+  float: right;
+  margin-top: 10px;
+}
+
+#login a {
+  display: block;
+  text-decoration: none;
+  font-size: 130%;
+  font-weight: bold;
+  height: 20px;
+  padding: 0 20px 0 5px;
+}
+
+#login a.active {
+  
+}
+
+.loginLabel {
+	text-transform:uppercase;
+	font-size: 10px;
+}

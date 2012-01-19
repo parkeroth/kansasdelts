@@ -6,13 +6,9 @@
 
 <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
 <script type="text/javascript">
-
-	$(function() {
-		
-		document.getElementById('username').focus();
-		
-	});
-	
+    $(document).ready(function(){
+        $('#username').focus();
+    });
 </script>
 
 <style type="text/css">

@@ -10,13 +10,31 @@
             </div>
          	<div id="headerNavBarRight">
                	<a href="/account.php">my account</a> | 
-                <?php
-					if(isset($session->member_id)){ ?>
-						<a href="/logout.php">logout</a> <?php
-					} else { ?>
-						<a href="/loginForm.php">login</a> <?php
-					}
-				?>
+                <?php if(isset($session->member_id)){ ?>
+			<a href="/logout.php">logout</a> 
+                <?php } else { ?>
+			<!-- <a href="/loginForm.php">login</a>  -->
+                        <div id="login">
+                                <a href="#">login</a>
+                                <form action="/loginForm.php" method="post">
+                                    <div>
+                                            <input name="username" id="username" type="text" />
+                                            <label for="username" class="loginLabel">Username</label>
+                                    </div>
+                                    <div>
+                                            <input name="password" id="password" type="password"/>
+                                            <label for="password" class="loginLabel">Password</label>
+                                    </div>
+                                    <div>
+                                            <label for="rememberMe" style="display: inline-block;">Remember Me:</label>
+                                            <input name="remember" id="rememberMe" type="checkbox" style="display: inline-block;" />
+                                    </div>
+                                    <div>
+                                            <input type="submit" value="Log in!" style="text-align: center; margin-right: auto; margin-left: auto;" />
+                                    </div>
+                                </form>
+                        </div> <!-- End login div -->
+                <?php } ?>
             </div>
         </div>
     </div>

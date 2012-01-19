@@ -12,3 +12,6 @@
 	<link rel="icon" type="image/vnd.microsoft.icon" href="favicon.ico" />
 	<link rel="stylesheet" href="/styles/style.css" type="text/css" />
 	<link rel="stylesheet" href="/styles/dropDown.css" type="text/css" />
+        
+        <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
+        <script type="text/javascript" src="/js/custom_jQuery.js"></script>
