@@ -68,43 +68,53 @@ function select(a) {
       <select id="type" name="type" onChange="Check('type');">
 	  	
 		<?php
-			if(strpos($session->accountType, "admin") || strpos($session->accountType, "communityService") )
+			$auth_list = array('admin', 'communityService');
+			if($session->isAuth($auth_list))
 			{
 				echo "<option value=\"communityService\">Community Service</option>";
 			}
-			if(strpos($session->accountType, "admin") || strpos($session->accountType, "houseManager") )
+			$auth_list = array('admin', 'houseManager');
+			if($session->isAuth($auth_list))
 			{
 				echo "<option value=\"house\">House Cleaning</option>";
 			}
-			if(strpos($session->accountType, "admin") || strpos($session->accountType, "brotherhood") )
+			$auth_list = array('admin', 'brotherhood');
+			if($session->isAuth($auth_list))
 			{
 				echo "<option value=\"brotherhood\">Brotherhood</option>";
 			}
-			if(strpos($session->accountType, "admin") || strpos($session->accountType, "secretary") )
+			$auth_list = array('admin', 'secretary');
+			if($session->isAuth($auth_list))
 			{
 				echo "<option value=\"general\">General</option>";
 			}
-			if(strpos($session->accountType, "admin") || strpos($session->accountType, "social") || strpos($session->accountType, "drm") )
+			$auth_list = array('admin', 'social', 'drm');
+			if($session->isAuth($auth_list))
 			{
 				echo "<option value=\"social\">Social</option>";
 			}
-			if(strpos($session->accountType, "admin") || strpos($session->accountType, "recruitment") )
+			$auth_list = array('admin', 'recruitment');
+			if($session->isAuth($auth_list))
 			{
 				echo "<option value=\"recruitment\">Recruitment</option>";
 			}
-			if(strpos($session->accountType, "admin") || strpos($session->accountType, "pledgeEd") )
+			$auth_list = array('admin', 'pledgeEd');
+			if($session->isAuth($auth_list))
 			{
 				echo "<option value=\"education\">Member Education</option>";
 			}
-			if(strpos($session->accountType, "admin") || strpos($session->accountType, "homecoming") )
+			$auth_list = array('admin', 'homecoming');
+			if($session->isAuth($auth_list))
 			{
 				echo "<option value=\"homecoming\">Homecoming</option>";
 			}
-			if(strpos($session->accountType, "admin") || strpos($session->accountType, "publicRel") )
+			$auth_list = array('admin', 'publicRel');
+			if($session->isAuth($auth_list))
 			{
 				echo "<option value=\"pr\">Public Relations</option>";
 			}
-			if(strpos($session->accountType, "admin") || strpos($session->accountType, "philanthropy") || strpos($session->accountType, "publicRel") )
+			$auth_list = array('admin', 'philanthropy', 'publicRel');
+			if($session->isAuth($auth_list))
 			{
 				echo "<option value=\"philanthropy\">Philanthropy</option>";
 			}
