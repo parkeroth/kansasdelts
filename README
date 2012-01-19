@@ -13,4 +13,5 @@ Goals of this refactoring are as follows:
 	
 Working code for review can be found in the following directories:
 	- management
+	- core
 	- recruitment (in progress)
