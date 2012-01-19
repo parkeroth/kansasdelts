@@ -22,12 +22,12 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 		$errors[] = "Please select the status of this report.";
 		$valid_input = false;
 	} else {
-		$status = mysql_real_escape_string($_POST[status]);
+		$status = $_POST[status];
 	}
 	if($_POST[agenda] == ''){
 		$agenda = NULL;
 	} else {
-		$agenda = mysql_real_escape_string($_POST[agenda]);
+		$agenda = $_POST[agenda];
 	}
 	if(!isset($_POST[tasks])){
 		$errors[] = "Please commit to at least one task for next week.<br>";
