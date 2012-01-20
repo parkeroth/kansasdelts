@@ -75,7 +75,7 @@ while($row = mysqli_fetch_array($result, MYSQLI_ASSOC))
 					AND members.gradYear > '$year'
 					AND residency != 'limbo'
 					GROUP BY members.username
-					ORDER BY count, member.ID DESC, RAND()";
+					ORDER BY count, members.ID DESC, RAND()";
 				$generalResult = mysqli_query($mysqli, $generalQuery);
 				$arrayCount=0;
 				$minCount=100;			///////// CONSTANT SET //////////////
