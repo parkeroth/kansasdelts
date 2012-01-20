@@ -12,8 +12,7 @@ class BusinessItem extends DB_Table
 	public $title = NULL;
 	public $details = NULL;
 	public $item_type = NULL;
-	public $meeting_type = NULL;
-	public $meeting_date = NULL;
+	public $meeting_id = NULL;
 	public $notes = NULL;
          public $votes_for = NULL;
          public $votes_against = NULL;
@@ -27,8 +26,7 @@ class BusinessItem extends DB_Table
 			'title' => 'title',
 			'details' => 'details',
 			'item_type' => 'item_type',
-			'meeting_type' => 'meeting_type',
-			'meeting_date' => 'meeting_date',
+			'meeting_id' => 'meeting_id',
 			'notes' => 'notes',
 			'votes_for' => 'votes_for',
 			'votes_against' => 'votes_against',
@@ -52,12 +50,8 @@ class BusinessItemManager extends DB_Manager
 		parent::__construct();
 	}
 	
-	public function get_items_by_meeting_date_type($date, $type){
-		$meeting_date = date('Y-m-d', strtotime($date));
-		$where = " WHERE meeting_date = '$meeting_date' ";
-		$where .= "AND meeting_type = '$type'" ;
-		if($type == 'internal' || $type == 'external')
-			$where .= "OR meeting_type = 'admin' ";
+	public function get_items_by_meeting($meeting_id){
+		$where = "WHERE meeting_id = '$meeting_id'";
 		return $this->get_item_list($where);
 	}
 	

@@ -8,10 +8,35 @@ require_once 'classes/Report.php';
 require_once 'classes/BusinessItem.php';
 require_once 'classes/Meeting.php';
 
-if(isset($_GET[board])){
-	$board =  $_GET[board];
+if($_SERVER['REQUEST_METHOD'] == "POST") {
+	
+	if($_POST[action] == 'meeting_add'){
+		$type = $_POST[meeting_type];
+		$datetime = $_POST[meeting_datetime];
+		$date = date('Y-m-d', strtotime($datetime));
+		$time = date('h:i:s', strtotime($datetime));
+
+		$meeting = new Meeting();
+		$meeting->date = $date;
+		$meeting->time = $time;
+		$meeting->type = $type;
+		$meeting->insert();
+		
+		$board = $type;	// Necessary for when page loads after POST is complete
+	
+	} else if($_POST[action] == 'meeting_remove'){
+		$meeting_id = $_POST[id];
+		$meeting = new Meeting($meeting_id);
+		$board = $meeting->type;		// Necessary for when page loads after POST is complete
+		$meeting->delete();
+	}
+	
 } else {
-	header("location: /error.php");
+	if(isset($_GET[board])){
+		$board =  $_GET[board];
+	} else {
+		header("location: /error.php");
+	}
 }
 
 include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
@@ -21,10 +46,13 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 <link type="text/css" href="../styles/ui-lightness/jquery-ui-1.8.1.custom.css" rel="stylesheet" />
 <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
 <script type="text/javascript" src="../js/jquery-ui-1.8.1.custom.min.js"></script>
+<script type="text/javascript" src="../js/jquery-ui-timepicker-addon.js"></script>
 
 <script type="text/javascript">
 	$(function() {
-		$("#datepickerCurrent").datepicker();
+		$("#timepicker").datetimepicker({
+			ampm: true
+		});
 
 		$("#updateButtonCurrent").click(function() {
 			var date = $("#datepickerCurrent").val();
@@ -79,20 +107,27 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 	<h2>Meetings</h2>
 	<ul id="item_list">
 <?php
-	$meeting_manager = new MeetingManager();
-	$meeting_list = $meeting_manager->get_meetings($board);
+	$meeting_manager = new Meeting_Manager();
+	$meeting_list = $meeting_manager->get_meetings_by_type($board);
 	if($meeting_list){
 		foreach($meeting_list as $meeting){
-			$date_str = date('M j, Y', strtotime($meeting->meeting_date));
-			if($meeting->has_been_processed()){
-				$link_str = 'View';
-			} else {
-				$link_str = 'Edit';
-			}
-			echo '<li>';
-			echo '<b>'.$date_str.'</b> ';
-			echo '<a href="manageMeeting.php?board='.$board.'&meeting_date='.$meeting->meeting_date.'">'.$link_str.'</a><br>';
-			echo '</li>';
+			$date_str = date('M j, Y', strtotime($meeting->date));
+			if($meeting->can_remove()){ ?>
+		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+			<input type="hidden" name="action" value="meeting_remove" />
+			<input type="hidden" name="id" value="<?php echo $meeting->id; ?>" />
+				<li>
+					<b><?php echo $date_str; ?></b>
+					<input type="submit" value="Remove" />
+				</li>
+		</form>
+<?php		} else { ?>
+				<li>
+					<b><?php echo $date_str; ?></b>
+					<a href="manageMeeting.php?id=<?php echo $meeting->id; ?>">View</a><br>
+				</li>
+<?php		}
+			
 		}
 	} else {
 		echo '<p>No previous meetings.</p>';
@@ -100,6 +135,14 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 	
 ?>
 	</ul>
+	<h3>Add Meeting</h3>
+	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+		<input  name="meeting_datetime" type="text" id="timepicker" size="16"
+			   value="<?php echo date('m/d/Y', strtotime('this Sunday')); ?> 05:00 pm" />
+		<input type="hidden" name="action" value="meeting_add" />
+		<input type="hidden" name="meeting_type" value="<?php echo $board; ?>" />
+		<input type="submit" value="Add" />
+	</form>
 </div>
 <div class="clear_block"></div>
 <?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/footer.php"); ?>

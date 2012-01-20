@@ -5,6 +5,7 @@ include_once($_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php');
 
 require_once 'classes/Task.php';
 require_once 'classes/Report.php';
+require_once 'classes/Meeting.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 
 
@@ -15,18 +16,20 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 if($_SERVER['REQUEST_METHOD'] == "POST") {
 	$position_id = $_POST[position_id];
 	$report_id = $_POST[report_id];
+	$meeting_id = $_POST[meeting_id];
 
 	$valid_input = true;
 	$errors = array();
 
-	if($_POST[meeting_date] == ''){
-		$errors[] = "Please provide the date of the meeting.<br>";
+	if($_POST[meeting_id] == ''){
+		$errors[] = "Missing meeting id.<br>";
 		$valid_input = false;
 	} else {
-		$meeting_date = date('Y-m-d', strtotime($_POST[meeting_date]));
+		$meeting_id = $_POST[meeting_id];
 	}
+	
 	$task_manager = new TaskManager();
-	$task_list_old = $task_manager->get_previous_tasks($report_id, $position_id);
+	$task_list_old = $task_manager->get_previous_tasks($meeting_id, $position_id);
 	foreach($task_list_old as $task){
 		if($_POST['progress-'.$task->id] == 'select'){
 			$errors[] = 'Please set the progress of all of your tasks from last week.';
@@ -63,7 +66,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 			$report->save();
 		} else { //Creating new report
 			$report = new Report();
-			$report->meeting_date = $meeting_date;
+			$report->meeting_id = $meeting_id;
 			$report->position_id = $position_id;
 			$report->extra = $extra;
 			$report->discussion = $discussion;
@@ -99,27 +102,30 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 		}
 	} else {
 		$_GET[position] = $position_id;
-		$_GET[id] = $report_id;
+		$_GET[report] = $report_id;
+		$_GET[meeting] = $meeting_id;
 	}
 } else {
 	$position_id = $_GET[position];
-	$report_id = $_GET[id];
+	$meeting_id = $_GET[meeting];
+	$report_id = $_GET[report];
 
 	if(isset($report_id)){
 		$report = new Report($report_id);
 		$extra = $report->extra;
 		$discussion = $report->discussion;
 		$agenda = $report->agenda;
-		$meeting_date = date('M j, Y', strtotime($report->meeting_date));
+		$meeting_id = $report->meeting_id;
 	} else {
 		$report_id  = NULL; 
 		$extra = NULL;
 		$discussion = NULL; 
 		$agenda = NULL;
 		$report_manager = new ReportManager(); 
-		$meeting_date = date('M j, Y', $report_manager->get_next_meeting_date($position_id)); 
 	}
 }
+
+$meeting = new Meeting($meeting_id);
 
 $task_manager = new TaskManager();
 
@@ -165,9 +171,8 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 
 		<table class="centered" align="center">
 			<tr>
-				<th>Date of meeting: </th>
-				<td><input name="meeting_date" type="text" id="datepicker" size="10" value="<?php 
-				echo date('m/d/Y', strtotime('this Sunday')); ?>" /></td>
+				<th>Meeting Date: </th>
+				<td><?php echo date('M jS, Y',strtotime($meeting->date)); ?></td>
 				</tr>
 			<tr>
 				<td colspan="2">&nbsp;</td>
@@ -176,7 +181,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 				<th>Tasks from <strong>last</strong> week:</th>
 				<td style="text-align: center;">
 <?php
-	$task_list_old = $task_manager->get_previous_tasks($report_id, $position_id);
+	$task_list_old = $task_manager->get_previous_tasks($meeting_id);
 	if($task_list_old){
 		echo '<table cellspacing="0" align="center">';
 		foreach($task_list_old as $task){
@@ -280,7 +285,8 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 				</tr>
 			<tr>
 				<th></th>
-				<td>	<input type="hidden" name="position_id" value="<?php echo $position_id; ?>" />
+				<td>	<input type="hidden" name="meeting_id" value="<?php echo $meeting_id; ?>" />
+					<input type="hidden" name="position_id" value="<?php echo $position_id; ?>" />
 					<input type="hidden" name="report_id" value="<?php echo $report_id; ?>" />
 					<input type="submit" value="Submit" /></td>
 				</tr>

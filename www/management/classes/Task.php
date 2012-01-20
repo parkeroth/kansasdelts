@@ -5,7 +5,31 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position_Log.php';
 include_once($_SERVER['DOCUMENT_ROOT'].'/recruitment/util.php');
 require_once 'Report.php';
 require_once 'Task.php';
+require_once 'Meeting.php';
 
+/**
+ * This table contains all the relavent information about a weekly task. Each task is associated with a weekly 
+ * report. The tasks state is determined by the status and progress variables.
+ * 
+ * @author Parker Roth
+ *
+ * Schema Updated: 2011-01-16
+ * 
+CREATE TABLE IF NOT EXISTS `tasks` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(200) NOT NULL,
+  `position_id` int(11) NOT NULL,
+  `deadline` date DEFAULT NULL,
+  `status` set('new','proposed','committed','closed') NOT NULL,
+  `progress` set('not-stated','in-progress','blocked','completed','cancelled') DEFAULT NULL,
+  `priority` set('low','normal','high','critical') NOT NULL,
+  `last_updated` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `notes` text,
+  `report_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
+ * 
+ */
 class Task extends DB_Table
 {
 	public static $TASK_STATUS = array('new', 'proposed', 'committed', 'closed');
@@ -146,15 +170,13 @@ class TaskManager extends DB_Manager
 		return $this->get_task_list($where);
 	}
 	
-	public function get_previous_tasks($report_id, $position_id = NULL){
-		if($report_id){
-			$report = new Report($report_id);
-			$previous_report_id = $report->get_previous_report_id();
-		} else {
-			$report_manager = new ReportManager();
-			$previous_report_id = $report_manager->get_latest_report_by_position($position_id)->id;
-		}
-		$previous_tasks = $this->get_tasks_by_report_id($previous_report_id);
+	public function get_previous_tasks($meeting_id, $position_id){
+		$meeting_manager = new Meeting_Manager();
+		$report_manager = new ReportManager();
+		$previous_meeting = $meeting_manager->get_previous_meeting($meeting_id);
+		$report_list = $report_manager->get_reports_by_meeting($previous_meeting->id, $position_id);
+		$previous_report = $report_list[0];
+		$previous_tasks = $this->get_tasks_by_report_id($previous_report->id);
 		return $previous_tasks;
 	}
 

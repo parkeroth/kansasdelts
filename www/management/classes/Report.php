@@ -7,21 +7,32 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/DB_Manager.php';
  * Set As: 12 noon day of meeting (+12 hrs)
  */
 require_once 'Task.php';
+require_once 'Meeting.php';
 
 $deadline = 43200;
 
-/*
- * CREATE TABLE IF NOT EXISTS `reports` (
+/**
+ * This table contains all the relavent information a weekly report. Each position on a given board is expected
+ * to submit on report per meeting entry.
+ *
+ * @author Parker Roth
+ *
+ * Schema Updated: 2011-01-16
+ * 
+CREATE TABLE IF NOT EXISTS `reports` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date_submitted` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `position_id` int(11) NOT NULL,
-  `status` varchar(20) DEFAULT NULL,
-  `meeting_date` date NOT NULL,
+  `status` set('pending','complete','incomplete') NOT NULL,
+  `meeting_date` date DEFAULT NULL COMMENT 'Deprecated',
+  `meeting_id` int(11) NOT NULL,
+  `extra` text,
   `discussion` text,
   `agenda` text,
-  `minutes` text,
+  `minutes_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+ * 
  */
 class Report extends DB_Table
 {
@@ -32,6 +43,7 @@ class Report extends DB_Table
 	public $position_id = NULL;
          public $status = NULL;
          public $meeting_date = NULL;
+	public $meeting_id = NULL;
 	public $extra = NULL;
 	public $discussion = NULL;
 	public $agenda = NULL;
@@ -45,10 +57,11 @@ class Report extends DB_Table
 			'position_id' => 'position_id',
 			'status' => 'status',
 			'meeting_date' => 'meeting_date',
+			'meeting_id' => 'meeting_id',
 			'extra' => 'extra',
 			'discussion' => 'discussion',
 			'agenda' => 'agenda',
-			'minutes' => 'minutes'
+			'minutes_id' => 'minutes_id'
 		);
 		$params = array('id' => $report_id);
 		parent::__construct($params);
@@ -71,7 +84,8 @@ class Report extends DB_Table
 	}
 
 	public function is_late(){
-		$time_due = strtotime($this->meeting_date) + $deadline;
+		$meeting = new Meeting($this->meeting_id);
+		$time_due = strtotime($meeting->date) + $deadline;
 		$time_submitted = strtotime($this->date_submitted);
 		return $time_submitted > $time_due;
 	}
@@ -110,29 +124,20 @@ class Report extends DB_Table
 			$task->save();
 		}
 	}
-	
-	public function get_previous_report_id(){
-		$query = "
-			SELECT ID
-			FROM reports
-			WHERE position_id= '$this->position_id'
-			AND meeting_date < '$this->meeting_date'
-			ORDER BY meeting_date DESC
-			LIMIT 1"; //echo $query.'<br>';
-		$result = mysqli_query($this->connection, $query);
-		$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
-		if(isset($data[ID])){
-			return $data[ID];
-		} else {
-			return 0;
-		}
-	}
 }
 
 class ReportManager extends DB_Manager
 {
 	function __construct() {
 		parent::__construct();
+	}
+	
+	public function get_reports_by_meeting($meeting_id, $position_id = NULL){
+		$where ="WHERE meeting_id = '$meeting_id'";
+		if($position_id){
+			$where .= " AND position_id = '$position_id'";
+		}
+		return $this->get_report_list($where);
 	}
 
 	public function get_reports_by_position($position_id){
@@ -159,28 +164,12 @@ class ReportManager extends DB_Manager
 		$query = "
 			SELECT ID FROM reports
 			$where
-			ORDER BY meeting_date DESC"; //echo $query.'<br>';
+			ORDER BY ID DESC"; //echo $query.'<br>';
 		$result = mysqli_query($this->connection, $query);
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Report($data[ID]);
 		}
 		return $list;
-	}
-	
-	public function get_latest_report_by_position($position_id){
-		$query = "
-			SELECT ID
-			FROM reports
-			WHERE position_id= '$position_id'
-			ORDER BY meeting_date DESC
-			LIMIT 1"; //echo $query.'<br>';
-		$result = mysqli_query($this->connection, $query);
-		$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
-		if(isset($data[ID])){
-			return new Report($data[ID]);
-		} else {
-			return NULL;
-		}
 	}
 	
 	public function get_next_meeting_date($position_id){
