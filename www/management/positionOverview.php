@@ -8,6 +8,7 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';
 require_once 'classes/Report.php';
 require_once 'classes/ReportingTask.php';
 require_once 'classes/Task.php';
+require_once 'classes/Meeting.php';
 
 $position_id = $_GET[position];
 
@@ -124,40 +125,82 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 <div id="overview_reports">
 	<h3 style="text-align: center;">Reports</h3>
 	<?php 
-		$report_list = $report_manager->get_reports_by_position($position->id);
+		$meeting_type = $position->board;
+		$meeting_manager = new Meeting_Manager();
+		$meeting_list = $meeting_manager->get_meetings_by_type($meeting_type);
 
-		if($report_list){
+		// Initialize variables to see if a report has been submitted for a meeting this Sunday
+		$meeting_date_this_week = date('Y-m-d', strtotime('this Sunday'));
+		$missing_this_week = false;
+		
+		if($meeting_list){
 			echo '<table cellspacing="0" align="center">';
 			$first = True;
 
-			foreach($report_list as $report){
-				if($first){
-					echo '<tr class="tableHeader">';
-					echo '<td width="60">Date</td><td width="40">Status</td><td></td>';
-					echo '</tr>';
-					$first = False;
+			foreach($meeting_list as $meeting){
+				$report_list = $report_manager->get_reports_by_meeting($meeting->id, $position->id);
+				$report = $report_list[0];
+				if($meeting->date == $meeting_date_this_week){
+					$missing_this_week = true;
 				}
-				echo '<tr>';
-				echo '<td>'.date('M j, Y', strtotime($report->meeting_date)).'</td>';
-				echo '<td class="center">'.ucwords($report->status).'</td>';
+				if($report){
+					if($missing_this_week && ($meeting->date == $meeting_date_this_week))
+						$missing_this_week = false;
+					
+					$status = $report->status;
+				
+					if($first){
+						echo '<tr class="tableHeader">';
+						echo '<td width="60">Date</td><td width="40">Status</td><td></td>';
+						echo '</tr>';
+						$first = False;
+					}
+					echo '<tr>';
+					echo '<td>'.date('M j, Y', strtotime($meeting->date)).'</td>';
+					echo '<td class="center">'.ucwords($status).'</td>';
 
-				echo '<td>';
-				if($report->can_edit()){
-					echo '<a href="reportForm.php?position='.$position_id.'&id='.$report->id.'">Edit</a>';
+					echo '<td>';
+					if($report->can_edit()){
+						echo '<a href="reportForm.php?position='.$position_id.'&report='.$report->id.'">Edit</a>';
+					}
+					echo '</td>';
+					echo '</tr>';
 				}
-				echo '</td>';
-				echo '</tr>';
 			}
 
 			echo '</table>';
 		} else {
 			echo '<p style="text-align:center;">No Reports</p>';
 		}
-	?>
+		
+		if($missing_this_week){ ?>
+			<p>&nbsp;</p>
+			<div class="ui-widget">
+				<div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em;">
+					<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
+					You have not submitted a report for this coming Sunday! </p>
+				</div>
+			</div>
+<?php	} ?>
 	<br />
-	<p style="text-align: center;">
-		<a href="reportForm.php?position=<?php echo $position_id; ?>">Submit New Report</a>
-	</p>
+	<h4 style="text-align: center;">Submit New Report</h4>
+	<p style="text-align: center;"> 
+		
+<?php
+		$meeting_list = $meeting_manager->get_meetings_missing_report($position_id);
+		$this_sunday = date('Y-m-d', strtotime('this Sunday'));
+		$selected = '';
+		foreach($meeting_list as $meeting){
+			if($meeting->id == $meeting_id){			// If already stored as meeting_id
+				$selected = 'selected="selected" ';
+			} else if($meeting->date == $this_sunday){	// If it is the meeting next Sunday
+				$selected = 'selected="selected" ';
+			} else {
+				$selected = '';
+			}
+			echo date('M jS, Y',strtotime($meeting->date)).' <a href="reportForm.php?position='.$position_id.'&meeting='.$meeting->id.'">Submit</a><br />';
+		}
+?>	</p>
 </div>
 <div class="clear_block">&nbsp;</div>
 <?php

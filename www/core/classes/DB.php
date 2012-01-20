@@ -1,7 +1,9 @@
 <?php
 
 /**
- * Description of DB
+ * This class is designed to contain all the information necessary to interact with a MySQL database.
+ * The authentication parameters are stored as private variables and the resulttion connection, a
+ * protected variable.
  *
  * @author Parker Roth
  */

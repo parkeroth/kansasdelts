@@ -1,78 +1,121 @@
 <?php
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/DB.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';
 require_once 'Report.php';
 
-class Meeting extends DB
+/**
+ * This table serves to connect all the information about a meeting. This includes:
+ *	Attendance Records
+ *	Minutes
+ *	Reports -> Tasks
+ *
+ * @author Parker Roth
+ *
+ * Schema Updated: 2011-01-16
+ * 
+CREATE TABLE IF NOT EXISTS `meetings` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date` date NOT NULL,
+  `type` set('chapter','exec','internal','external') NOT NULL,
+  `time` time NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
+ * 
+ */
+class Meeting extends DB_Table
 {
-	public $meeting_date = NULL;
-	public $board = NULL;
+	public static $MEETING_TYPES = array('chapter', 'exec', 'internal', 'external');
 	
-	function __construct($meeting_date = NULL, $board = NULL){
-		$this->meeting_date = $meeting_date;
-		$this->board = $board;
-		parent::__construct();
+	public $id = NULL;
+	public $date = NULL;
+	public $type = NULL;
+         public $time = NULL;
+         public $require_report = NULL;
+
+	function __construct($meeting_id) {
+		$this->table_name = 'meetings';
+		$this->table_mapper = array(
+			'id' => 'id',
+			'date' => 'date',
+			'type' => 'type',
+			'time' => 'time'
+		);
+		$params = array('id' => $meeting_id);
+		parent::__construct($params);
 	}
 	
-	public function has_been_processed(){
+	public function can_remove(){
 		$report_manager = new ReportManager();
-		$report_list = $report_manager->get_reports_by_date_board($this->meeting_date, $this->board);
-		
-		$processed = true;
-		foreach($report_list as $report){
-			if($report->status == 'pending'){
-				$processed = false;
-			}
-		}
-		
-		if($processed){
-			return true;
-		} else {
+		$report_list = $report_manager->get_reports_by_meeting($this->id);
+		if(count($report_list)){
 			return false;
+		} else {
+			return true;
 		}
 	}
+	
 }
 
-class MeetingManager extends DB
+class Meeting_Manager extends DB_Manager
 {
 	function __construct() {
 		parent::__construct();
 	}
 	
-	//TODO: This is kinda janky
-	public function get_meetings($board_slug){
-		$where = "WHERE position_id IN (
-					SELECT ID
-					FROM positions
-					WHERE board = '$board_slug')";
-		return $this->get_meeting_list($where);
+	public function get_meetings_by_type($type, $limit = NULL){
+		// Check if valid type
+		if(!in_array($type, Meeting::$MEETING_TYPES)){
+			//error
+			return NULL;
+		} else {
+			$where = "WHERE type = '$type'";
+			return $this->get_meeting_list($where, $limit);
+		}
 	}
 	
-	public function get_chapters(){
-		$where = 'WHERE agenda IS NOT NULL';
+	public function get_meetings_missing_report($position_id){
+		$list = array();
+		$report_manager = new  ReportManager();
+		$position = new Position($position_id);
+		$meeting_list = $this->get_meetings_by_type($position->board);
+		foreach($meeting_list as $meeting){
+			$report = $report_manager->get_reports_by_meeting($meeting->id, $position_id);
+			if(!$report){
+				array_push($list, $meeting);
+			}
+		}
+		return array_reverse($list);
 	}
 	
-	public function get_latest_date(){
+	public function get_previous_meeting($meeting_id){
+		$current_meeting = new Meeting($meeting_id);
 		$query = "
-			SELECT MAX(meeting_date) AS meeting_date 
-			FROM reports
-			WHERE agenda IS NOT NULL
-			LIMIT 1"; //echo $query.'<br>';
-		$result = mysqli_query($this->connection, $query);
-		$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
-		
-		return $data[meeting_date];
+			SELECT id FROM meetings
+			WHERE date < '$current_meeting->date'
+			ORDER BY date DESC
+			LIMIT 1";
+		$result = $this->connection->query($query); //echo $query;
+		if($result){
+			$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
+			return new Meeting($data[id]);
+		} else {
+			return NULL;
+		}
 	}
-
-	private function get_meeting_list($where){
+	
+	private function get_meeting_list($where, $limit = NULL){
+		if(!$limit){
+			$limit = 20;
+		}
 		$list = array();
 		$query = "
-			SELECT DISTINCT meeting_date FROM reports
+			SELECT id FROM meetings
 			$where
-			ORDER BY meeting_date DESC
-			LIMIT 20"; //echo $query.'<br>';
+			ORDER BY date DESC
+			LIMIT $limit"; //echo $query.'<br>';
 		$result = mysqli_query($this->connection, $query);
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
-			$list[] = new Meeting($data[meeting_date], $data[board]);
+			$list[] = new Meeting($data[id]);
 		}
 		return $list;
 	}

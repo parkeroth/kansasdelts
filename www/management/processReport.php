@@ -15,6 +15,7 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';
 
 if($_SERVER['REQUEST_METHOD'] == "POST") {
 	$report_id = $_POST[report_id];
+	$report = new Report($report_id);
 	$valid_input = true;
 	$errors = array();
 	
@@ -34,7 +35,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 		$valid_input = false;
 	}
 	$task_manager = new TaskManager();
-	$previous_tasks = $task_manager->get_previous_tasks($report_id);
+	$previous_tasks = $task_manager->get_previous_tasks($report->meeting_id, $report->position_id);
 	foreach($previous_tasks as $task){
 		$progress = $_POST['progress-'.$task->id];
 		if($progress == 'select'){
@@ -42,15 +43,17 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 			$valid_input = false;
 			break;
 		}
-		if( ($progress != 'completed' && $progress != 'cancelled') && !in_array($task->id, $_POST[tasks])){
+		// Obsolete
+		/*if( ($progress != 'completed' && $progress != 'cancelled') && !in_array($task->id, $_POST[tasks])){
 			$errors[] = "Task: $task->title has not been marked complete/cancelled and has not been assigned to next week!";
 			$valid_input = false;
-		}
+		}*/
 	}
 	if($valid_input){
-		$report = new Report($report_id);
+		$task_list = $_POST[tasks];
 		$report->agenda = $agenda;
 		$report->status = $status;
+		echo 'TAG1 :'.$report->status.'|';
 		$report->save();
 		
 		foreach($previous_tasks as $task){
@@ -63,13 +66,17 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 			} else {
 				$task->status = 'committed';
 			}
+			// If task was not completed carry it over to the next week
+			if($progress == 'blocked' || $progress == 'in-progress'){
+				$task_list[] = $task->id;
+			}
 			$task->save();
 		}
-		$report->assign_tasks('committed', $_POST[tasks]);
+		$report->assign_tasks('committed', $task_list);
 		$meeting_date = $report->meeting_date;
 		$position = new Position($report->position_id);
 		$board = $position->board;
-		header("location: manageMeeting.php?board=$board&meeting_date=$meeting_date");
+		header("location: manageMeeting.php?id=$report->meeting_id");
 	} else {
 		$_GET[id] = $report_id;
 	}
@@ -152,7 +159,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 				<th>Tasks from <strong>last</strong> week:</th>
 				<td style="text-align: center;">
 <?php
-	$previous_tasks = $task_manager->get_previous_tasks($report_id);
+	$previous_tasks = $task_manager->get_previous_tasks($report->meeting_id);
 	if($previous_tasks){
 		echo '<table cellspacing="0" align="center">';
 		foreach($previous_tasks as $task){

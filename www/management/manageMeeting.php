@@ -7,15 +7,12 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';
 require_once 'classes/Report.php';
 require_once 'classes/BusinessItem.php';
+require_once 'classes/Meeting.php';
 
-if(isset($_GET[meeting_date])){
-	$meeting_date = date('m/d/Y', strtotime($_GET[meeting_date]));
-} else {
-	$meeting_date = date('m/d/Y', strtotime('this Sunday'));
-}
-
-if(isset($_GET[board])){
-	$board = $_GET[board];
+if(isset($_GET[id])){
+	$meeting_id = $_GET[id];
+	$meeting = new Meeting($meeting_id);
+	$board = $meeting->type;
 } else {
 	header("location: /error.php");
 }
@@ -47,14 +44,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 
 <?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php");?>
 
-<h1><?php echo Position::$BOARD_ARRAY[$board]; ?> Meeting - <?php echo date('M j, Y', strtotime($meeting_date));?></h1>
-	<form>
-		<p>
-			<input name="dateMeeting" type="text" id="datepickerCurrent" size="11" value="<?php echo $meeting_date; ?>" />
-			<input id="updateButtonCurrent" type="button" value="Update" />
-			Select the date of the meeting.
-		</p>
-	</form>
+<h1><?php echo Position::$BOARD_ARRAY[$board]; ?> Meeting - <?php echo date('M j, Y', strtotime($meeting->date));?></h1>
 <div id="report_list">
 	<h2>Reports</h2>
 	<?php		
@@ -67,7 +57,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 		echo "<tr><td></td><td></td><td></td></tr>";
 
 		foreach($position_list as $position){
-			$report_list = $report_manager->get_reports_by_date_position($meeting_date, $position->id);
+			$report_list = $report_manager->get_reports_by_meeting($meeting->id, $position->id);
 
 			echo "<tr>\n";
 			echo "<th>$position->title: </th>\n";
@@ -103,7 +93,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 	<ul id="item_list">
 <?php
 	$business_item_manager = new BusinessItemManager();
-	$item_list = $business_item_manager->get_items_by_meeting_date_type($meeting_date, $board);
+	$item_list = $business_item_manager->get_items_by_meeting($meeting->id);
 	if($item_list){
 		foreach($item_list as $item){
 			echo '<li>';
