@@ -39,7 +39,7 @@ class Study_Hour_Logs extends DB_Table
                 $this->timeIn = date('Y-m-d H:i:s', $curTime);
                 $this->proctorIn = $_SESSION['username'];
                 $this->open = "yes";
-		return $this->connection->insert();
+		return $this->insert();
         }
 
         public function end_sh_session($shUser, $timeCompleted) {
@@ -60,12 +60,12 @@ class Study_Hour_Logs extends DB_Table
 
 		//Now set up our update query
                $this->open = 'no';                                   //close out the open session
-               $this->connection->save();          //and update the database
+               $this->save();          //and update the database
                return $this->duration;                  //return duration of current session back to caller
         }
 
         public function delete_sh_log() {
-		return $this->connection->delete();
+		return $this->delete();
         }
 }
 
@@ -102,17 +102,17 @@ class Study_Hour_Requirements extends DB_Table
 
         public function add_sh_user() {
                 //set all class variables externally and then call this
-		return $this->connection->insert();
+		return $this->insert();
         }
 
         public function update_hrs_completed($newHrs) {
                 //can both add and subtract hours if adjustments need to be made
                 $this->hoursCompleted += $newHrs;
-                return $this->connection->save();
+                return $this->save();
         }
 
         public function remove_sh_user($shUser, $timeCompleted) {
-                return $this->connection->delete();
+                return $this->delete();
         }
 }
 
