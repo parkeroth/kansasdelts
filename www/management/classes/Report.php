@@ -94,6 +94,10 @@ class Report extends DB_Table
 		return $this->status == 'pending';
 	}
 	
+	public function can_delete(){
+		return $this->status == 'pending';
+	}
+	
 	public function get_tasks($status){
 		$task_manager = new TaskManager($this->connection);
 		return $task_manager->get_tasks_by_report_id($this->id, $status);
@@ -123,6 +127,17 @@ class Report extends DB_Table
 			$task->status = $status;
 			$task->save();
 		}
+	}
+	
+	public function delete(){
+		$task_manager = new TaskManager();
+		$task_list = $task_manager->get_tasks_by_report_id($this->id);
+		foreach($task_list as $task){
+			$task->report_id = NULL;
+			$task->status = 'new';
+			$task->save();
+		}
+		parent::delete();
 	}
 }
 
