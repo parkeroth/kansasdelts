@@ -12,6 +12,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 if($_SERVER['REQUEST_METHOD'] == "POST") {
 	
 	if($_POST[action] == 'meeting_add'){
+		$meeting_manager = new Meeting_Manager();
 		$boards = $_POST[boards];
 		$datetime = $_POST[meeting_datetime];
 		$date = date('Y-m-d', strtotime($datetime));
@@ -19,11 +20,15 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 		
 		foreach(Position::$BOARD_ARRAY as $board => $title){
 			if($board != 'committee' && in_array($board, $boards)){
-				$meeting = new Meeting();
-				$meeting->date = $date;
-				$meeting->time = NULL;		//TODO: Fix this to use a time
-				$meeting->type = $board;
-				$meeting->insert();
+				$meeting = $meeting_manager->get_meeting($board, $date);
+				if(!$meeting){
+					$meeting = new Meeting();
+					$meeting->date = $date;
+					$meeting->time = NULL;		//TODO: Fix this to use a time
+					$meeting->type = $board;
+					$meeting->insert();
+					$meeting->create_reports();
+				}
 			}
 		}
 	
@@ -49,14 +54,14 @@ function print_meeting_row($meeting){
 	echo '</td>';
 	echo '<td>';
 	if($meeting->can_remove()){
-		echo '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+		echo '<form class="remove"  action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		echo '<input type="hidden" name="action" value="meeting_remove" />';
 		echo '<input type="hidden" name="id" value="'.$meeting->id.'" />';
-		echo '<input type="button" value="Edit" />';
+		echo '<input class="edit" id="'.$meeting->id.'" type="button" value="Edit" />';
 		echo '<input type="submit" value="Remove" />';
 		echo '</form>';
 	} else {
-		echo '<input type="button" value="Edit" />';
+		echo '<input class="edit" id="'.$meeting->id.'" type="button" value="Edit" />';
 	}
 	echo '</td>';
 	echo '</tr>';
@@ -84,8 +89,12 @@ function print_meeting_row($meeting){
 			window.location.href=URL
 		});
 		
-		$(".remove").click(function(){
+		$("form.remove").submit(function(){
 			return confirm('Are you sure you want to delete this meeting. This could cause some reports to be removed from the system.')
+		})
+		
+		$("input.edit").click(function(event){
+			window.location.href = 'boardMinutes.php?id=' + event.target.id;
 		})
 	});
 </script>
@@ -108,7 +117,7 @@ function print_meeting_row($meeting){
 				print_meeting_row($next_meeting);
 			} else {
 				echo '<tr>';
-				echo '<td colspan="2">No Upcoming Meeting</td>';
+				echo '<td colspan="2">No Meeting This Week</td>';
 				echo '</tr>';
 			}
 ?>
@@ -128,6 +137,7 @@ function print_meeting_row($meeting){
 	}
 ?>
 <div class="clear_block">
+	<p>&nbsp;</p>
 	<h3>Add Meeting</h3>
 	<p>Remember to add the admin/exec meeting well enough in advance for people to fill out their weekly reports.</p>
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">

@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS `meetings` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` date NOT NULL,
   `type` set('chapter','exec','internal','external') NOT NULL,
-  `time` time NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
  * 
@@ -29,7 +28,6 @@ class Meeting extends DB_Table
 	public $id = NULL;
 	public $date = NULL;
 	public $type = NULL;
-         public $time = NULL;
 	public $chapter_id = NULL;
 
 	function __construct($meeting_id) {
@@ -38,11 +36,26 @@ class Meeting extends DB_Table
 			'id' => 'id',
 			'date' => 'date',
 			'type' => 'type',
-			'time' => 'time',
 			'chapter_id' => 'chapter_id'
 		);
 		$params = array('id' => $meeting_id);
 		parent::__construct($params);
+	}
+	
+	public function create_reports(){
+		$report_manager = new ReportManager();
+		$position_manager = new Position_Manager();
+		$position_list = $position_manager->get_positions_by_board($this->type);
+		foreach($position_list as $position){
+			$report = $report_manager->get_reports_by_meeting($this->id, $position->id);
+			if(!$report){
+				$report = new Report();
+				$report->meeting_id = $this->id;
+				$report->position_id = $position->id;
+				$report->status = 'blank';
+				$report->insert();
+			}
+		}
 	}
 	
 	public function has_past(){
@@ -109,13 +122,19 @@ class Meeting_Manager extends DB_Manager
 		}
 	}
 	
+	public function get_meeting($type, $date){
+		$where = "WHERE type = '$type' AND date = '$date'";
+		return $this->get_meeting_list($where);
+	}
+	
 	public function get_next_meeting($board, $date = NULL){
 		if(!$date)
 			$date = date('Y-m-d');
-		
+		$date_plus_week = date('Y-m-d', strtotime('+1 week', strtotime($date)));
 		$query = "
 			SELECT id FROM meetings
-			WHERE date > '$date'
+			WHERE date >= '$date'
+			AND date < '$date_plus_week'
 			AND type = '$board'
 			ORDER BY date ASC
 			LIMIT 1";

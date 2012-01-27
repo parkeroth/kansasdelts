@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `reports` (
  */
 class Report extends DB_Table
 {
-	public static $REPORT_STATUS = array('pending', 'complete', 'incomplete');
+	public static $REPORT_STATUS = array('pending', 'complete', 'incomplete', 'blank');
 	
 	public $id = NULL;
 	public $date_submitted = NULL;
@@ -95,7 +95,7 @@ class Report extends DB_Table
 	}
 	
 	public function can_delete(){
-		return $this->status == 'pending';
+		return $this->status == 'blank';
 	}
 	
 	public function get_tasks($status){
