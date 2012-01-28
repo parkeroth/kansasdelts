@@ -3,11 +3,10 @@
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/DB_Table.php';
 
 class Minutes extends DB_Table {
-	public static $MEETING_TYPES = array('chapter', 'exec', 'admin');
+	public static $MEETING_TYPES = array('chapter', 'exec', 'internal', 'external');
 	
 	public $id = NULL;
-	public $meeting_date = NULL;
-	public $meeting_type = NULL;
+	public $meeting_id = NULL;
 	public $formal = NULL;
 	public $presiding_officer_id = NULL;
 	public $old_business = NULL;
@@ -17,11 +16,10 @@ class Minutes extends DB_Table {
 	public $start_time = NULL;
 	public $end_time = NULL;
 	
-	function __construct($date, $type) {
+	function __construct($minutes_id) {
 		$this->table_name = 'minutes';
 		$this->table_mapper = array('id' => 'ID',
-							'meeting_date' => 'meeting_date',
-							'meeting_type' => 'meeting_type',
+							'meeting_id' => 'meeting_id',
 							'formal' => 'formal',
 							'presiding_officer_id' => 'presiding_officer',
 							'old_business' => 'old_business',
@@ -30,12 +28,8 @@ class Minutes extends DB_Table {
 							'good_of_order' => 'good_of_order',
 							'start_time' => 'start_time',
 							'end_time' => 'end_time');
-		$params = array('meeting_date' => $date, 'meeting_type' => $type);
+		$params = array('id' => $minutes_id);
 		parent::__construct($params);
-		if(!$this->meeting_date){
-			$this->meeting_date = $date;
-			$this->meeting_type = $type;
-		}
 	}
 	
 	function __destruct() {
@@ -44,15 +38,18 @@ class Minutes extends DB_Table {
 }
 
 class Minutes_Manager extends DB {
-	public function need_minutes($date){
-		if($this->get_minutes($date)){
-			return false;
+	
+	public function get_by_meeting($meeting_id){
+		$where  = "WHERE meeting_id = '$meeting_id'";
+		$list = $this->get_minutes_list($where);
+		if($list){
+			return $list[0];
 		} else {
-			return true;
+			return NULL;
 		}
 	}
 	
-	public function get_all_minutes($limit = 12){
+	public function get_all_minutes($board, $limit = 12){
 		$where = NULL;
 		$limit = "LIMIT $limit";
 		return $this->get_minutes_list($where, $limit);
@@ -61,31 +58,17 @@ class Minutes_Manager extends DB {
 	private function get_minutes_list($where, $limit = NULL){
 		$list = array();
 		$query = "
-			SELECT meeting_date FROM minutes
+			SELECT ID FROM minutes
 			$where
-			ORDER BY meeting_date DESC
+			ORDER BY meeting_id DESC
 			$limit"; //echo $query.'<br>';
 		$result = mysqli_query($this->connection, $query);
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
-			$list[] = new Minutes($data[meeting_date]);
+			$list[] = new Minutes($data[ID]);
 		}
 		return $list;
 	}
 	
-	public function get_minutes($date){
-		$query_date = date('Y-m-d', strtotime($date));
-		$query = "
-			SELECT ID
-			FROM minutes
-			WHERE meeting_date='$query_date' 
-			LIMIT 1"; //echo $query;
-		$result = $this->connection->query($query);
-		$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
-		if($data){
-			return $data[ID];
-		} else {
-			return NULL;
-		}
-	}
+	
 }
 ?>

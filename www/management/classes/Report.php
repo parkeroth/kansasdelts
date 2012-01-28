@@ -61,7 +61,7 @@ class Report extends DB_Table
 			'extra' => 'extra',
 			'discussion' => 'discussion',
 			'agenda' => 'agenda',
-			'minutes_id' => 'minutes_id'
+			'minutes' => 'minutes'
 		);
 		$params = array('id' => $report_id);
 		parent::__construct($params);

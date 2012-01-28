@@ -24,6 +24,10 @@ CREATE TABLE IF NOT EXISTS `meetings` (
 class Meeting extends DB_Table
 {
 	public static $MEETING_TYPES = array('chapter', 'exec', 'internal', 'external');
+	public static $PRESIDING_OFFICERS = array('chapter' => 'pres',
+									'exec' => 'pres',
+									'internal' => 'vpInternal',
+									'external' => 'vpExternal');
 	
 	public $id = NULL;
 	public $date = NULL;

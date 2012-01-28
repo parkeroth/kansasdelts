@@ -70,7 +70,7 @@ class DB_Table extends DB{
 		}
 		$id_field = $this->table_mapper[id];
 		$query .= " WHERE $id_field = '$this->id'";
-		//echo $query;
+		//echo $query.'<br>';
 		$this->connection->query($query);
 	}
 	
@@ -129,6 +129,10 @@ class DB_Table extends DB{
 		$this->connection->query($query);
 		// Find the proper value for the id of the newly inserted object
 		$this->id = $this->connection->insert_id;
+	}
+	
+	public function close(){
+		$this->__destruct();
 	}
 	
 	/**
