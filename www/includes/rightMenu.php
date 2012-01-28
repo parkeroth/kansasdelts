@@ -140,7 +140,7 @@ foreach($user_position_ids as $position_ids){
 					<ul>
 						<li><a href="documents.php">Document Box</a></li>
 						<li><a href="familyTree.php">Family Tree</a></li>
-						<li><a href="management/chapterAgenda.php">View Agendas</a></li>
+						<li><a href="records/chapterAgenda.php">View Agendas</a></li>
 						<li><a href="chapterMinutes.php">View Minutes</a></li>
 					</ul>
 				</li>
@@ -154,7 +154,7 @@ foreach($user_position_ids as $position_ids){
 						<?php 
 						if($user_position)
 						{
-							echo "<li><a href=\"management/positionOverview.php?position=$user_position->id\">My Position</a></li>";
+							echo "<li><a href=\"records/positionOverview.php?position=$user_position->id\">My Position</a></li>";
 							echo "<li><a href=\"viewReportingTasks.php\">View FAAR Tasks</a></li>";
 						}?>
 					</ul>
@@ -184,7 +184,7 @@ foreach($user_position_ids as $position_ids){
 
 foreach(Position::$BOARD_ARRAY as $code => $name){
 	if($name){
-		echo '<li><a href="management/boardOverview.php?board='.$code.'">'.$name.'</a></li>';
+		echo '<li><a href="records/boardOverview.php?board='.$code.'">'.$name.'</a></li>';
 	}
 }
 
@@ -192,12 +192,11 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 					</ul>
 				</li>
 				<li>
-					<a href="#">Manage Chapter</a>
+					<a href="#">Manage Records</a>
 					<ul>
-						<li><a href="agendaList.php">Chapter Agendas</a></li>
+						<li><a href="records/boardMinutes.php">Board Meetings</a></li>
 						<li><a href="attendanceExcused.php">Excuse Member</a></li>
-						<li><a href="attendanceForm.php">Attendance Update</a></li>
-						<li><a href="minutesList.php">Take Minutes</a></li>
+						<li><a href="attendanceForm.php">Attendance Records</a></li>
 					</ul>
 				</li>
 				
