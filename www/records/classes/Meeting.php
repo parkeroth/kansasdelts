@@ -47,6 +47,14 @@ class Meeting extends DB_Table
 		parent::__construct($params);
 	}
 	
+	/*
+	 * Creates a report for every position on the board the meeting is typed to. These reports are given 
+	 * the blank status to reflect that the posotion has not actually done anything with it. This is done 
+	 * to allow the secretary to take minutes and create an agenda for chapter even if the report never
+	 * gets submitted.
+	 * 
+	 * Should be called after creating a meeting.
+	 */
 	public function create_reports(){
 		$report_manager = new ReportManager();
 		$position_manager = new Position_Manager();
@@ -86,6 +94,11 @@ class Meeting extends DB_Table
 		}
 	}
 	
+	/*
+	 * Removes every report that was previously associated with the meeting.
+	 * 
+	 * @todo: Remove the minutes associated with the meeting being deleted.
+	 */
 	function delete(){
 		$report_manager = new ReportManager();
 		$report_list  =$report_manager->get_reports_by_meeting($this->id);

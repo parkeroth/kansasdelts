@@ -126,6 +126,9 @@ class Report extends DB_Table
 		}
 	}
 	
+	/*
+	 * Removes every task that was previously associated with the report.
+	 */
 	public function delete(){
 		$task_manager = new TaskManager();
 		$task_list = $task_manager->get_tasks_by_report_id($this->id);

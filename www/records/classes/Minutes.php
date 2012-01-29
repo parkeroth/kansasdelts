@@ -3,8 +3,8 @@
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/DB_Table.php';
 
 /**
- * This table contains all the relavent information a weekly report. Each position on a given board is expected
- * to submit on report per meeting entry.
+ * This table contains all the relavent information for the minutes of a meeting. The officer report information
+ * is stored in the applicable report record in the minutes field
  *
  * @author Parker Roth
  *
