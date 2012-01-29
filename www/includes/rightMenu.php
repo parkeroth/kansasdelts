@@ -194,7 +194,7 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 				<li>
 					<a href="#">Manage Records</a>
 					<ul>
-						<li><a href="records/boardMinutes.php">Board Meetings</a></li>
+						<li><a href="records/manageBoard.php">Board Meetings</a></li>
 						<li><a href="attendanceExcused.php">Excuse Member</a></li>
 						<li><a href="attendanceForm.php">Attendance Records</a></li>
 					</ul>
