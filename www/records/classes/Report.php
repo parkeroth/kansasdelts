@@ -17,6 +17,7 @@ $deadline = 43200;
  *
  * @author Parker Roth
  *
+ * CHANGED
  * Schema Updated: 2011-01-16
  * 
 CREATE TABLE IF NOT EXISTS `reports` (
@@ -42,7 +43,6 @@ class Report extends DB_Table
 	public $date_submitted = NULL;
 	public $position_id = NULL;
          public $status = NULL;
-         public $meeting_date = NULL;
 	public $meeting_id = NULL;
 	public $extra = NULL;
 	public $discussion = NULL;
@@ -56,7 +56,6 @@ class Report extends DB_Table
 			'date_submitted' => 'date_submitted',
 			'position_id' => 'position_id',
 			'status' => 'status',
-			'meeting_date' => 'meeting_date',
 			'meeting_id' => 'meeting_id',
 			'extra' => 'extra',
 			'discussion' => 'discussion',
@@ -91,7 +90,7 @@ class Report extends DB_Table
 	}
 
 	public function can_edit(){
-		return $this->status == 'pending';
+		return $this->status == 'pending' || $this->status == 'blank';
 	}
 	
 	public function can_delete(){
