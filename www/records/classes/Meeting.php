@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS `meetings` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` date NOT NULL,
   `type` set('chapter','exec','internal','external') NOT NULL,
-  `time` time NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
  * 
@@ -25,12 +24,15 @@ CREATE TABLE IF NOT EXISTS `meetings` (
 class Meeting extends DB_Table
 {
 	public static $MEETING_TYPES = array('chapter', 'exec', 'internal', 'external');
+	public static $PRESIDING_OFFICERS = array('chapter' => 'pres',
+									'exec' => 'pres',
+									'internal' => 'vpInternal',
+									'external' => 'vpExternal');
 	
 	public $id = NULL;
 	public $date = NULL;
 	public $type = NULL;
-         public $time = NULL;
-         public $require_report = NULL;
+	public $chapter_id = NULL;
 
 	function __construct($meeting_id) {
 		$this->table_name = 'meetings';
@@ -38,20 +40,58 @@ class Meeting extends DB_Table
 			'id' => 'id',
 			'date' => 'date',
 			'type' => 'type',
-			'time' => 'time'
+			'chapter_id' => 'chapter_id'
 		);
 		$params = array('id' => $meeting_id);
 		parent::__construct($params);
 	}
 	
-	public function can_remove(){
+	public function create_reports(){
 		$report_manager = new ReportManager();
-		$report_list = $report_manager->get_reports_by_meeting($this->id);
-		if(count($report_list)){
+		$position_manager = new Position_Manager();
+		$position_list = $position_manager->get_positions_by_board($this->type);
+		foreach($position_list as $position){
+			$report = $report_manager->get_reports_by_meeting($this->id, $position->id);
+			if(!$report){
+				$report = new Report();
+				$report->meeting_id = $this->id;
+				$report->position_id = $position->id;
+				$report->status = 'blank';
+				$report->insert();
+			}
+		}
+	}
+	
+	public function has_past(){
+		$cur_date = date('Y-m-d');
+		if($this->date < $cur_date){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public function can_remove(){
+		if($this->has_past() || $this->chapter_id){
 			return false;
 		} else {
+			$report_manager = new ReportManager();
+			$report_list = $report_manager->get_reports_by_meeting($this->id);
+			foreach($report_list as $report){
+				if(!$report->can_delete())
+					return false;
+			}
 			return true;
 		}
+	}
+	
+	function delete(){
+		$report_manager = new ReportManager();
+		$report_list  =$report_manager->get_reports_by_meeting($this->id);
+		foreach($report_list as $report){
+			$report->delete();
+		}
+		parent::delete();
 	}
 	
 }
@@ -62,14 +102,52 @@ class Meeting_Manager extends DB_Manager
 		parent::__construct();
 	}
 	
-	public function get_meetings_by_type($type, $limit = NULL){
+	public function get_meetings_by_type($type, $limit = NULL, $date = NULL){
 		// Check if valid type
 		if(!in_array($type, Meeting::$MEETING_TYPES)){
 			//error
 			return NULL;
 		} else {
 			$where = "WHERE type = '$type'";
+			if($date){
+				$month = date('n', strtotime($date));
+				$year = date('Y', strtotime($date));
+				if($month < 8){
+					$start = "$yaear-01-01";
+					$end = "$year-08-01";
+				} else {
+					$start = "$year-08-01";
+					$year++;
+					$end = "$year-01-01";
+				}
+				$where .= " AND date >= '$start' AND date < '$end'";
+			}
 			return $this->get_meeting_list($where, $limit);
+		}
+	}
+	
+	public function get_meeting($type, $date){
+		$where = "WHERE type = '$type' AND date = '$date'";
+		return $this->get_meeting_list($where);
+	}
+	
+	public function get_next_meeting($board, $date = NULL){
+		if(!$date)
+			$date = date('Y-m-d');
+		$date_plus_week = date('Y-m-d', strtotime('+1 week', strtotime($date)));
+		$query = "
+			SELECT id FROM meetings
+			WHERE date >= '$date'
+			AND date < '$date_plus_week'
+			AND type = '$board'
+			ORDER BY date ASC
+			LIMIT 1";
+		$result = $this->connection->query($query); //echo $query;
+		$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
+		if($data){
+			return new Meeting($data[id]);
+		} else {
+			return NULL;
 		}
 	}
 	

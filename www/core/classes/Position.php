@@ -9,6 +9,8 @@ class Position extends DB_Table
 								'internal' => 'Internal Affairs',
 								'external' => 'External Affairs',
 								'committee' => '');
+	public static $COMMITTEE_SLUGS = array('honorBoard');
+	
 	public $id = NULL;
 	public $type = NULL;
 	public $title = NULL;
@@ -49,19 +51,18 @@ class Position extends DB_Table
 		}
 	}
 	
-	private function get_position_id($str){		
+	private function get_position_id($str){
+		$db = new DB();
 		foreach(Position::$COMMITTEE_SLUGS as $slug)
 			$str = $this->clean_string($str, $slug);
 		$position_slug = str_replace('|', '', $str);
-		
 		$query = "
 			SELECT ID
 			FROM positions
 			WHERE type = '$position_slug'
 			ORDER BY ID"; //echo $query.'<br>';
-		$result = mysqli_query($this->connection, $query);
+		$result = $db->connection->query($query); //echo $query;
 		$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
-		
 		return $data[ID];
 	}
 
