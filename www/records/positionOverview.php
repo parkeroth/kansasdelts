@@ -139,7 +139,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 
 			foreach($meeting_list as $meeting){
 				// Only show meetings that this week or in the past
-//				if($meeting->date < $meeting_date_this_week){
+				if($meeting->date <= $meeting_date_this_week){
 					$report_list = $report_manager->get_reports_by_meeting($meeting->id, $position->id);
 					$report = $report_list[0];
 					if($meeting->date == $meeting_date_this_week){

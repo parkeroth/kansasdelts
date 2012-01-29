@@ -60,6 +60,9 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 	if($valid_input){
 		if($report_id){ //Editing existing report
 			$report = new Report($report_id);
+			if($report->status == 'blank'){
+				$report->status = 'pending';		// Could be jankety
+			}
 			$report->extra = $extra;
 			$report->discussion = $discussion;
 			$report->agenda = $agenda;

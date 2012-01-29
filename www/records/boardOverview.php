@@ -85,16 +85,18 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 	<ul id="item_list">
 <?php
 	$meeting_manager = new Meeting_Manager();
-	$meeting_list = $meeting_manager->get_meetings_by_type($board);
+	$meeting_list = $meeting_manager->get_meetings_by_type($board, NULL, date('Y-m-d'));
 	if($meeting_list){
 		foreach($meeting_list as $meeting){
-			$date_str = date('M j, Y', strtotime($meeting->date));
+			if($meeting->date <= date('Y-m-d', strtotime('this Sunday'))){
+				$date_str = date('M j, Y', strtotime($meeting->date));
 ?>
 			<li>
 				<b><?php echo $date_str; ?></b>
 				<a href="manageMeeting.php?id=<?php echo $meeting->id; ?>">View</a><br>
 			</li>
 <?php		
+			}
 			
 		}
 	} else {
