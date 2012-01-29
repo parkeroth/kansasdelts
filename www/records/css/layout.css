@@ -92,3 +92,12 @@ tr.normal { }
 	background-repeat: no-repeat;
 	padding-left: 20px;
 }
+
+.three_col {
+        width: 33%;
+        float: left;
+}
+
+.bold {
+	font-weight: bold;
+}

@@ -2,6 +2,7 @@
 
 require_once 'DB_Table.php';
 require_once 'DB_Manager.php';
+require_once 'Position_Log.php';
 
 class Member extends DB_Table
 {
@@ -98,6 +99,18 @@ class Member extends DB_Table
 		} else {
 			return false;
 		}
+	}
+	
+	function is_position($position_id){
+		$position_log_manager = new Position_Log_Manager();
+		$month = date('n');
+		$year = date('Y');
+		if($month < 8){
+			$term = 'spring';
+		} else {
+			$term = 'fall';
+		}
+		return $position_log_manager->member_in_committee($this->id, $position_id, $term, $year);
 	}
 	
 	public function get_class(){

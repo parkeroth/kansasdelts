@@ -60,6 +60,9 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 	if($valid_input){
 		if($report_id){ //Editing existing report
 			$report = new Report($report_id);
+			if($report->status == 'blank'){
+				$report->status = 'pending';		// Could be jankety
+			}
 			$report->extra = $extra;
 			$report->discussion = $discussion;
 			$report->agenda = $agenda;
@@ -181,7 +184,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 				<th>Tasks from <strong>last</strong> week:</th>
 				<td style="text-align: center;">
 <?php
-	$task_list_old = $task_manager->get_previous_tasks($meeting_id);
+	$task_list_old = $task_manager->get_previous_tasks($meeting_id, $position_id);
 	if($task_list_old){
 		echo '<table cellspacing="0" align="center">';
 		foreach($task_list_old as $task){

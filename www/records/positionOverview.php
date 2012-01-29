@@ -127,7 +127,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 	<?php 
 		$meeting_type = $position->board;
 		$meeting_manager = new Meeting_Manager();
-		$meeting_list = $meeting_manager->get_meetings_by_type($meeting_type);
+		$meeting_list = $meeting_manager->get_meetings_by_type($meeting_type, NULL, date('Y-m-d'));
 
 		// Initialize variables to see if a report has been submitted for a meeting this Sunday
 		$meeting_date_this_week = date('Y-m-d', strtotime('this Sunday'));
@@ -138,17 +138,19 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 			$first = True;
 
 			foreach($meeting_list as $meeting){
-				$report_list = $report_manager->get_reports_by_meeting($meeting->id, $position->id);
-				$report = $report_list[0];
-				if($meeting->date == $meeting_date_this_week){
-					$missing_this_week = true;
-				}
-				if($report){
+				// Only show meetings that this week or in the past
+				if($meeting->date <= $meeting_date_this_week){
+					$report_list = $report_manager->get_reports_by_meeting($meeting->id, $position->id);
+					$report = $report_list[0];
+					if($meeting->date == $meeting_date_this_week){
+						$missing_this_week = true;
+					}
+
 					if($missing_this_week && ($meeting->date == $meeting_date_this_week))
 						$missing_this_week = false;
-					
+
 					$status = $report->status;
-				
+
 					if($first){
 						echo '<tr class="tableHeader">';
 						echo '<td width="60">Date</td><td width="40">Status</td><td></td>';
@@ -166,7 +168,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 					echo '</td>';
 					echo '</tr>';
 				}
-			}
+//			}
 
 			echo '</table>';
 		} else {

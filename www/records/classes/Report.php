@@ -17,6 +17,7 @@ $deadline = 43200;
  *
  * @author Parker Roth
  *
+ * CHANGED
  * Schema Updated: 2011-01-16
  * 
 CREATE TABLE IF NOT EXISTS `reports` (
@@ -36,13 +37,12 @@ CREATE TABLE IF NOT EXISTS `reports` (
  */
 class Report extends DB_Table
 {
-	public static $REPORT_STATUS = array('pending', 'complete', 'incomplete');
+	public static $REPORT_STATUS = array('pending', 'complete', 'incomplete', 'blank');
 	
 	public $id = NULL;
 	public $date_submitted = NULL;
 	public $position_id = NULL;
          public $status = NULL;
-         public $meeting_date = NULL;
 	public $meeting_id = NULL;
 	public $extra = NULL;
 	public $discussion = NULL;
@@ -56,12 +56,11 @@ class Report extends DB_Table
 			'date_submitted' => 'date_submitted',
 			'position_id' => 'position_id',
 			'status' => 'status',
-			'meeting_date' => 'meeting_date',
 			'meeting_id' => 'meeting_id',
 			'extra' => 'extra',
 			'discussion' => 'discussion',
 			'agenda' => 'agenda',
-			'minutes_id' => 'minutes_id'
+			'minutes' => 'minutes'
 		);
 		$params = array('id' => $report_id);
 		parent::__construct($params);
@@ -91,7 +90,11 @@ class Report extends DB_Table
 	}
 
 	public function can_edit(){
-		return $this->status == 'pending';
+		return $this->status == 'pending' || $this->status == 'blank';
+	}
+	
+	public function can_delete(){
+		return $this->status == 'blank';
 	}
 	
 	public function get_tasks($status){
@@ -123,6 +126,17 @@ class Report extends DB_Table
 			$task->status = $status;
 			$task->save();
 		}
+	}
+	
+	public function delete(){
+		$task_manager = new TaskManager();
+		$task_list = $task_manager->get_tasks_by_report_id($this->id);
+		foreach($task_list as $task){
+			$task->report_id = NULL;
+			$task->status = 'new';
+			$task->save();
+		}
+		parent::delete();
 	}
 }
 
