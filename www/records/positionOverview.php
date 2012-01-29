@@ -168,7 +168,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 					echo '</td>';
 					echo '</tr>';
 				}
-//			}
+			}
 
 			echo '</table>';
 		} else {
