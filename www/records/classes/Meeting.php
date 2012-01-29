@@ -11,14 +11,15 @@ require_once 'Report.php';
  *
  * @author Parker Roth
  *
- * Schema Updated: 2011-01-16
+ * Schema Updated: 2011-01-29
  * 
 CREATE TABLE IF NOT EXISTS `meetings` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` date NOT NULL,
   `type` set('chapter','exec','internal','external') NOT NULL,
+  `chapter_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=59 ;
  * 
  */
 class Meeting extends DB_Table

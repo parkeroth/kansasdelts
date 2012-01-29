@@ -2,6 +2,29 @@
 
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/DB_Table.php';
 
+/**
+ * This table contains all the relavent information a weekly report. Each position on a given board is expected
+ * to submit on report per meeting entry.
+ *
+ * @author Parker Roth
+ *
+ * Schema Updated: 2011-01-29
+ * 
+CREATE TABLE IF NOT EXISTS `minutes` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `meeting_id` int(11) NOT NULL,
+  `formal` tinyint(1) DEFAULT NULL,
+  `presiding_officer` int(11) DEFAULT NULL,
+  `old_business` text NOT NULL,
+  `new_business` text NOT NULL,
+  `unfinished_business` text NOT NULL,
+  `good_of_order` text NOT NULL,
+  `start_time` datetime DEFAULT NULL,
+  `end_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+ * 
+ */
 class Minutes extends DB_Table {
 	public static $MEETING_TYPES = array('chapter', 'exec', 'internal', 'external');
 	

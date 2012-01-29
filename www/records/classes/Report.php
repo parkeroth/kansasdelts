@@ -17,22 +17,20 @@ $deadline = 43200;
  *
  * @author Parker Roth
  *
- * CHANGED
- * Schema Updated: 2011-01-16
+ * Schema Updated: 2011-01-29
  * 
 CREATE TABLE IF NOT EXISTS `reports` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date_submitted` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `position_id` int(11) NOT NULL,
-  `status` set('pending','complete','incomplete') NOT NULL,
-  `meeting_date` date DEFAULT NULL COMMENT 'Deprecated',
+  `status` set('pending','complete','incomplete','blank') NOT NULL,
   `meeting_id` int(11) NOT NULL,
   `extra` text,
   `discussion` text,
   `agenda` text,
-  `minutes_id` int(11) DEFAULT NULL,
+  `minutes` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=207 ;
  * 
  */
 class Report extends DB_Table
