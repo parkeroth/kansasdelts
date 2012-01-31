@@ -296,7 +296,7 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 				
 			<?php } 
 			
-			$auth_list = array('admin', 'saa', 'honorBoard');
+			$auth_list = array('admin', 'saa', 'honor-board');
 			if($session->isAuth($auth_list)){  ?>
 			
 				<li>
