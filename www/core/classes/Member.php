@@ -35,6 +35,7 @@ class Member extends DB_Table
 	public $parent_email = NULL;
 	
 	public $dad_id = NULL;
+	public $excused = NULL;
 
 	function __construct($member_id = NULL, $username = NULL) {
 		$this->table_name = 'members';
@@ -61,7 +62,8 @@ class Member extends DB_Table
 			'parent_name' => 'parentName',
 			'parent_address' => 'parentAddress',
 			'parent_email' => 'parentEmail',
-			'dad_id' => 'dad_id'
+			'dad_id' => 'dad_id',
+			'excused' => 'excused'
 		);
 		if($username){
 			$params = array('username' => $username);

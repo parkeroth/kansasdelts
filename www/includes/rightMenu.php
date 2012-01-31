@@ -172,7 +172,7 @@ foreach($user_position_ids as $position_ids){
 						<li><a href="graduationUpdateForm.php">Graduation Update</a></li>
 						<li><a href="/core/electionUpdateForm.php">Election Update</a></li>
 						<li><a href="removeUserForm.php">Remove User</a></li>
-						<li><a href="userStatusForm.php">User Status Form</a></li>
+						<li><a href="/core/memberStatusForm.php">User Status Form</a></li>
 						<li><a href="chapterContactForm.php">Send Text</a></li>
 					</ul>
 				</li>
