@@ -266,7 +266,9 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 				strpos($userDataArray['accountType'], "recruitment") || 
 				strpos($userDataArray['accountType'], "pledgeEd") || 
 				strpos($userDataArray['accountType'], "homecoming") || 
-				strpos($userDataArray['accountType'], "publicRel") || 
+				strpos($userDataArray['accountType'], "vpInternal") || 
+				strpos($userDataArray['accountType'], "vpExternal") || 
+				strpos($userDataArray['accountType'], "pres") || 
 				strpos($userDataArray['accountType'], "drm") || 
 				strpos($userDataArray['accountType'], "social") || 
 				strpos($userDataArray['accountType'], "philanthropy") )

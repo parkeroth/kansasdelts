@@ -1,6 +1,7 @@
 <?php
 $authUsers = array('brother');
-include_once('php/authenticate.php');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
+include_once '../php/login.php';
 
 $db_connection = mysql_connect ($db_host, $db_username, $db_password) OR die (mysql_error());  
 $db_select = mysql_select_db ($db_database) or die (mysql_error());
@@ -8,7 +9,8 @@ $db_select = mysql_select_db ($db_database) or die (mysql_error());
 
 $mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
 
-$isSuper = strpos($session->accountType, "admin") || strpos($session->accountType, "drm");
+$super_list = array('admin', 'drm', 'pres');
+$haz_super_powers = $session->isAuth($super_list);
 
 function getmicrotime(){ 
     list($usec, $sec) = explode(" ",microtime()); 
@@ -100,9 +102,9 @@ IF($_GET['month'] == 2){
 
 include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 
-<link type="text/css" href="styles/popUp.css" rel="stylesheet" />
-<link type="text/css" href="styles/BADD.css" rel="stylesheet" />
-<link type="text/css" href="styles/cal.css" rel="stylesheet" />
+<link type="text/css" href="../styles/popUp.css" rel="stylesheet" />
+<link type="text/css" href="../styles/BADD.css" rel="stylesheet" />
+<link type="text/css" href="../styles/cal.css" rel="stylesheet" />
 
 <script language="JavaScript" type="text/JavaScript">
 <!--
@@ -116,7 +118,7 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 //-->
 </script>
 
-<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
 <script type="text/javascript" src="js/BADD.js"></script>
 
 <?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php"); ?>
@@ -162,8 +164,8 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 			<td><div align="left"><a href="<? echo "baddDutyDates.php?month=$next_month&amp;year=$next_year"; ?>">&gt;&gt;</a></div></td>
 			</tr>
 		</table>
-	<?php if(strpos($session->accountType, "admin") || strpos($session->accountType, "drm")) { ?>
-	<p>To fill empty slots with people <a href="php/baddRandom.php?<?php echo "year=$_GET[year]&amp;month=$_GET[month]"; ?>">click here</a>.</p>
+	<?php if($haz_super_powers) { ?>
+	<p>To fill empty slots with people <a href="baddRandom.php?<?php echo "year=$_GET[year]&amp;month=$_GET[month]"; ?>">click here</a>.</p>
 	<?php } ?>
 	<?php if($myTrading) { ?>
 	<p style="text-align:left">You currently have a <b>trade request outstaning</b>. Please wait for the other person to respond. If you would like to cancel this request click the day you are trading (it is blue).</p>
@@ -274,9 +276,9 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 			echo "<div align=\"right\"><span class=\"toprightnumber\">\n";
 			
 			//Set details for day number
-			if($isSuper)
+			if($haz_super_powers)
 			{
-				echo "<a class=\"topRightNum\" href=\"php/baddDayAction.php?date=$formattedQueryDate&amp;action=$dayAction\"";
+				echo "<a class=\"topRightNum\" href=\"baddDayAction.php?date=$formattedQueryDate&amp;action=$dayAction\"";
 				if($dayAction == "remove")
 				{
 					if($class == "baddDayPast")
@@ -304,7 +306,7 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 				echo "<div class=\"baddDayActive\"";
 				if(( count($assigned) < 2 || in_array($_SESSION[username], $assignedUsers) ) && $status[$i] == "open" || $class == 'baddDayMyTrade')
 				{
-					echo "onclick=\"if(confirm('".$confirmMessage."')) window.location.href='php/baddAction.php?action=$updateAction&amp;date=$formattedQueryDate'\"";
+					echo "onclick=\"if(confirm('".$confirmMessage."')) window.location.href='baddAction.php?action=$updateAction&amp;date=$formattedQueryDate'\"";
 				}
 				echo ">";
 				//end add/remove
@@ -343,7 +345,7 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 					} // end if
 					else
 					{ */
-					if($isSuper)
+					if($haz_super_powers)
 					{
 						echo "<span id=\"$assignedUsers[$k]$ids[$i]\" class=\"tradable\"><a href=\"#\">$assigned[$k]</a></span>";
 					}

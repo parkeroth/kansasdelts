@@ -1,8 +1,8 @@
 <?php
 session_start();
-include_once('php/login.php');
-$authUsers = array('admin', 'drm');
-include_once('php/authenticate.php');
+include_once('../php/login.php');
+$authUsers = array('admin', 'drm', 'pres');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 
 include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");?>
 

@@ -76,6 +76,8 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 					echo "<span class=\"rankRed\">Incomplete</span>";
 				} else if($report->status == 'pending'){
 					echo "<span class=\"rankYellow\">Submitted</span>";
+				} else if($report->status == "blank"){
+					echo "<span class=\"rankRed\">Missing</span>";
 				}
 
 				echo "</td>";

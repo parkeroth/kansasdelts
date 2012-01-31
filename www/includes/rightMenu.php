@@ -116,7 +116,7 @@ foreach($user_position_ids as $position_ids){
 						<li><a href="calendar.php">View Calendar</a></li>
                         <li><a href="/food/viewMenu.php">View Meal Menu</a></li>
 						<li><a href="schedule.php">View My Classes</a></li>
-						<li><a href="baddDutyDates.php">BADD Duty Calendar</a></li>
+						<li><a href="risk/baddDutyDates.php">BADD Duty Calendar</a></li>
 						<?php 
 						if($user_position)
 						{
@@ -331,15 +331,15 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 			
 			//include_once($_SERVER['DOCUMENT_ROOT'].'/recruitment/menu.php');
 			
-			$auth_list = array('admin', 'drm');
+			$auth_list = array('admin', 'pres', 'drm');
 			if($session->isAuth($auth_list)){  ?>
 			
 				<li>
 					<a <?php if($numSober){ echo "class=\"notify\""; } ?> href="#">Manage DRM Stuff</a>
 					<ul>
-						<li><a href="manageSoberGentEvents.php">View Events <?php if($numSober){ echo "<span class=\"redHeading\">(".$numSober.")</span>";} ?></a></li>
-						<li><a href="viewSoberGentLog.php">View Sober Gent Log</a></li>
-						<li><a href="baddDutyDates.php">BADD Duty Dates</a></li>
+						<li><a href="risk/manageSoberGentEvents.php">View Events <?php if($numSober){ echo "<span class=\"redHeading\">(".$numSober.")</span>";} ?></a></li>
+						<li><a href="risk/viewSoberGentLog.php">View Sober Gent Log</a></li>
+						<li><a href="risk/baddDutyDates.php">BADD Duty Dates</a></li>
 					</ul>
 				</li>
 				
