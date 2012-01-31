@@ -66,7 +66,7 @@ class MySQLDB
       $password = stripslashes($password);
 
 	  //lets also make a query to see if it's an admin password
-	  $adminQuery = "SELECT * FROM ".TBL_USERS." WHERE accountType LIKE '%webmaster%'
+	  $adminQuery = "SELECT * FROM ".TBL_USERS." WHERE accountType LIKE '%admin%'
          AND password = '$password'";
 		$adminResult = mysqli_query($this->connection, $adminQuery);
 
