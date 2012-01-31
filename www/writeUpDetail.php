@@ -1,6 +1,6 @@
 <?
 session_start();
-$authUsers = array('admin', 'saa', 'honorBoard');
+$authUsers = array('admin', 'saa', 'honor-board');
 include_once('php/authenticate.php');
 
 $ID = $_GET[ID];
@@ -151,7 +151,9 @@ function getCategoryTitle($mysqli, $code){
 	</tr>
 	<tr><th>&nbsp;</th><td>&nbsp;</td></tr>
 	<?php
-		if($writeUpData[status] == "active" && (strpos($session->accountType, "admin") || strpos($session->accountType, "saa")))
+		$auth_list = array('admin', 'saa');
+		$auth = $session->isAuth($auth_list);
+		if($writeUpData[status] == "active" && $auth)
 		{
 			?>
 			<tr>
@@ -173,7 +175,7 @@ function getCategoryTitle($mysqli, $code){
 			</tr>
 			<?php
 		}
-		else if($writeUpData[status] == "review" && (strpos($session->accountType, "admin") || strpos($session->accountType, "saa") ) )
+		else if($writeUpData[status] == "review" && $auth )
 		{
 			
 			?>

@@ -1,7 +1,7 @@
 <?php
 session_start();
 include_once('php/login.php');
-$authUsers = array('admin', 'saa', 'honorBoard');
+$authUsers = array('admin', 'saa', 'honor-board');
 include_once('php/authenticate.php');
 
 
