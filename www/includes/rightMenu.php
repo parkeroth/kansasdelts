@@ -12,7 +12,7 @@ foreach($user_position_ids as $position_ids){
 	}
 }
 
-	$auth_list = array('admin', 'saa');
+	$auth_list = array('admin', 'saa', 'honor-board', 'pres');
 	if($session->isAuth($auth_list)){
 		$query = "
 			SELECT status, COUNT(ID)
@@ -129,8 +129,8 @@ foreach($user_position_ids as $position_ids){
 					<a href="#">Forms</a>
 					<ul>
 						<li><a href="classSearchForm.php">Search Classes</a></li>
-						<li><a href="missedDutyForm.php">Report Missed Duty</a></li>
-						<li><a href="writeUpForm.php">Submit Honor Board <br />Write Up</a></li>
+						<li><a href="honor/missedDutyForm.php">Report Missed Duty</a></li>
+						<li><a href="honor/writeUpForm.php">Submit Honor Board <br />Write Up</a></li>
 						<li><a href="brokenItemForm.php">Report Broken Item</a></li>
 						<li><a href="ideaForm.php">Submit Idea</a></li>
 					</ul>
@@ -296,24 +296,28 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 				
 			<?php } 
 			
-			$auth_list = array('admin', 'saa', 'honor-board');
+			$auth_list = array('admin', 'pres', 'saa', 'honor-board');
 			if($session->isAuth($auth_list)){  ?>
 			
 				<li>
 					<a <?php if($numNewWriteUps || $numNewMisses){ echo "class=\"notify\""; } ?> href="#">Manage Honor Board</a>
 					<ul>
 						<?php	$auth_list = array('admin', 'saa');
+								$pres_list = array('admin', 'saa', 'pres');
 								if($session->isAuth($auth_list)){  ?>
 							
 						<li><a href="/core/chooseCommittee.php?committee=honor-board">Select Honor Board</a></li>
-						<li><a href="manageMissedDuties.php">Missed Duty Hopper <?php if($numNewMisses){ echo "<span class=\"redHeading\">(".$numNewMisses.")</span>";} ?></a></li>
-						<li><a href="missedDutyLog.php">Missed Duty Log</a></li>
-						<li><a href="setPunishments.php">Set Punishments</a></li>
+						<li><a href="honor/setPunishments.php">Set Punishments</a></li>
+						
+						<?php }  if($session->isAuth($pres_list)){ ?>
+						
+						<li><a href="honor/manageMissedDuties.php">Missed Duty Hopper <?php if($numNewMisses){ echo "<span class=\"redHeading\">(".$numNewMisses.")</span>";} ?></a></li>
+						<li><a href="honor/missedDutyLog.php">Missed Duty Log</a></li>
 						
 						<?php } ?>
 						
-						<li><a href="manageWriteUps.php">View Write Ups <?php if($numNewWriteUps){ echo "<span class=\"redHeading\">(".$numNewWriteUps.")</span>";} ?></a></li>
-						<li><a href="conductList.php">Conduct Summary</a></li>
+						<li><a href="honor/manageWriteUps.php">View Write Ups <?php if($numNewWriteUps){ echo "<span class=\"redHeading\">(".$numNewWriteUps.")</span>";} ?></a></li>
+						<li><a href="honor/conductList.php">Conduct Summary</a></li>
 						
 					</ul>
 				</li>
