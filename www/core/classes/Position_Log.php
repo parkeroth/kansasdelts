@@ -88,10 +88,6 @@ class Position_Log_Manager extends DB_Manager
 				AND term = '$term'";
 		$list = $this->get_logs($where, $term, $year);
 		
-		if($member_id == 32){
-			echo 'PARKER'.$list[0]->id;
-		}
-		
 		if(count($list) == 1){
 			return $list[0]->id;
 		} else {
