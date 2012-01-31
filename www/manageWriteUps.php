@@ -38,6 +38,9 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 
 <h2>Honor Board Write Ups</h2>
 	<?php
+		$auth_list = array('admin', 'saa');
+		$haz_super_powers = $session->isAuth($auth_list);
+		
 		$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
 		
 		$userData = "
@@ -68,40 +71,42 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 		$numRWR=0;
 		$first=true;
 		
-		echo "<h3>Awaiting Review</h3>\n";
+		if($haz_super_powers){
 		
-		echo "<table>\n";
-		while ($reviewArray = mysqli_fetch_array($getReviewWriteUps, MYSQLI_ASSOC)){
-			$numRWR++;
-			
-			for($i=0; $i<$memberCount; $i++)
-			{
-				if($members[$i]['username'] == $reviewArray[partyResponsible])
+			echo "<h3>Awaiting Review</h3>\n";
+
+			echo "<table>\n";
+			while ($reviewArray = mysqli_fetch_array($getReviewWriteUps, MYSQLI_ASSOC)){
+				$numRWR++;
+
+				for($i=0; $i<$memberCount; $i++)
 				{
-					$partyFiling = $members[$i]['firstName']." ".$members[$i]['lastName'];
+					if($members[$i]['username'] == $reviewArray[partyResponsible])
+					{
+						$partyFiling = $members[$i]['firstName']." ".$members[$i]['lastName'];
+					}
 				}
+
+				if($first)
+				{
+					echo "<tr style=\"font-weight: bold;\"><td width=\"150\">Party Responible</td><td width=\"160\">Date of Occurance</td><td width=\"80\">Urgency</td><td>Category</td><td></td></tr>\n";
+					$first = false;
+				}
+
+				$categoryTitle = getCategoryTitle($mysqli, $reviewArray[category]);
+
+				echo "<tr>\n";
+				echo "<td>$partyFiling</td><td>$reviewArray[dateOccured]</td><td>$reviewArray[urgency]</td><td>$categoryTitle</td>";
+				echo "<td><a href=\"javascript:MM_openBrWindow('writeUpDetail.php?ID=$reviewArray[ID]','','width=500,height=440, scrollbars=1');\">Details</a></td>";
+				echo "</tr>\n";
 			}
-			
-			if($first)
+			echo "</table>\n";
+
+			if($numRWR == 0)
 			{
-				echo "<tr style=\"font-weight: bold;\"><td width=\"150\">Party Responible</td><td width=\"160\">Date of Occurance</td><td width=\"80\">Urgency</td><td>Category</td><td></td></tr>\n";
-				$first = false;
+				echo "<p>No new write ups.</p>";
 			}
-			
-			$categoryTitle = getCategoryTitle($mysqli, $reviewArray[category]);
-			
-			echo "<tr>\n";
-			echo "<td>$partyFiling</td><td>$reviewArray[dateOccured]</td><td>$reviewArray[urgency]</td><td>$categoryTitle</td>";
-			echo "<td><a href=\"javascript:MM_openBrWindow('writeUpDetail.php?ID=$reviewArray[ID]','','width=500,height=440, scrollbars=1');\">Details</a></td>";
-			echo "</tr>\n";
 		}
-		echo "</table>\n";
-		
-		if($numRWR == 0)
-		{
-			echo "<p>No new write ups.</p>";
-		}
-		
 		
 		$activeWriteUps = "
 		SELECT * 
@@ -148,6 +153,8 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 		}
 		
 		
+		if($haz_super_powers){
+		
 		?>
 		<p>&nbsp;</p>
 		<h2>Upload Bylaws</h2>
@@ -172,4 +179,6 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 			Files must be .docx and less than 10 MB.
 		</p>
 
-<?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/footer.php"); ?>
+<?php 
+		}
+include_once($_SERVER['DOCUMENT_ROOT']."/includes/footer.php"); ?>
