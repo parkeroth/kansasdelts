@@ -1,8 +1,8 @@
 <?php
 	session_start();
-	$authUsers = array('admin', 'drm');
-	include_once('authenticate.php');
-	include_once('login.php');
+	$authUsers = array('admin', 'drm', 'pres');
+	include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
+	include_once('../php/login.php');
 
 	$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
 	
@@ -73,5 +73,5 @@
 	
 	
 	
-	header("location: ../editSoberGentEvent.php?id=".$_POST[id]."");
+	header("location: editSoberGentEvent.php?id=".$_POST[id]."");
 ?>

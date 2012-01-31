@@ -1,9 +1,9 @@
 <?php
 session_start();
-$authUsers = array('admin', 'drm');
-include_once('authenticate.php');
+$authUsers = array('admin', 'drm', 'pres');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 	
-include_once('login.php');
+include_once('../php/login.php');
 $mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
 
 if($_GET[action] == "add")
@@ -24,6 +24,6 @@ else if($_GET[action] == "remove")
 $month = date("n", strtotime($_GET['date']))+1;
 $year = date("Y", strtotime($_GET['date']));
 
-header("location: ../baddDutyDates.php?month=$month&year=$year");
+header("location: baddDutyDates.php?month=$month&year=$year");
 
 ?>

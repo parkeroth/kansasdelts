@@ -1,8 +1,8 @@
 <?php
 session_start();
-include_once('php/login.php');
-$authUsers = array('admin', 'drm');
-include_once('php/authenticate.php');
+include_once('../php/login.php');
+$authUsers = array('admin', 'drm', 'pres');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 
 include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 
@@ -178,7 +178,7 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 				?>
 			</table>
 		<h2>People Available</h2>
-		<form action="php/soberGent.php" method="post">
+		<form action="soberGent.php" method="post">
 			<p>
 				To assign selected people to the event click the assign button. <input type="submit" value="Assign"/>
 			</p>

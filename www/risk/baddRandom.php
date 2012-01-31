@@ -1,9 +1,9 @@
 <?php
 session_start();
-$authUsers = array('admin', 'drm');
-include_once('authenticate.php');
-	
-include_once('login.php');
+$authUsers = array('admin', 'drm', 'pres');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
+
+include_once('../php/login.php');
 $mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
 
 if(date("n") > 5)
@@ -111,6 +111,6 @@ while($row = mysqli_fetch_array($result, MYSQLI_ASSOC))
 $query = "UPDATE baddDutyDays SET status='closed' WHERE status='open'";
 $result = mysqli_query($mysqli, $query);
 
-header("location: ../baddDutyDates.php?month=$_GET[month]&year=$_GET[year]");
+header("location: baddDutyDates.php?month=$_GET[month]&year=$_GET[year]");
 
 ?>
