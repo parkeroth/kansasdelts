@@ -1,19 +1,22 @@
 <?php
 session_start();
-include_once('php/login.php');
-$authUsers = array('admin', 'saa', 'honorBoard');
-include_once('php/authenticate.php');
+include_once('../php/login.php');
+$authUsers = array('admin', 'saa', 'pres');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 
-include_once('snippet/missedDuties.php');
+$super_list = array('admin', 'saa');
+$haz_super_powers = $session->isAuth($super_list);
+
+include_once('snippets.php');
 
 include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 
-<link type="text/css" href="styles/ui-lightness/jquery-ui-1.8.1.custom.css" rel="stylesheet" />
-<link type="text/css" href="styles/popUp.css" rel="stylesheet" />
+<link type="text/css" href="../styles/ui-lightness/jquery-ui-1.8.1.custom.css" rel="stylesheet" />
+<link type="text/css" href="../styles/popUp.css" rel="stylesheet" />
 
-<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="js/jquery-ui-1.8.1.custom.min.js"></script>
-<script type="text/javascript" src="js/popup.js"></script>
+<script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../js/jquery-ui-1.8.1.custom.min.js"></script>
+<script type="text/javascript" src="../js/popup.js"></script>
 
 <script>
 
@@ -24,15 +27,15 @@ $(document).ready(function(){
 		
 		var id = $(this).attr('id');
 		
-		$.get('snippet/dutyPopup.php?type=eval&ID=' + id, function(data){
+		$.get('dutyPopup.php?type=eval&ID=' + id, function(data){
 			$("#popupBody").html(data);
 			
 			$(".auth").click(function(){
-				window.location = 'php/missedDuty.php?type=auth&status=approved&id=' + id;
+				window.location = 'missedDuty.php?type=auth&status=approved&id=' + id;
 			});
 			
 			$(".reject").click(function(){
-				window.location = 'php/missedDuty.php?type=auth&status=rejected&id=' + id;
+				window.location = 'missedDuty.php?type=auth&status=rejected&id=' + id;
 			});
 		});
 		

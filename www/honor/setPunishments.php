@@ -1,8 +1,8 @@
 <?php
 session_start();
-include_once('php/login.php');
+include_once('../php/login.php');
 $authUsers = array('admin', 'saa');
-include_once('php/authenticate.php');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 
 /**
  * Processing Section
@@ -82,12 +82,12 @@ td {
 
 </style>
 
-<link type="text/css" href="styles/ui-lightness/jquery-ui-1.8.1.custom.css" rel="stylesheet" />
-<link type="text/css" href="styles/popUp.css" rel="stylesheet" />
+<link type="text/css" href="../styles/ui-lightness/jquery-ui-1.8.1.custom.css" rel="stylesheet" />
+<link type="text/css" href="../styles/popUp.css" rel="stylesheet" />
 
-<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="js/jquery-ui-1.8.1.custom.min.js"></script>
-<script type="text/javascript" src="js/popup.js"></script>
+<script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../js/jquery-ui-1.8.1.custom.min.js"></script>
+<script type="text/javascript" src="../js/popup.js"></script>
 
 <script>
 

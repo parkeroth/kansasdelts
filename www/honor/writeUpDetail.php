@@ -1,7 +1,7 @@
 <?
 session_start();
-$authUsers = array('admin', 'saa', 'honor-board');
-include_once('php/authenticate.php');
+$authUsers = array('admin', 'saa', 'honor-board', 'pres');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 
 $ID = $_GET[ID];
 
@@ -58,6 +58,9 @@ function getCategoryTitle($mysqli, $code){
 		
 	}
 }
+
+$super_list = array('admin', 'saa');
+$haz_super_powers = $session->isAuth($super_list);
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -65,8 +68,6 @@ function getCategoryTitle($mysqli, $code){
 <title>Member Report Form</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="images/cal.css" rel="stylesheet" type="text/css">
-
-<script language="JavaScript" src="js/gen_validatorv31.js" type="text/javascript"></script>
 
 <style>
 	th {
@@ -126,7 +127,7 @@ function getCategoryTitle($mysqli, $code){
 		
 		<select name="category">
 			
-			<?php 
+			<?php
 				$catQuery = "SELECT * FROM writeUpCategories ORDER BY ID DESC";
 				$getCat = mysqli_query($mysqli, $catQuery);
 
@@ -151,9 +152,8 @@ function getCategoryTitle($mysqli, $code){
 	</tr>
 	<tr><th>&nbsp;</th><td>&nbsp;</td></tr>
 	<?php
-		$auth_list = array('admin', 'saa');
-		$auth = $session->isAuth($auth_list);
-		if($writeUpData[status] == "active" && $auth)
+		
+		if($writeUpData[status] == "active" && $haz_super_powers)
 		{
 			?>
 			<tr>
@@ -175,7 +175,7 @@ function getCategoryTitle($mysqli, $code){
 			</tr>
 			<?php
 		}
-		else if($writeUpData[status] == "review" && $auth )
+		else if($writeUpData[status] == "review" && $haz_super_powers )
 		{
 			
 			?>

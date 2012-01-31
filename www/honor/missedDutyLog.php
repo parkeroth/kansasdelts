@@ -1,9 +1,12 @@
 <?php
-	$authUsers = array('admin','saa','secretary');
-	include_once('php/authenticate.php');
+	$authUsers = array('admin', 'pres', 'saa', 'secretary');
+	include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 	$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
 	
 	include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
+	
+	$super_list = array('admin', 'saa');
+	$haz_super_powers = $session->isAuth($super_list);
 ?>
 	
 <script>
@@ -95,7 +98,7 @@ function confirmRevert(URL){
 		</table>
 </div>
 	<?php 
-		include_once('php/login.php');
+		include_once('../php/login.php');
 		$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
 		
 		if($season == "fall") {
@@ -148,9 +151,11 @@ function confirmRevert(URL){
 				echo "<td>";
 				echo date('M j, Y', strtotime($infractionArray[dateOccured]));
 				echo "</td><td>";
-				echo "<input 	type=\"button\"  
+				if($haz_super_powers){
+					echo "<input 	type=\"button\"  
 								value=\"Revert\"
-								onclick=\"javascript: confirmRevert('php/missedDuty.php?type=revert&amp;id=".$infractionArray[ID]."')\" />";
+								onclick=\"javascript: confirmRevert('missedDuty.php?type=revert&amp;id=".$infractionArray[ID]."')\" />";
+				}
 				echo "</td></tr>\n";
 			}
 			echo "</table>";

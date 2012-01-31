@@ -1,8 +1,8 @@
 <?php
 session_start();
-include_once('php/login.php');
-$authUsers = array('admin', 'saa', 'honor-board');
-include_once('php/authenticate.php');
+$authUsers = array('admin', 'saa', 'honor-board', 'pres');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
+include_once '../php/login.php';	// TODO: Get rid of this
 
 
 function getCategoryTitle($mysqli, $code){
@@ -38,8 +38,8 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 
 <h2>Honor Board Write Ups</h2>
 	<?php
-		$auth_list = array('admin', 'saa');
-		$haz_super_powers = $session->isAuth($auth_list);
+		$super_list = array('admin', 'saa');
+		$haz_super_powers = $session->isAuth($super_list);
 		
 		$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
 		
@@ -71,7 +71,8 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 		$numRWR=0;
 		$first=true;
 		
-		if($haz_super_powers){
+		// Hide new cases from honor-board
+		//if($haz_super_powers){
 		
 			echo "<h3>Awaiting Review</h3>\n";
 
@@ -106,7 +107,7 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 			{
 				echo "<p>No new write ups.</p>";
 			}
-		}
+		//}
 		
 		$activeWriteUps = "
 		SELECT * 
@@ -159,7 +160,7 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 		<p>&nbsp;</p>
 		<h2>Upload Bylaws</h2>
 		
-		<form enctype="multipart/form-data" action="php/uploadBylaws.php" method="POST">
+		<form enctype="multipart/form-data" action="uploadBylaws.php" method="POST">
 			<input type="hidden" name="MAX_FILE_SIZE" value="100000" />
 			Choose File: <input style="color:#fff;" name="userfile" type="file" />
 			<input type="submit" value="Upload Bylaws" />
@@ -168,7 +169,7 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 		
 		<h2>Upload House Rules</h2>
 		
-		<form enctype="multipart/form-data" action="php/uploadBylaws.php" method="POST">
+		<form enctype="multipart/form-data" action="uploadBylaws.php" method="POST">
 			<input type="hidden" name="MAX_FILE_SIZE" value="100000" />
 			Choose File: <input style="color:#fff;" name="userfile" type="file" />
 			<input type="submit" value="Upload House Rules" />

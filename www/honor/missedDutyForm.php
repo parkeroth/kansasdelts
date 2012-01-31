@@ -1,13 +1,12 @@
 <?php
-
 session_start();
 $authUsers = array('brother');
-include_once('php/authenticate.php');
-include_once('php/login.php');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
+include_once('../php/login.php');
 
 $mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
 
-include_once('snippet/missedDuties.php');
+include_once('snippets.php');
 
 /**
  * Processing Section
@@ -27,7 +26,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 				
 				
 	$add_res = mysqli_query($mysqli, $add_sql);
-	header("location: success.php?page=MissedDuty");
+	header("location: ../success.php?page=MissedDuty");
 	
 	
 	/*require 'class.phpmailer.php';
@@ -75,9 +74,9 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 
 include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");?>
 
-<link type="text/css" href="styles/ui-lightness/jquery-ui-1.8.1.custom.css" rel="stylesheet" />	
-<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="js/jquery-ui-1.8.1.custom.min.js"></script>
+<link type="text/css" href="../styles/ui-lightness/jquery-ui-1.8.1.custom.css" rel="stylesheet" />	
+<script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../js/jquery-ui-1.8.1.custom.min.js"></script>
 
 <?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php");?>
 

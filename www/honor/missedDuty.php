@@ -1,10 +1,10 @@
 <?php
 session_start();
 $authUsers = array('saa', 'admin');
-include_once('authenticate.php');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 	
-include_once('login.php');
-include_once('../snippet/missedDuties.php');
+include_once('../php/login.php');
+include_once('snippets.php');
 $mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
 
 $month = date('n');
@@ -73,7 +73,7 @@ if($_GET[type] == 'auth')
 				WHERE ID = '$id'";
 	$result = mysqli_query($mysqli, $query);
 	
-	header("location: ../manageMissedDuties.php");
+	header("location: manageMissedDuties.php");
 	
 }
 else if($_GET[type] == 'revert')
@@ -123,7 +123,7 @@ else if($_GET[type] == 'revert')
 	
 	$result = mysqli_query($mysqli, $query);
 	
-	header("location: ../manageMissedDuties.php");
+	header("location: manageMissedDuties.php");
 }
 
 

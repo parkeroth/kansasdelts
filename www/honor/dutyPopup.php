@@ -1,8 +1,11 @@
 <?php
-$authUsers = array('admin', 'saa');
-include_once('../php/authenticate.php');
+$authUsers = array('admin', 'saa', 'pres');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 
-include_once('../snippet/missedDuties.php');
+include_once('snippets.php');
+
+$super_list = array('admin', 'saa');
+$haz_super_powers = $session->isAuth($super_list);
 
 include_once('../php/login.php');
 $mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
@@ -136,12 +139,14 @@ $mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
 				 ?></td>
 			</tr><tr>
 				<th colspan="2">&nbsp;</th>
-			</tr><tr>
+			</tr>
+			<?php if($haz_super_powers){ ?>
+			<tr>
 				<th>&nbsp;</th>
 				<td><input id="<?php echo $id; ?>" class="auth" type="button" value="Authorize" />
 					<input id="<?php echo $id; ?>" class="reject" type="button" value="Reject" /></td>
 			</tr>
-				
+			<?php } ?>
 			</tr>
 		</table>
 		
