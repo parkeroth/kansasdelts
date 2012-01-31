@@ -162,7 +162,7 @@ foreach($user_position_ids as $position_ids){
 				
 			<? }
 	
-			$auth_list = array('admin', 'secretary');
+			$auth_list = array('admin', 'secretary', 'pres');
 			if($session->isAuth($auth_list)){ ?>
 			
 				<li>
@@ -178,6 +178,20 @@ foreach($user_position_ids as $position_ids){
 					</ul>
 				</li>
 				<li>
+					<a href="#">Manage Records</a>
+					<ul>
+						<li><a href="records/manageBoard.php">Board Meetings</a></li>
+						<li><a href="attendanceExcused.php">Excuse Member</a></li>
+						<li><a href="attendanceForm.php">Attendance Records</a></li>
+					</ul>
+				</li>
+				
+			<?php }
+			
+			$auth_list = array('admin', 'secretary', 'pres', 'vpInternal', 'vpExternal');
+			if($session->isAuth($auth_list)){ ?>
+			
+			<li>
 					<a href="#">Manage Meetings</a>
 					<ul>
 <?php
@@ -191,15 +205,6 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 ?>
 					</ul>
 				</li>
-				<li>
-					<a href="#">Manage Records</a>
-					<ul>
-						<li><a href="records/manageBoard.php">Board Meetings</a></li>
-						<li><a href="attendanceExcused.php">Excuse Member</a></li>
-						<li><a href="attendanceForm.php">Attendance Records</a></li>
-					</ul>
-				</li>
-				
 			<?php }
 			
 			$auth_list = array('admin', 'academics', 'proctor');
