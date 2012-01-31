@@ -1,6 +1,6 @@
 <?
 session_start();
-$authUsers = array('admin', 'secretary');
+$authUsers = array('admin', 'secretary', 'pres', 'vpInternal', 'vpExternal');
 include_once($_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php');
 
 require_once 'classes/Chapter_Attendance.php';

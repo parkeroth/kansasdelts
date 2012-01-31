@@ -1,7 +1,7 @@
 <?php
 session_start();
 echo $session->member_id;
-$authUsers = array('admin', 'secretary');
+$authUsers = array('admin', 'secretary', 'pres', 'vpInternal', 'vpExternal');
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';

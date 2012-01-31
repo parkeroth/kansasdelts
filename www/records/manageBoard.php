@@ -1,6 +1,6 @@
 <?php
 session_start();
-$authUsers = array('admin', 'secretary');
+$authUsers = array('admin', 'secretary', 'pres');
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';
