@@ -24,7 +24,6 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 				if(!$meeting){
 					$meeting = new Meeting();
 					$meeting->date = $date;
-					$meeting->time = NULL;		//TODO: Fix this to use a time
 					$meeting->type = $board;
 					$meeting->insert();
 					$meeting->create_reports();
