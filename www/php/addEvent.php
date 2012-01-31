@@ -1,6 +1,6 @@
 <?php
 session_start();
-$authUsers = array('admin', 'communityService', 'houseManager', 'brotherhood', 'social', 'secretary', 'recruitment', 'pledgeEd', 'homecoming', 'publicRel', 'drm', 'philanthropy');
+$authUsers = array('admin', 'communityService', 'houseManager', 'brotherhood', 'social', 'secretary', 'recruitment', 'pledgeEd', 'homecoming', 'vpExternal', 'vpInternal', 'pres', 'drm', 'philanthropy');
 include_once('authenticate.php');
 	
 include_once('login.php');

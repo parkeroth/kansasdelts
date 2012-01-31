@@ -1,7 +1,7 @@
 <?
 session_start();
 include_once('php/login.php');
-$authUsers = array('admin', 'brotherhood', 'recruitment', 'secretary', 'communityService', 'social', 'houseManager', 'pledgeEd', 'homecoming', 'publicRel', 'drm', 'philanthropy');
+$authUsers = array('admin', 'pres', 'vpInternal', 'vpExternal', 'brotherhood', 'recruitment', 'secretary', 'communityService', 'social', 'houseManager', 'pledgeEd', 'homecoming', 'publicRel', 'drm', 'philanthropy');
 include_once('php/authenticate.php');
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -68,52 +68,52 @@ function select(a) {
       <select id="type" name="type" onChange="Check('type');">
 	  	
 		<?php
-			$auth_list = array('admin', 'communityService');
+			$auth_list = array('admin', 'pres', 'vpInternal', 'communityService');
 			if($session->isAuth($auth_list))
 			{
 				echo "<option value=\"communityService\">Community Service</option>";
 			}
-			$auth_list = array('admin', 'houseManager');
+			$auth_list = array('admin', 'pres', 'vpInternal', 'houseManager');
 			if($session->isAuth($auth_list))
 			{
 				echo "<option value=\"house\">House Cleaning</option>";
 			}
-			$auth_list = array('admin', 'brotherhood');
+			$auth_list = array('admin', 'pres', 'vpInternal', 'brotherhood');
 			if($session->isAuth($auth_list))
 			{
 				echo "<option value=\"brotherhood\">Brotherhood</option>";
 			}
-			$auth_list = array('admin', 'secretary');
+			$auth_list = array('admin', 'pres', 'vpInternal', 'vpExternal', 'secretary');
 			if($session->isAuth($auth_list))
 			{
 				echo "<option value=\"general\">General</option>";
 			}
-			$auth_list = array('admin', 'social', 'drm');
+			$auth_list = array('admin', 'pres', 'vpInternal', 'social', 'drm');
 			if($session->isAuth($auth_list))
 			{
 				echo "<option value=\"social\">Social</option>";
 			}
-			$auth_list = array('admin', 'recruitment');
+			$auth_list = array('admin', 'pres', 'recruitment');
 			if($session->isAuth($auth_list))
 			{
 				echo "<option value=\"recruitment\">Recruitment</option>";
 			}
-			$auth_list = array('admin', 'pledgeEd');
+			$auth_list = array('admin', 'pres', 'pledgeEd');
 			if($session->isAuth($auth_list))
 			{
 				echo "<option value=\"education\">Member Education</option>";
 			}
-			$auth_list = array('admin', 'homecoming');
+			$auth_list = array('admin', 'pres', 'vpExternal', 'homecoming');
 			if($session->isAuth($auth_list))
 			{
 				echo "<option value=\"homecoming\">Homecoming</option>";
 			}
-			$auth_list = array('admin', 'publicRel');
+			$auth_list = array('admin', 'pres', 'vpExternal');
 			if($session->isAuth($auth_list))
 			{
 				echo "<option value=\"pr\">Public Relations</option>";
 			}
-			$auth_list = array('admin', 'philanthropy', 'publicRel');
+			$auth_list = array('admin', 'philanthropy', 'vpExternal', 'pres');
 			if($session->isAuth($auth_list))
 			{
 				echo "<option value=\"philanthropy\">Philanthropy</option>";
