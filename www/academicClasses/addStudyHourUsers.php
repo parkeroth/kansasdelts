@@ -4,6 +4,7 @@ include_once($_SERVER['DOCUMENT_ROOT'].'/php/login.php');
 $authUsers = array('admin', 'academics');
 include_once($_SERVER['DOCUMENT_ROOT'].'/php/authenticate.php');
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/studyHours.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 
 include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 
@@ -50,7 +51,7 @@ function timedRefresh(timeoutPeriod) {
 		text-align: center;
 		text-transform: uppercase;
 		}
-	</style>
+</style>
 
 <?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php"); ?>
 
@@ -62,45 +63,9 @@ function timedRefresh(timeoutPeriod) {
         Use the datepicker to pick the time period for the required study hours.</p>
 		<p>&nbsp;</p>
 
-<?php
-	//Start our shit here
-	$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
-	//Fist, we'll build an array of the data of people ALREADY in the
-	//StudyHourRequirements table
-	$getUserDataQ = '
-		SELECT members.username, members.firstName, members.lastName, studyHourRequirements.startDate, studyHourRequirements.stopDate, studyHourRequirements.hoursRequired
-		FROM members LEFT JOIN studyHourRequirements
-		ON members.username = studyHourRequirements.username
-		ORDER BY members.lastName';
-	//and execute said quiery
-	$getUserData = mysqli_query($mysqli, $getUserDataQ);
-	if(!$getUserData)
-	{
- 		die('Could not get data: ' . mysqli_error());
-	}
-	//now loop through, build array
-	$memberCount = 0;
-	while($userDataArray = mysqli_fetch_array($getUserData, MYSQLI_ASSOC))
-		{
-			$userSHData[$memberCount]['username'] = $userDataArray['username'];
-			$userSHData[$memberCount]['firstName'] = $userDataArray['firstName'];
-			$userSHData[$memberCount]['lastName'] = $userDataArray['lastName'];
-			$userSHData[$memberCount]['startDate'] = $userDataArray['startDate'];
-			$userSHData[$memberCount]['stopDate'] = $userDataArray['stopDate'];
-			$userSHData[$memberCount]['hoursRequired'] = $userDataArray['hoursRequired'];
-			//echo $userDataArray['username'].': '.$userDataArray['hoursRequired'].'<br />';
-			$memberCount++;
-		}
-	//ain't that some shit?
-
-	// think that should be pretty much all the crap we need
-	// lets build the form
-	// i'll do it all in php cause i'm SUPER HARDCORE
-
-		echo '<form enctype="multipart/form-data" id="shUsers" name="shUsers" method="post" action="'.$_SERVER['PHP_SELF'].'" onSubmit="return Confirm();">';
-		echo '<table border="1">';
-		echo '
-		<tr>
+		<form enctype="multipart/form-data" id="shUsers" name="shUsers" method="post" action="'.$_SERVER['PHP_SELF'].'" onSubmit="return Confirm();">
+		<table border="1">
+                    <tr>
 			<th style="width: 100px;">
 				Member Name
 			</th>
@@ -116,53 +81,72 @@ function timedRefresh(timeoutPeriod) {
 			<th style="width: 120px;">
 				Stop Date
 			</th>
-		</tr>';
-		for($i=1; $i < $memberCount; $i++)
-		{
+                    </tr>
+                <?php
+                    $memManager = new Member_Manager();
+                    $memList = $memManager->get_all_members();
+
+                    foreach($memList as $member) {
+                        $userSHData = new Study_Hour_Requirements($member->id);
 			echo "<tr>
 					<td>
-						<label>".$userSHData[$i]['firstName']." ".$userSHData[$i]['lastName']."</label>
+						<label>$member->first_name $member->last_name</label>
 					</td>\n";
-			if ($userSHData[$i]['hoursRequired'] != 0 || $userSHData[$i]['hoursRequired'] != NULL || $userSHData[$i]['hoursRequired'] != '')
+			if ($userSHData->hoursRequired != 0 || $userSHData->hoursRequired != NULL || $userSHData->hoursRequired != '')
 			{
 				//User DOES have required hours, so study hour stuff should be set up
 				echo '
 					<td>
-						<input type="checkbox" name="'.$userSHData[$i]['username'].'" id="'.$userSHData[$i]['username'].'" value="Y" checked="checked" />
+						<input type="checkbox" name="'.$member->id.'" id="'.$member->id.'" value="Y" checked="checked" />
 					</td>
 					<td>
-						<input type="text" name="'.$userSHData[$i]['username'].'_hrs" id="'.$userSHData[$i]['username'].'_hrs" value="'.$userSHData[$i]['hoursRequired'].'" size="5" />
+						<input type="text" name="'.$member->id.'_hrs" id="'.$member->id.'_hrs" value="'.$userSHData[$i]['hoursRequired'].'" size="5" />
 					</td>
 					<td>
-						<input type="text" name="'.$userSHData[$i]['username'].'_start" id="datepicker" value="'.$userSHData[$i]['startDate'].'" size="10" readonly="readonly" /> <input type="button" value="    " onclick="scwShow('.$userSHData[$i]['username'].'_start,event);" />
+						<input type="text" name="'.$member->id.'_start" id="datepicker" value="'.$userSHData->startDate.'" size="10" readonly="readonly" /> <input type="button" value="    " onclick="scwShow('.$member->id.'_start,event);" />
 					</td>
 					<td>
-						<input type="text" name="'.$userSHData[$i]['username'].'_stop" id="datepicker" value="'.$userSHData[$i]['stopDate'].'" size="10" readonly="readonly" /> <input type="button" value="    " onclick=scwShow('.$userSHData[$i]['username'].'_stop,event);" />
+						<input type="text" name="'.$member->id.'_stop" id="datepicker" value="'.$userSHData->stopDate.'" size="10" readonly="readonly" /> <input type="button" value="    " onclick=scwShow('.$member->id.'_stop,event);" />
 					</td>
 					';
 			} else {
 				echo '
 					<td>
-						<input type="checkbox" name="'.$userSHData[$i]['username'].'" id="'.$userSHData[$i]['username'].'" value="Y" />
+						<input type="checkbox" name="'.$member->id.'" id="'.$member->id.'" value="Y" />
 					</td>
 					<td>
-						<input type="text" name="'.$userSHData[$i]['username'].'_hrs" id="'.$userSHData[$i]['username'].'_hrs" value=""size="5" />
+						<input type="text" name="'.$member->id.'_hrs" id="'.$member->id.'_hrs" value=""size="5" />
 					</td>
 					<td>
-						<input type="text" name="'.$userSHData[$i]['username'].'_start" id="datepicker" size="10" readonly="readonly" /> <input type="button" value="    " onclick="scwShow('.$userSHData[$i]['username'].'_start,event);" />
+						<input type="text" name="'.$member->id.'_start" id="datepicker" size="10" readonly="readonly" /> <input type="button" value="    " onclick="scwShow('.$member->id.'_start,event);" />
 					</td>
 					<td>
-						<input type="text" name="'.$userSHData[$i]['username'].'_stop" id="datepicker" size="10" readonly="readonly" /> <input type="button" value="    " onclick="scwShow('.$userSHData[$i]['username'].'_stop,event);" />
+						<input type="text" name="'.$member->id.'_stop" id="datepicker" size="10" readonly="readonly" /> <input type="button" value="    " onclick="scwShow('.$member->id.'_stop,event);" />
 					</td>
 					';
 			}
 			echo '</tr>';
-		}
-		echo "</table>";
-		echo '<p>&nbsp;</p>
+                    }
+                ?>
+		</table>
+		<p>&nbsp;</p>
 		<div style="text-align: center;"><input type="submit" name="submit" id="submit" value="  Submit  " /></div>
-	</form>';
+	</form>
 
+        <?php
+       //Now process the shit that needs updating
+	if(isset($_POST['submit']))
+        {
+            foreach($memList as $member) {
+                if(isset($_POST[$member->id]))
+                {
+                    $userSHData = new Study_Hour_Requirements($member->id);
+                }
+            }
+        }
+        ?>
+
+        <?php
 	//Now process the shit that needs updating
 	if(isset($_POST['submit']))
 	{

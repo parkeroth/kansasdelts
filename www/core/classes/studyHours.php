@@ -18,7 +18,7 @@ class Study_Hour_Logs extends DB_Table
 		$this->table_name = 'studyHourLogs';
 		$this->table_mapper = array(
                         'userID' => 'userID',
-                        'sessionID' => 'ID',
+                        'id' => 'ID',
 			'timeIn' => 'timeIn',
                         'proctorIn' => 'proctorIn',
                         'proctorOut' => 'proctorOut',
@@ -27,7 +27,7 @@ class Study_Hour_Logs extends DB_Table
 		);
 
 		if($log_id){
-			$params = array('sessionID' => $log_id);
+			$params = array('id' => $log_id);
 		} else {
 			$params = NULL;
 		}
@@ -37,7 +37,7 @@ class Study_Hour_Logs extends DB_Table
         public function start_sh_session() {
                 $curTime = time();
                 $this->timeIn = date('Y-m-d H:i:s', $curTime);
-                $this->proctorIn = $_SESSION['username'];
+                $this->proctorIn = $_SESSION['userID'];
                 $this->open = "yes";
 		return $this->insert();
         }
@@ -51,7 +51,7 @@ class Study_Hour_Logs extends DB_Table
 		//that shouldn't be the case.  working the solution another way will be more
 		//time/resource comsuming, so i'll just do it the "drity" way until it causes problems
 
-        	$this->proctorOut = $_SESSION['username'];
+        	$this->proctorOut = $_SESSION['userID'];
 		$curTime = time();
 
 		$timeDiff = $curTime - strtotime($this->timeIn);
@@ -78,13 +78,13 @@ class Study_Hour_Requirements extends DB_Table
         public $hoursCompleted = NULL;
         public $hoursRequired = NULL;
         public $status  = NULL;
-        public $ID = NULL;
+        public $id = NULL;
 
-	function __construct ($log_id = NULL) {
+	function __construct ($in_id = NULL) {
 		$this->table_name = 'studyHourRequirements';
 		$this->table_mapper = array(
                         'userID' => 'userID',
-                        'ID' => 'ID',
+                        'id' => 'ID',
 			'startDate' => 'startDate',
 			'stopDate' => 'stopDate',
 			'hoursRequired' => 'hoursRequired',
@@ -92,8 +92,8 @@ class Study_Hour_Requirements extends DB_Table
 			'status' => 'status'
 		);
 
-		if($log_id){
-			$params = array('id' => $log_id);
+		if($in_id){
+			$params = array('id' => $in_id);
 		} else {
 			$params = NULL;
 		}
@@ -128,7 +128,7 @@ class Study_Hour_Manager extends DB_Manager
 			SELECT ID FROM studyHourRequirements
 			$where
 			ORDER BY userID ASC";
-		$result = mysqli_query($this->connection, $query);
+		$result = $this->connection->query($query);
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Study_Hour_Requirements($data[ID]);
 		}
@@ -170,7 +170,7 @@ class Study_Hour_Log_Manager extends DB_Manager
 			$where
 			ORDER BY startTime DESC
                         LIMIT 50";
-		$result = mysqli_query($this->connection, $query);
+		$result = $this->connection->query($query);
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Study_Hour_Logs($data[ID]);
 		}
@@ -193,7 +193,22 @@ class Study_Hour_Log_Manager extends DB_Manager
                 $retVal = $userID ? $this->get_session_list($where) : $this->get_user_sessions($userID, $where);
                 return $retVal;
         }
-        
+
+        public function get_current_week_data($userID) {
+                $retVal = -1;
+                $curWeekBlockQ =
+                    "SELECT COUNT(*) AS rows
+                    FROM studyHourLogs
+                    WHERE YEARWEEK(timeIn) = YEARWEEK(CURRENT_DATE)
+                        AND userID='$userID'
+                ";
+                $result = $this->connection->query($curWeekBlockQ);
+		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
+			$retVal = $data[row];
+		}
+		return $retVal;
+        }
+
 }
 
 ?>
