@@ -110,47 +110,48 @@ if(isset($_GET['term']) && isset($_GET['year']))
 		}
 		$date = date('Y-m-d', strtotime($date));
 		
+		$member_manager = new Member_Manager();
+		$all_members = $member_manager->get_all_members();
+		
 		$attendance_manager = new Chapter_Attendance_Manager();
 		$meeting_manager = new Meeting_Manager();
 		$meeting_list = $meeting_manager->get_meetings_by_type('chapter', $limit=NULL, $date);
 		
 		foreach($meeting_list as $meeting){
 			echo "<h2>".date("F j, Y",strtotime($meeting->date))."</h2>";
-			
-			$attendance_list = $attendance_manager->
 			echo "<table align=\"center\">";
-			$attendanceData = "
-				SELECT members.firstName AS firstName, members.lastName AS lastName, attendance.status, attendance.ID AS ID 
-				FROM members 
-				JOIN attendance on members.username = attendance.username 
-				WHERE attendance.date = '".$dateArray['date']."'
-				ORDER BY members.lastName";
-			$getAttendanceData = mysqli_query($mysqli, $attendanceData);
-			while($attendanceArray = mysqli_fetch_array($getAttendanceData, MYSQLI_ASSOC)){
+			
+			$members_with_records = array();	// Keep track of who already has a record for the meeting
+			
+			$attendance_list = $attendance_manager->get_list_by_meeting($meeting->id);
+			foreach($attendance_list as $attendance_record){
+				$member = new Member($attendance_record->member_id);
+				$members_with_records[] = $member->id;	// Add id to tracking array
 							
 				echo "<tr><th>";
-				echo $attendanceArray['firstName']." ".$attendanceArray['lastName'].": </th>\n";
+				echo $member->first_name." ".$member->last_name.": </th>\n";
 				echo "<td ";
 				
 				
-				if($attendanceArray['status'] == 'absent')
+				if($attendance_record->status == 'absent')
 				{
 					echo "class=\"redHeading\" ";	
 				}
 				
 				
 				echo ">";
-				echo ucwords($attendanceArray['status']);
+				echo ucwords($attendance_record->status);
 				echo "</td><td>";
 				echo "<input 	type=\"button\" 
-								name=\"remove-".$attendanceArray[ID]."\" 
+								name=\"remove-".$attendance_record->id."\" 
 								value=\"Remove\"
-								onclick=\"window.location.href='php/attendance.php?action=remove&amp;ID=".$attendanceArray[ID]."'\" />";
+								onclick=\"window.location.href='php/attendance.php?action=remove&amp;ID=".$attendance_record->id."'\" />";
 				echo "<input 	type=\"button\" 
-								name=\"toggle-".$attendanceArray[ID]."\" 
+								name=\"toggle-".$attendance_record->id."\" 
 								value=\"Toggle\"
-								onclick=\"window.location.href='php/attendance.php?action=toggle&amp;ID=".$attendanceArray[ID]."&amp;status=".$attendanceArray['status']."'\" />";
+								onclick=\"window.location.href='php/attendance.php?action=toggle&amp;ID=".$attendance_record->id."&amp;status=".$attendance_record->status."'\" />";
 				echo "</td></tr>\n";
+				$member->__destruct();
 			}
 			echo "</table>";
 			
@@ -160,18 +161,11 @@ if(isset($_GET['term']) && isset($_GET['year']))
 			echo "<tr>";
 			
 			echo "<td>";
-			$nameQuery = "
-				SELECT firstName, lastName, username
-				FROM members 
-				WHERE username 
-				NOT IN(	SELECT username 
-						FROM attendance 
-						WHERE date = '".$dateArray['date']."')
-				ORDER BY lastName";
-			$getNames = mysqli_query($mysqli, $nameQuery);
 			echo "<select name=\"name\">";
-			while($nameArray = mysqli_fetch_array($getNames, MYSQLI_ASSOC)){
-				echo "<option value=\"".$nameArray[username]."\">".ucwords($nameArray[firstName])." ".ucwords($nameArray[lastName])."</option>";
+			foreach($all_members as $member){
+				if(!in_array($member->id, $members_with_records)){
+					echo "<option value=\"".$member->id."\">".ucwords($member->first_name)." ".ucwords($member->last_name)."</option>";
+				}
 			}
 			echo "</select>:";
 			echo "</td><td>";

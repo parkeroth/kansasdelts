@@ -72,6 +72,11 @@ class Chapter_Attendance extends DB_Table {
 
 class Chapter_Attendance_Manager extends DB_Manager {
 	
+	public function get_list_by_meeting($meeting_id){
+		$where = "WHERE meeting_id='$meeting_id'";
+		return $this->get_attendance_list($where);
+	}
+	
 	public function get_record_by_meeting_member($member_id, $meeting_id){
 		$where = "WHERE member_id='$member_id' AND meeting_id ='$meeting_id'";
 		$list = $this->get_attendance_list($where);
