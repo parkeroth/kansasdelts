@@ -183,8 +183,8 @@ $haz_super_powers = $session->isAuth($super_list);
 				<td colspan="2"><hr>
 				
 					
-					<a href="php/writeUpAction.php?ID=<?php echo $ID;?>&amp;action=discard">Discard</a> | 
-					<a href="php/writeUpAction.php?ID=<?php echo $ID;?>&amp;action=consider">Consider Case</a> | 
+					<a href="writeUpAction.php?ID=<?php echo $ID;?>&amp;action=discard">Discard</a> | 
+					<a href="writeUpAction.php?ID=<?php echo $ID;?>&amp;action=consider">Consider Case</a> | 
 					<a href="javascript: window.close();">Close</a>
 				</td>
 			</tr>
