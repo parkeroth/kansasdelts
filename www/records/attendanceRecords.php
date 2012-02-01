@@ -1,9 +1,13 @@
 <?php
-	$authUsers = array('admin','saa','secretary');
-	include_once('php/authenticate.php');
-	$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
+session_start();
+$authUsers = array('admin', 'secretary', 'pres');
+include_once($_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php');
+
+require_once 'classes/Chapter_Attendance.php';
+require_once 'classes/Meeting.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 	
-	include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
+include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 ?>
 	
 <script language="JavaScript" src="js/gen_validatorv31.js" type="text/javascript"></script>
@@ -24,35 +28,35 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 
 <div style="text-align:center;">
 	<?php
-	if(isset($_GET['season']) && isset($_GET['year']))
-	{
-		$year = $_GET['year'];
-		$season = $_GET['season'];
+if(isset($_GET['term']) && isset($_GET['year']))
+{
+	$year = $_GET['year'];
+	$term = $_GET['term'];
+} else {
+	$year = date(Y);
+	$month = date(n);
+
+	if($month < 8){
+		$term = "spring";
 	} else {
-		$year = date(Y);
-		$month = date(n);
-		
-		if($month > 0 && $month < 7){
-			$season = "spring";
-		} else if($month > 7 && $month < 13){
-			$season = "fall";
-		}
+		$term = "fall";
 	}
+}
 	
 	
 	
-	echo "<h2>Chapter Absenses - ".ucwords($season)." ".$year."</h2>";
+	echo "<h1>Chapter Absenses - ".ucwords($term)." ".$year."</h1>";
 	?>
 	
 	<table width="600" border="0" cellspacing="0" cellpadding="0" align="center">
 		<tr> 
 			<td><div align="right"><a href="<? 
 	  		
-			if($season == "fall"){
-				echo "attendanceRecords.php?year=$year&amp;season=spring"; 
+			if($term == "fall"){
+				echo "attendanceRecords.php?year=$year&amp;term=spring"; 
 			} else {
 				$lastYear = $year-1;
-				echo "attendanceRecords.php?year=$lastYear&amp;season=fall"; 
+				echo "attendanceRecords.php?year=$lastYear&amp;term=fall"; 
 			}
 			
 			?>">&lt;&lt;</a></div></td>
@@ -60,18 +64,18 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 				
 				<select name="season" id="month" onChange="MM_jumpMenu('parent',this,0)">
 					<?
-			if($season == "fall"){
-		  		echo "<option value=\"attendanceRecords.php?year=$year&amp;season=spring\" >Spring</option>\n";
-				echo "<option value=\"attendanceRecords.php?year=$year&amp;season=fall\" selected>Fall</option>\n";
+			if($term == "fall"){
+		  		echo "<option value=\"attendanceRecords.php?year=$year&amp;term=spring\" >Spring</option>\n";
+				echo "<option value=\"attendanceRecords.php?year=$year&amp;term=fall\" selected>Fall</option>\n";
 			} else {
-				echo "<option value=\"attendanceRecords.php?year=$year&amp;season=spring\" selected>Spring</option>\n";
-				echo "<option value=\"attendanceRecords.php?year=$year&amp;season=fall\" >Fall</option>\n";
+				echo "<option value=\"attendanceRecords.php?year=$year&amp;term=spring\" selected>Spring</option>\n";
+				echo "<option value=\"attendanceRecords.php?year=$year&amp;term=fall\" >Fall</option>\n";
 			}
 			?>
 					</select>
 				<select name="year" id="year" onChange="MM_jumpMenu('parent',this,0)">
 					<?
-		  $yearLoop = date("Y");
+		  $yearLoop = $year;
 		  
 		  for ($i = $yearLoop+1; $i >= $yearLoop-3; $i--) {
 		  	if($i == $year){
@@ -79,46 +83,41 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 			} else {
 				$selected = "";
 			}
-		  	echo "<option value=\"attendanceRecords.php?season=$season&amp;year=$i\" $selected>$i</option>\n";
+		  	echo "<option value=\"attendanceRecords.php?term=$term&amp;year=$i\" $selected>$i</option>\n";
 		  }
 		  ?>
 					</select>
 				</div></td>
-			<td><div align="left"><a href="<? 
+			<td>
+				<div align="left"><a href="<? 
 	  	
-		if($season == "fall"){
-				$nextYear = $year+1;
-				echo "attendanceRecords.php?year=$nextYear&amp;season=spring"; 
-			} else {
-				echo "attendanceRecords.php?year=$year&amp;season=fall"; 
-			}
+		if($term == "fall"){
+			$nextYear = $year+1;
+			echo "attendanceRecords.php?year=$nextYear&amp;term=spring"; 
+		} else {
+			echo "attendanceRecords.php?year=$year&amp;term=fall"; 
+		}
 		
 		?>">&gt;&gt;</a></div></td>
 			</tr>
-		</table>
+</table>
 </div>
 	<?php 
-		include_once('php/login.php');
-		$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
-		
-		if($season == "fall") {
-			$startDate = $year."-08-01";
-			$endDate = $year."-12-31";
-		} else if($season == "spring") {
-			$startDate = $year."-01-01";
-			$endDate = $year."-05-31";
+		if($term == 'spring'){
+			$date = $year.'-01-01';
+		} else {
+			$date = $year.'-08-01';
 		}
+		$date = date('Y-m-d', strtotime($date));
 		
-		$attendanceDates = "
-			SELECT DISTINCT date
-			FROM attendance
-			WHERE date > '$startDate'
-			AND date < '$endDate'
-			ORDER BY date DESC";
-		$getDates = mysqli_query($mysqli, $attendanceDates);
-		while($dateArray = mysqli_fetch_array($getDates, MYSQLI_ASSOC)){
-			echo "<h2>".date("F j, Y",strtotime($dateArray['date']))."</h2>";
+		$attendance_manager = new Chapter_Attendance_Manager();
+		$meeting_manager = new Meeting_Manager();
+		$meeting_list = $meeting_manager->get_meetings_by_type('chapter', $limit=NULL, $date);
+		
+		foreach($meeting_list as $meeting){
+			echo "<h2>".date("F j, Y",strtotime($meeting->date))."</h2>";
 			
+			$attendance_list = $attendance_manager->
 			echo "<table align=\"center\">";
 			$attendanceData = "
 				SELECT members.firstName AS firstName, members.lastName AS lastName, attendance.status, attendance.ID AS ID 

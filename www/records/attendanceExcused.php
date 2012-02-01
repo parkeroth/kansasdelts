@@ -1,8 +1,15 @@
 <?php
 session_start();
-include_once('php/login.php');
-$authUsers = array('admin', 'secretary');
-include_once('php/authenticate.php');
+$authUsers = array('admin', 'secretary', 'pres');
+include_once($_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php');
+
+require_once 'classes/Chapter_Attendance.php';
+require_once 'classes/Meeting.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
+
+$member_manager = new Member_Manager();
+$member_list = $member_manager->get_all_members();
+$attendance_manager = new Chapter_Attendance_Manager();
 
 /**
  * Processing Section
@@ -10,29 +17,31 @@ include_once('php/authenticate.php');
  
 if($_SERVER['REQUEST_METHOD'] == "POST") {
 	
-	$date = $_POST['date'];
+	$meeting_id = $_POST['meeting_id'];
+	$meeting = new Meeting($meeting_id);
 	
-	$removeQuery = "DELETE FROM attendance WHERE date = '$date' AND status='excused'";
-	$doRemove = mysqli_query($mysqli, $removeQuery);
-	
-	$userData = "
-		SELECT username
-		FROM members
-		ORDER BY lastName";
-	$getUserData = mysqli_query($mysqli, $userData);
-	
-	while($userDataArray = mysqli_fetch_array($getUserData, MYSQLI_ASSOC))
-	{
-		if($_POST[$userDataArray[username]]) {
-			$modify = "INSERT INTO attendance
-				(username, date, status)
-				VALUES
-				('$userDataArray[username]', '$date', 'excused')";
-			$doModification = mysqli_query($mysqli, $modify);
+	foreach($member_list as $member){
+		$attendance_record = $attendance_manager->get_record_by_meeting_member($member->id, $meeting->id);
+		
+		// Case 1: was excused and is no longer
+		if($attendance_record->status == 'excused' && !$_POST[$member->id]){
+			$attendance_record->delete();
 			
-			//echo $modify."<br>";
+		// Case 2: was not excused but is now	
+		} else if($attendance_record->status != 'excused' && $_POST[$member->id]){
+			$attendance_record = new Chapter_Attendance();
+			$attendance_record->meeting_id = $meeting->id;
+			$attendance_record->member_id = $member->id;
+			$attendance_record->status = 'excused';
+			$attendance_record->insert();
+			
+		// Case 3: was not excused but should not be now
+		} else {
+			// Do nothing
 		}
 	}
+	
+	$_GET[id] = $meeting_id;
 }
 	
 
@@ -42,97 +51,66 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
  * Form Section
  */
  
-if(!isset($_GET[currentDate])) { $_GET[currentDate] = date("Y-m-d"); }
+$meeting_id = $_GET[id];
+if(!isset($meeting_id)){
+	header('location: ../error.php');
+}
 
-$timeString = $_GET[currentDate];
-$time = strtotime($timeString);
-$date = date("M j, Y",$time);
-$qDate = date("Y-m-d",$time);
+$meeting = new Meeting($meeting_id);
+
 
 
 include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 
-<link type="text/css" href="styles/ui-lightness/jquery-ui-1.8.1.custom.css" rel="stylesheet" />	
-<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="js/jquery-ui-1.8.1.custom.min.js"></script>
+<link type="text/css" href="css/layout.css" rel="stylesheet" />
+
+<script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../js/jquery-ui-1.8.1.custom.min.js"></script>
 
 <script type="text/javascript">
 
 	$(function() {
-		$("#updateButtonCurrent").click(function() {
-			var date = $("#datepickerCurrent").val();
-			var month = date.substr(0,2);
-			var day = date.substr(3,2);
-			var year = date.substr(6,4);
-			var URL = 'attendanceExcused.php?currentDate=' + year + '-' + month + '-' + day;
-			
-			window.location.href=URL
-		});
-		
+		$("#toggle-longterm").click(function(){
+			$(".excused").attr("checked",'checked');
+		})
 	});
 	
-	$(function() {
-		$("#datepickerCurrent").datepicker();
-		$("#datepickerPrevious").datepicker();
-	});
-	
-	function MM_openBrWindow(theURL,winName,features) { //v2.0
-	  	window.open(theURL,winName,features);
-	}
 </script>
 
 <?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php"); ?>
 	
-	<h1>Excuse Members From Chapter - <?php echo $date;?></h1>
-	<form>
-		<p>
-			<input name="dateMeeting" type="text" id="datepickerCurrent" size="11" value="<?php echo $_GET[currentDate]; ?>" />
-			<input id="updateButtonCurrent" type="button" value="Update" />
-			Select the date of chapter meeting.
-		</p>
-	</form>
+	<h1 class="center">Excuse Members From Chapter - <?php echo date('M j, Y', strtotime($meeting->date));?></h1>
 	
-	<form id="gap" name="gpa" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+	<p class="center"><input type="button" id="toggle-longterm" value="Check Pre-Excused" /></p>
+	
+	<form id="excused" name="excused" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 		<table style="text-align:center;" align="center">
 			<tr>
 				<td><strong>Member</strong></td><td width="100"px><strong>Excused</strong></td></tr>
 			<?php 
-		include_once('php/login.php');
-		$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
-		
-		$userData = "
-			SELECT * 
-			FROM members
-			WHERE residency != 'limbo'
-			ORDER BY lastName";
-		$getUserData = mysqli_query($mysqli, $userData);
-		
-		while($userDataArray = mysqli_fetch_array($getUserData, MYSQLI_ASSOC)){
 			
-			echo "<tr>";
-			echo "<td style=\"text-align: left;\">";
-			echo 	"<label>".$userDataArray['firstName']." ".$userDataArray['lastName']." </td>\n";
-			
-			
-			$check = "	SELECT ID 
-						FROM attendance
-						WHERE username = '$userDataArray[username]'
-						AND date = '$qDate'";
-			$checkTable = mysqli_query($mysqli, $check);
-			
-			if(mysqli_fetch_row($checkTable))
-			{
-				$checked = "checked=\"checked\"";
+		foreach($member_list as $member){
+			$attendance_record = $attendance_manager->get_record_by_meeting_member($member->id, $meeting->id);
+			if($member->excused){
+				$class = 'class="excused"';
 			} else {
-				$checked = "";
+				$class = '';
 			}
-			echo "<td><input type=\"checkbox\" name=\"".$userDataArray['username']."\" value=\"1\" $checked /></label></td>";
-			echo "</tr>\n";
+			if($attendance_record->status == 'excused'){
+				$checked = 'checked="checked"';
+			} else {
+				$checked = '';
+			}
+			
+			echo '<tr>';
+			echo '<th>'.$member->first_name.' '.$member->last_name.'</th>';
+			echo '<td><input type="checkbox" name="'.$member->id.'" value="1" '.$class.'" '.$checked,' /></td>';
+			echo '</tr>';
 		}
 	?>
 			</table>
 		<p style="text-align:center;">
-			<input  type="hidden" name="date" value="<?php echo $qDate;?>" />
+			<input  type="hidden" name="meeting_id" value="<?php echo $meeting->id;?>" />
 			<input type="submit" name="submit" id="submit" value="Submit" />
 			<label>
 				<input type="reset" name="Reset" id="Reset" value="Reset" />

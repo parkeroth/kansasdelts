@@ -92,11 +92,14 @@ function print_meeting_row($meeting){
 		$("input.edit-agenda").click(function(event){
 			window.location.href = 'chapterAgenda.php?action=edit&id=' + event.target.id;
 		})
+		$("input.excuse-member").click(function(event){
+			window.location.href = 'attendanceExcused.php?id=' + event.target.id;
+		})
 		$("input.edit-minutes").click(function(event){
 			window.location.href = 'chapterMinutes.php?id=' + event.target.id;
 		})
 		$("input.take-attendance").click(function(event){
-			window.location.href = 'chapterAttendance.php?id=' + event.target.id;
+			window.location.href = 'attendanceForm.php?id=' + event.target.id;
 		})
 	});
 </script>

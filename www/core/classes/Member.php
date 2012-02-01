@@ -165,7 +165,7 @@ class Member_Manager extends DB_Manager
 		$query = "
 			SELECT ID FROM members
 			$where
-			ORDER BY firstName ASC"; //echo $query.'<br>';
+			ORDER BY lastName ASC"; //echo $query.'<br>';
 		$result = $this->connection->query($query);
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$member = new Member($data[ID]);
