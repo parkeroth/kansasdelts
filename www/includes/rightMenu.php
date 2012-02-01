@@ -136,18 +136,16 @@ foreach($user_position_ids as $position_ids){
 					</ul>
 				</li>
 				<li>
-					<a href="#">Chapter Records</a>
+					<a href="#">Information</a>
 					<ul>
+						<li><a href="records/chapterRecords.php">Chapter Records</a></li>
 						<li><a href="documents.php">Document Box</a></li>
 						<li><a href="familyTree.php">Family Tree</a></li>
-						<li><a href="records/chapterAgenda.php">View Agendas</a></li>
-						<li><a href="chapterMinutes.php">View Minutes</a></li>
 					</ul>
 				</li>
 				<li>
 					<a href="#">My Account</a>
 					<ul>
-						<li><div id="notificationButton"><a href="#">Notification Settings</a></div></li>
 						<li><a href="/core/memberInfo.php">Change Roster Info</a></li>
 						<li><a href="passwordChangeForm.php">Change Password</a></li>
 						<li><a href="accomplishmentForm.php">My Accomplishments</a></li>
@@ -155,7 +153,7 @@ foreach($user_position_ids as $position_ids){
 						if($user_position)
 						{
 							echo "<li><a href=\"records/positionOverview.php?position=$user_position->id\">My Position</a></li>";
-							echo "<li><a href=\"viewReportingTasks.php\">View FAAR Tasks</a></li>";
+							echo "<li><a href=\"viewReportingTasks.php\">My FAAR Tasks</a></li>";
 						}?>
 					</ul>
 				</li>
@@ -173,7 +171,7 @@ foreach($user_position_ids as $position_ids){
 						<li><a href="graduationUpdateForm.php">Graduation Update</a></li>
 						<li><a href="/core/electionUpdateForm.php">Election Update</a></li>
 						<li><a href="removeUserForm.php">Remove User</a></li>
-						<li><a href="userStatusForm.php">User Status Form</a></li>
+						<li><a href="/core/memberStatusForm.php">User Status Form</a></li>
 						<li><a href="chapterContactForm.php">Send Text</a></li>
 					</ul>
 				</li>

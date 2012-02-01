@@ -51,6 +51,23 @@ class Position extends DB_Table
 		}
 	}
 	
+	public function get_current_member_id($date = NULL){
+		if(!$date)
+			$date = date('Y-m-d');
+		
+		$year = date('Y', strtotime($date));
+		$month = date('n', strtotime($date));
+		if($month < 8){
+			$term = 'spring';
+		} else {
+			$term = 'fall';
+		}
+		$position_log_manager = new Position_Log_Manager();
+		$logs = $position_log_manager->get_logs_by_position($this->id, $term, $year);
+		$member = new Member($logs[0]->member_id);
+		return $member;
+	}
+	
 	private function get_position_id($str){
 		$db = new DB();
 		foreach(Position::$COMMITTEE_SLUGS as $slug)

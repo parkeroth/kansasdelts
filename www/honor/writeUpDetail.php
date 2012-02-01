@@ -98,7 +98,7 @@ $haz_super_powers = $session->isAuth($super_list);
 </head>
 <body>
 <h2>Honor Board - Member Report Form</h2>
-<form action="php/writeUpAction.php" method="post">
+<form action="writeUpAction.php" method="post">
 <table>
 	<tr>
 		<th width="160">Party Filing:</th>
