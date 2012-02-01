@@ -1,6 +1,6 @@
 <?php
 session_start();
-$authUsers = array('admin', 'academics');
+$authUsers = array('admin', 'academics', 'saa');
 include_once 'authenticate.php';
 
 require_once 'classes/Member.php';
