@@ -71,6 +71,18 @@ class Meeting extends DB_Table
 		}
 	}
 	
+	/*
+	 * Updates all the board meetings on the specified date to have the chapter id of the calling object
+	 */
+	public function associate_board_meetings($board_meeting_date){
+		$meeting_manager = new Meeting_Manager();
+		$meeting_list = $meeting_manager->get_meetings_missing_chapter($board_meeting_date);
+		foreach($meeting_list as $meeting){
+			$meeting->chapter_id = $this->id;
+			$meeting->save();
+		}
+	}
+	
 	public function has_past(){
 		$cur_date = date('Y-m-d');
 		if($this->date < $cur_date){
@@ -127,7 +139,7 @@ class Meeting_Manager extends DB_Manager
 				$month = date('n', strtotime($date));
 				$year = date('Y', strtotime($date));
 				if($month < 8){
-					$start = "$yaear-01-01";
+					$start = "$year-01-01";
 					$end = "$year-08-01";
 				} else {
 					$start = "$year-08-01";
@@ -135,9 +147,44 @@ class Meeting_Manager extends DB_Manager
 					$end = "$year-01-01";
 				}
 				$where .= " AND date >= '$start' AND date < '$end'";
-			}
+			} //echo $where;
 			return $this->get_meeting_list($where, $limit);
 		}
+	}
+	
+	public function get_meetings_by_chapter($chapter_id, $type = NULL){
+		$where = "WHERE chapter_id = '$chapter_id'";
+		if($type){
+			$where .= " AND type = '$type'";
+		} //echo $where;
+		$list = $this->get_meeting_list($where);
+		if($type){
+			return $list[0];
+		} else {
+			return $list;
+		}
+	}
+	
+	public function get_board_meeting_dates(){
+		$list = array();
+		$query = "SELECT DISTINCT date 
+				FROM meetings 
+				WHERE chapter_id IS NULL
+				AND type != 'chapter'
+				ORDER BY date DESC";
+		$result = $this->connection->query($query); //echo $query;
+		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
+			$list[] = $data[date];
+		}
+		return $list;
+	}
+	
+	public function get_meetings_missing_chapter($date, $require_null_chapter = true){
+		$where = "WHERE date = '$date' AND type != 'chapter'";
+		if($require_null_chapter){
+			$where .= "AND chapter_id IS NULL";
+		} //echo $where;
+		return $this->get_meeting_list($where);
 	}
 	
 	public function get_meeting($type, $date){
@@ -184,11 +231,12 @@ class Meeting_Manager extends DB_Manager
 		$query = "
 			SELECT id FROM meetings
 			WHERE date < '$current_meeting->date'
+			AND type = '$current_meeting->type'
 			ORDER BY date DESC
 			LIMIT 1";
 		$result = $this->connection->query($query); //echo $query;
-		if($result){
-			$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
+		if($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
+			echo 'TAG';
 			return new Meeting($data[id]);
 		} else {
 			return NULL;

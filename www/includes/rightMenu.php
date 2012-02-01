@@ -136,12 +136,11 @@ foreach($user_position_ids as $position_ids){
 					</ul>
 				</li>
 				<li>
-					<a href="#">Chapter Records</a>
+					<a href="#">Information</a>
 					<ul>
+						<li><a href="records/chapterRecords.php">Chapter Records</a></li>
 						<li><a href="documents.php">Document Box</a></li>
 						<li><a href="familyTree.php">Family Tree</a></li>
-						<li><a href="records/chapterAgenda.php">View Agendas</a></li>
-						<li><a href="chapterMinutes.php">View Minutes</a></li>
 					</ul>
 				</li>
 				<li>

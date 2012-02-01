@@ -1,8 +1,8 @@
 <?php
 session_start();
 $authUsers = array('admin', 'saa');
-include_once('authenticate.php');
-include_once('login.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php');;
+include_once('../php/login.php');
 
 $mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
 
@@ -61,7 +61,7 @@ if($_POST[settled] == "yes")
 <!--
 	 function redirect_to(where, closewin)
 	 {
-			 opener.location= '../manageWriteUps.php';
+			 opener.location= 'manageWriteUps.php';
 			 
 			 if (closewin == 1)
 			 {
@@ -71,6 +71,6 @@ if($_POST[settled] == "yes")
 	  //-->
 </script>
 </head>
-<body onLoad="javascript:redirect_to('../manageWriteUps.php',1);">
+<body onLoad="javascript:redirect_to('manageWriteUps.php',1);">
 </body>
 </html>
