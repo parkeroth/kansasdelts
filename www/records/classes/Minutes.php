@@ -8,14 +8,13 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/DB_Table.php';
  *
  * @author Parker Roth
  *
- * Schema Updated: 2011-01-29
+ * Schema Updated: 2011-02-01
  * 
 CREATE TABLE IF NOT EXISTS `minutes` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `meeting_id` int(11) NOT NULL,
   `formal` tinyint(1) DEFAULT NULL,
   `presiding_officer` int(11) DEFAULT NULL,
-  `old_business` text NOT NULL,
   `new_business` text NOT NULL,
   `unfinished_business` text NOT NULL,
   `good_of_order` text NOT NULL,
@@ -32,7 +31,6 @@ class Minutes extends DB_Table {
 	public $meeting_id = NULL;
 	public $formal = NULL;
 	public $presiding_officer_id = NULL;
-	public $old_business = NULL;
 	public $new_business = NULL;
 	public $unfinished_business = NULL;
 	public $good_of_order = NULL;
@@ -45,7 +43,6 @@ class Minutes extends DB_Table {
 							'meeting_id' => 'meeting_id',
 							'formal' => 'formal',
 							'presiding_officer_id' => 'presiding_officer',
-							'old_business' => 'old_business',
 							'new_business' => 'new_business',
 							'unfinished_business' => 'unfinished_business',
 							'good_of_order' => 'good_of_order',

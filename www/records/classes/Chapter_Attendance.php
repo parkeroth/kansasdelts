@@ -25,44 +25,9 @@ class Chapter_Attendance extends DB_Table {
 		parent::__construct($params);
 	}
 	
-	public function get_count($attendanceStatus, $memberStatus = NULL){
-		
-		if($attendanceStatus != 'present'){
-			$query = "
-				SELECT COUNT(ID) AS total
-				FROM $this->table_name 
-				WHERE date = '$this->date'
-				AND status = '$attendanceStatus'";
-		} else {
-			$query = "
-				SELECT COUNT(ID) AS total
-				FROM members
-				WHERE username NOT IN(
-					SELECT username
-					FROM $this->table_name
-					WHERE date = '$this->date'
-				)";
-		}		
-		if($memberStatus != NULL){
-			$query .= " AND memberStatus = '$memberStatus'";
-		}
-		//echo $query;
-		$result = $this->connection->query($query);
-		$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
-		return $data[total];
-	}
-	
-	public function haz_quorum(){
-		$memeber_manager = new Member_Manager(); //TODO: Fix this call
-		
-		$can_vote = sizeof($memeber_manager->get_members_by_status('active'));
-		$voting_present = $this->get_count('present', 'active');
-		//echo $can_vote.' '.$voting_present;
-		if($voting_present/$can_vote > .5){
-			return true;
-		} else {
-			return false;
-		}
+	public function get_meeting_date(){
+		$meeting = new Meeting($this->meeting_id);
+		return $meeting->date;
 	}
 	
 	function __destruct() {
@@ -72,9 +37,38 @@ class Chapter_Attendance extends DB_Table {
 
 class Chapter_Attendance_Manager extends DB_Manager {
 	
-	public function get_list_by_meeting($meeting_id){
-		$where = "WHERE meeting_id='$meeting_id'";
-		return $this->get_attendance_list($where);
+	public function get_total_by_meeting($meeting_id, $status, $only_voting = false){
+		if($only_voting){
+			$restrict_str = " AND m.memberStatus = 'active'";
+		} else {
+			$restrict_str = '';
+		}
+		$query = "SELECT count(a.ID) as total 
+				FROM attendance AS a
+				JOIN members AS m
+				ON a.member_id = m.ID
+				WHERE a.meeting_id = '$meeting_id'
+				AND a.status = '$status' 
+				$restrict_str"; //echo $query;
+		$result = mysqli_query($this->connection, $query);
+		$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
+		
+		return $data[total];
+	}
+	
+	public function get_list_by_meeting($meeting_id, $sort = true){
+		$list = array();
+		$query = "SELECT a.ID 
+				FROM attendance AS a
+				JOIN members AS m
+				ON a.member_id = m.ID
+				WHERE a.meeting_id = '$meeting_id'
+				ORDER BY m.lastName"; //echo $query;
+		$result = mysqli_query($this->connection, $query);
+		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
+			$list[] = new Chapter_Attendance($data[ID]);
+		}
+		return $list;
 	}
 	
 	public function get_record_by_meeting_member($member_id, $meeting_id){

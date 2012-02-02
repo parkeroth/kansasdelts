@@ -7,6 +7,54 @@ require_once 'classes/Chapter_Attendance.php';
 require_once 'classes/Meeting.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 	
+if($_SERVER['REQUEST_METHOD'] == "POST") {
+	$meeting_id = $_POST[meeting_id];
+	$member_id = $_POST[member_id];
+	$status = $_POST[status];
+	$attendance_manager = new Chapter_Attendance_Manager();
+	$attendance_record = $attendance_manager->get_record_by_meeting_member($member_id, $meeting_id);
+	
+	if($status != 'select' && !$attendance_record->id){
+		$attendance_record = new Chapter_Attendance();
+		$attendance_record->meeting_id = $meeting_id;
+		$attendance_record->member_id = $member_id;
+		$attendance_record->status = $_POST[status];
+		$attendance_record->insert();
+
+		$meeting_date = $attendance_record->get_meeting_date();
+	}
+	
+} else if($_GET[action] == 'remove'){
+	$attendance_id = $_GET[id];
+	$attendance_record = new Chapter_Attendance($attendance_id);
+	$meeting_date = $attendance_record->get_meeting_date();
+	$attendance_record->delete();
+	
+} else if($_GET[action] == 'toggle'){
+	$attendance_id = $_GET[id];
+	$attendance_record = new Chapter_Attendance($attendance_id);
+	$meeting_date = $attendance_record->get_meeting_date();
+	if($attendance_record->status == 'absent'){
+		$attendance_record->status = 'excused';
+	} else {
+		$attendance_record->status = 'absent';
+	}
+	$attendance_record->save();
+}
+
+// Set get date variables based on $meeting_date
+if($meeting_date){
+	$month = date('n', strtotime($meeting_date));
+	$year = date('Y', strtotime($meeting_date));
+	$_GET[year] = $year;
+	if($month < 8){
+		$_GET[term] = 'spring';
+	} else {
+		$_GET[term] = 'fall';
+	}
+}
+
+
 include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 ?>
 	
@@ -145,23 +193,23 @@ if(isset($_GET['term']) && isset($_GET['year']))
 				echo "<input 	type=\"button\" 
 								name=\"remove-".$attendance_record->id."\" 
 								value=\"Remove\"
-								onclick=\"window.location.href='php/attendance.php?action=remove&amp;ID=".$attendance_record->id."'\" />";
+								onclick=\"window.location.href='".$_SERVER['PHP_SELF']."?action=remove&amp;id=".$attendance_record->id."'\" />";
 				echo "<input 	type=\"button\" 
 								name=\"toggle-".$attendance_record->id."\" 
 								value=\"Toggle\"
-								onclick=\"window.location.href='php/attendance.php?action=toggle&amp;ID=".$attendance_record->id."&amp;status=".$attendance_record->status."'\" />";
+								onclick=\"window.location.href='".$_SERVER['PHP_SELF']."?action=toggle&amp;id=".$attendance_record->id."'\" />";
 				echo "</td></tr>\n";
 				$member->__destruct();
 			}
 			echo "</table>";
 			
-			echo "<form action=\"php/attendance.php\" method=\"POST\">";
+			echo "<form action=\"".$_SERVER['PHP_SELF']."\" method=\"POST\">";
 			
 			echo "<table align=\"center\">";
 			echo "<tr>";
 			
 			echo "<td>";
-			echo "<select name=\"name\">";
+			echo "<select name=\"member_id\">";
 			foreach($all_members as $member){
 				if(!in_array($member->id, $members_with_records)){
 					echo "<option value=\"".$member->id."\">".ucwords($member->first_name)." ".ucwords($member->last_name)."</option>";
@@ -184,7 +232,7 @@ if(isset($_GET['term']) && isset($_GET['year']))
 			<input name="Submit" type="submit" />
 			
 			<input type="hidden" name="action" value="add" />
-			<input type="hidden" name="date" value="<?php echo $dateArray['date']; ?>" />
+			<input type="hidden" name="meeting_id" value="<?php echo $meeting->id; ?>" />
 			
 			<?php
 			echo "</td>";

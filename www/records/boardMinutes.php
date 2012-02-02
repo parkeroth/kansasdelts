@@ -29,7 +29,6 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 	$minutes->start_time = $_POST[start_time];
 	$minutes->formal = $_POST[formal];
 	$minutes->end_time = $_POST[end_time];
-	$minutes->old_business = addslashes($_POST[old_business]);
 	$minutes->new_business = addslashes($_POST[new_business]);
 	$minutes->unfinished_business = addslashes($_POST[unfinished_business]);
 	$minutes->good_of_order = addslashes($_POST[good_of_order]);

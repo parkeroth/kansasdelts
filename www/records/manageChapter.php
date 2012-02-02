@@ -96,7 +96,7 @@ function print_meeting_row($meeting){
 			window.location.href = 'attendanceExcused.php?id=' + event.target.id;
 		})
 		$("input.edit-minutes").click(function(event){
-			window.location.href = 'chapterMinutes.php?id=' + event.target.id;
+			window.location.href = 'chapterMinutes.php?action=edit&id=' + event.target.id;
 		})
 		$("input.take-attendance").click(function(event){
 			window.location.href = 'attendanceForm.php?id=' + event.target.id;
