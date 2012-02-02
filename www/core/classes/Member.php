@@ -148,6 +148,17 @@ class Member_Manager extends DB_Manager
 	function __construct() {
 		parent::__construct();
 	}
+	
+	// IF THIS CHANGES UPDATE /records/chapterMinutes.php
+	public function get_total_voting(){
+		$query = "
+			SELECT COUNT(ID) as total 
+			FROM members
+			WHERE memberStatus = 'active'"; //echo $query.'<br>';
+		$result = $this->connection->query($query);
+		$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
+		return $data[total];
+	}
 
 	public function get_members_by_position($position_type){
 		$where = "WHERE accountType LIKE '%|$position_type%'
@@ -165,7 +176,7 @@ class Member_Manager extends DB_Manager
 		$query = "
 			SELECT ID FROM members
 			$where
-			ORDER BY firstName ASC"; //echo $query.'<br>';
+			ORDER BY lastName ASC"; //echo $query.'<br>';
 		$result = $this->connection->query($query);
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$member = new Member($data[ID]);

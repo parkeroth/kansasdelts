@@ -179,8 +179,8 @@ foreach($user_position_ids as $position_ids){
 					<a href="#">Manage Records</a>
 					<ul>
 						<li><a href="records/manageBoard.php">Board Meetings</a></li>
-						<li><a href="attendanceExcused.php">Excuse Member</a></li>
-						<li><a href="attendanceForm.php">Attendance Records</a></li>
+						<li><a href="records/manageChapter.php">Chapter Meetings</a></li>
+						<li><a href="records/attendanceForm.php">Attendance Records</a></li>
 					</ul>
 				</li>
 				
