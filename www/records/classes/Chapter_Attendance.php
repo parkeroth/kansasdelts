@@ -76,12 +76,18 @@ class Chapter_Attendance_Manager extends DB_Manager {
 	
 	public function get_list_by_meeting($meeting_id, $sort = true){
 		$list = array();
-		$query = "SELECT a.ID 
-				FROM attendance AS a
-				JOIN members AS m
-				ON a.member_id = m.ID
-				WHERE a.meeting_id = '$meeting_id'
-				ORDER BY m.lastName"; //echo $query;
+		if($sort){
+			$query = "SELECT a.ID 
+					FROM attendance AS a
+					JOIN members AS m
+					ON a.member_id = m.ID
+					WHERE a.meeting_id = '$meeting_id'
+					ORDER BY m.lastName";
+		} else {
+			$query = "SELECT ID FROM attendance
+					WHERE meeting_id ='$meeting_id'";
+		}
+		// echo $query;
 		$result = mysqli_query($this->connection, $query);
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Chapter_Attendance($data[ID]);
