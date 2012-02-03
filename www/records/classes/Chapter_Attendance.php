@@ -3,6 +3,24 @@
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/DB_Table.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 
+/**
+ * This table holds all the relevent information about chapter attendance records
+ *
+ * @author Parker Roth
+ *
+ * Schema Updated: 2011-02-02
+ * 
+CREATE TABLE IF NOT EXISTS `attendance` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `member_id` int(11) NOT NULL,
+  `meeting_id` int(11) NOT NULL,
+  `username` varchar(6) DEFAULT NULL COMMENT 'Deprecated',
+  `status` set('absent','excused') NOT NULL,
+  `date` date DEFAULT NULL COMMENT 'Deprecated',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1444 ;
+ * 
+ */
 class Chapter_Attendance extends DB_Table {
 	private static $STATUS = array('present', 'excused', 'absent');
 	

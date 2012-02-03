@@ -180,7 +180,7 @@ foreach($user_position_ids as $position_ids){
 					<ul>
 						<li><a href="records/manageBoard.php">Board Meetings</a></li>
 						<li><a href="records/manageChapter.php">Chapter Meetings</a></li>
-						<li><a href="records/attendanceForm.php">Attendance Records</a></li>
+						<li><a href="records/attendanceRecords.php">Attendance Records</a></li>
 					</ul>
 				</li>
 				

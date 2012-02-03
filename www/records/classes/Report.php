@@ -17,7 +17,7 @@ $deadline = 43200;
  *
  * @author Parker Roth
  *
- * Schema Updated: 2011-01-29
+ * Schema Updated: 2011-02-02
  * 
 CREATE TABLE IF NOT EXISTS `reports` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `reports` (
   `agenda` text,
   `minutes` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=207 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=73 ;
  * 
  */
 class Report extends DB_Table
