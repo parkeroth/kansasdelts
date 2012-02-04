@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `infractionlog` (
  * 
  */
 class Infraction_Log extends DB_Table {
-	public static $INFRACTION_STATUS = array('approved', 'reverted');
+	public static $INFRACTION_STATUS = array('approved', 'reverted', 'rejected', 'reverted');
 	public static $INFRACTION_TYPES = array(	'missedDaily' => 'Missed Daily',
 									'missedCleaning' => 'Missed Cleanings',
 									'unexcusedChapter' => 'Unexcused Chapter Absence',
@@ -69,6 +69,18 @@ class Infraction_Log extends DB_Table {
 		parent::insert();
 	}
 	
+	public function get_occurance_num(){
+		$sem = new Semester($this->date_occured);
+		$occurances = 0;
+		$infraction_manager = new Infraction_Log_Manager();
+		$infraction_list = $infraction_manager->get_by_offender($this->offender_id, $this->type, $sem);
+		foreach($infraction_list as $record){
+			if($record->status == 'approved')
+				$occurances++;
+		}
+		return $occurances + 1;
+	}
+	
 	function __destruct() {
 		parent::__destruct();
 	}
@@ -88,13 +100,23 @@ class Infraction_Log_Manager extends DB_Manager {
 		return $this->get_log_list($where);
 	}
 	
-	public function get_by_offender($offender_id, $type = NULL, $sem = NULL){
+	public function get_by_offender($offender_id, $type = NULL, $sem = NULL, $status = NULL){
 		$where = "WHERE offender_id = '$offender_id'";
 		if($type)
 			$where .= " AND type = '$type'";
 		if($sem){
-			$where .= " AND dateOccured BETWEEN ".$sem->get_start_date()." AND ".$sem->get_end_date();
+			$where .= " AND dateOccured BETWEEN '".$sem->get_start_date()."' AND '".$sem->get_end_date()."'";
 		}
+		if($status){
+			$where .= " AND status = '$status'";
+		}
+		return $this->get_log_list($where);
+	}
+	
+	public function get_pending($type = NULL){
+		$where = "WHERE status = 'pending'";
+		if($type)
+			$where .= " AND type = '$type'";
 		return $this->get_log_list($where);
 	}
 	
@@ -104,7 +126,7 @@ class Infraction_Log_Manager extends DB_Manager {
 			SELECT ID FROM infractionLog
 			$where
 			ORDER BY dateOccured 
-			$limit"; echo $query.'<br>';
+			$limit"; //echo $query.'<br>';
 		$result = mysqli_query($this->connection, $query);
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Infraction_Log($data[ID]);

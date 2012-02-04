@@ -73,7 +73,7 @@ class Punishment_Manager extends DB_Manager {
 		$query = "
 			SELECT ID FROM ".TABLE."
 			$where
-			ORDER BY offence_num 
+			ORDER BY offenceNum 
 			$limit"; //echo $query.'<br>';
 		$result = mysqli_query($this->connection, $query);
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){

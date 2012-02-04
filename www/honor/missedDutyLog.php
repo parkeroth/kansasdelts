@@ -1,7 +1,8 @@
 <?php
 	$authUsers = array('admin', 'pres', 'saa', 'secretary');
 	include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
-	$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
+	include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
+	include_once 'classes/Infraction_Log.php';
 	
 	include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 	
@@ -98,67 +99,47 @@ function confirmRevert(URL){
 		</table>
 </div>
 	<?php 
-		include_once('../php/login.php');
-		$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
-		
+		$records = false;
+	
 		if($season == "fall") {
-			$startDate = $year."-08-01";
-			$endDate = $year."-12-31";
+			$sem = new Semester($year.'-08-01');
 		} else if($season == "spring") {
-			$startDate = $year."-01-01";
-			$endDate = $year."-05-31";
+			$sem = new Semester($year.'-01-01');
 		}
 		
-		$offenderQuery = "
-			SELECT DISTINCT l.offender, m.firstName, m.lastName
-			FROM infractionLog AS l
-			JOIN members AS m
-			ON l.offender = m.username
-			WHERE l.dateOccured BETWEEN '$startDate' AND '$endDate'
-			AND l.status = 'approved'
-			ORDER BY m.lastName";
-		$getOffenders = mysqli_query($mysqli, $offenderQuery);
-		$records = false;
-		while($offenderArray = mysqli_fetch_array($getOffenders, MYSQLI_ASSOC)){
-			$records = true;
-			echo "<h2>$offenderArray[firstName] $offenderArray[lastName]</h2>";
-			
-			echo "<table align=\"center\">";
-			$infractionQuery = "
-				SELECT 
-					t.name,
-					l.dateOccured,
-					l.ID
-				FROM infractionLog as l
-				JOIN infractionTypes as t
-				ON l.type = t.code 
-				WHERE l.offender = '$offenderArray[offender]'
-				AND l.status = 'approved'
-				ORDER BY l.dateOccured";
-			$getInfractions = mysqli_query($mysqli, $infractionQuery);
-			$first = true;
-			
-			echo "<table style=\"text-align:center;\" width=\"480\" align=\"center\" cellspacing=\"0\">";
-			
-			while($infractionArray = mysqli_fetch_array($getInfractions, MYSQLI_ASSOC)){
-				
-				if($first){
-					echo '<tr class="tableHeader"><td>Infraction</td><td>Date</td><td></td></tr>';
-					$first = false;
-				}				
-				echo "<tr><td>";
-				echo "$infractionArray[name]</t>\n";
-				echo "<td>";
-				echo date('M j, Y', strtotime($infractionArray[dateOccured]));
-				echo "</td><td>";
-				if($haz_super_powers){
-					echo "<input 	type=\"button\"  
-								value=\"Revert\"
-								onclick=\"javascript: confirmRevert('missedDuty.php?type=revert&amp;id=".$infractionArray[ID]."')\" />";
+		$member_manager = new Member_Manager();
+		$all_members = $member_manager->get_all_members();
+		
+		$infraction_manager = new Infraction_Log_Manager();
+		
+		foreach($all_members as $member){
+			$infraction_list = $infraction_manager->get_by_offender($member->id, NULL, $sem, 'approved');
+			if(count($infraction_list) > 0){
+				$records = true;
+				echo "<h2>$member->first_name $member->last_name</h2>";
+
+				$first = true;
+				echo "<table style=\"text-align:center;\" width=\"480\" align=\"center\" cellspacing=\"0\">";
+
+				foreach($infraction_list as $record){
+					if($first){
+						echo '<tr class="tableHeader"><td>Infraction</td><td>Date</td><td></td></tr>';
+						$first = false;
+					}				
+					echo "<tr><td>";
+					echo Infraction_Log::$INFRACTION_TYPES[$record->type]."</t>\n";
+					echo "<td>";
+					echo date('M j, Y', strtotime($record->date_occured));
+					echo "</td><td>";
+					if($haz_super_powers){
+						echo "<input 	type=\"button\"  
+									value=\"Revert\"
+									onclick=\"javascript: confirmRevert('popup/missedDuty.php?type=revert&amp;id=".$record->id."')\" />";
+					}
+					echo "</td></tr>\n";
 				}
-				echo "</td></tr>\n";
+				echo "</table>";
 			}
-			echo "</table>";
 		}
 		if(!$records){
 			echo '<p>&nbsp;</p>';
