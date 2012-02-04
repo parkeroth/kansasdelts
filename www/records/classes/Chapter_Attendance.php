@@ -1,7 +1,9 @@
 <?php
 
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/util.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/DB_Table.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/honor/classes/Punishment.php';
 
 /**
  * This table holds all the relevent information about chapter attendance records
@@ -48,8 +50,25 @@ class Chapter_Attendance extends DB_Table {
 		return $meeting->date;
 	}
 	
+	public function insert(){
+		$this->check_for_punishment();
+		parent::insert();
+	}
+	
+	public function save(){
+		$this->check_for_punishment();
+		parent::save();
+	}
+	
 	function __destruct() {
 		parent::__destruct();
+	}
+	
+	private function check_for_punishment(){
+		$infraction_type = 'unexcusedChapter';
+		$punishment_manager = new Punishment_Manager();
+		$infraction_manager = new Infraction_Log_Manager();
+		$sem = new Semester();
 	}
 }
 
