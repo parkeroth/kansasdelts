@@ -4,6 +4,7 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/util.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/DB_Table.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/honor/classes/Punishment.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/honor/classes/Infraction_Log.php';
 
 /**
  * This table holds all the relevent information about chapter attendance records
@@ -27,7 +28,7 @@ class Chapter_Attendance extends DB_Table {
 	private static $STATUS = array('present', 'excused', 'absent');
 	
 	public $id = NULL;
-	public $memeber_id = NULL;
+	public $member_id = NULL;
 	public $meeting_id = NULL;
 	public $username = NULL; // Deprecated
 	public $status = NULL;
@@ -66,9 +67,34 @@ class Chapter_Attendance extends DB_Table {
 	
 	private function check_for_punishment(){
 		$infraction_type = 'unexcusedChapter';
+		$sem = new Semester();
 		$punishment_manager = new Punishment_Manager();
 		$infraction_manager = new Infraction_Log_Manager();
-		$sem = new Semester();
+		
+		// If person is absent check for and apply the appropraite punishment
+		if($this->status == 'absent'){
+			$existing_log_list = $infraction_manager->get_by_meeting_id($this->meeting_id, $this->member_id);
+			if(count($existing_log_list) == 0){	// If no existing punishment has been issued for this meeting
+				$infraction_log = new Infraction_Log();
+				$infraction_log->date_occured = $this->get_meeting_date();
+				$infraction_log->description = 'Automated punishment submitted for unexcused chapter absense';
+				$infraction_log->meeting_id = $this->meeting_id;
+				$infraction_log->offender_id = $this->member_id;
+				$infraction_log->type = $infraction_type;
+				$infraction_log->insert();
+			}
+		} else if($this->status == 'excused'){
+			$existing_log_list = $infraction_manager->get_by_meeting_id($this->meeting_id, $this->member_id);
+			if(count($existing_log_list) > 0){ // If records exist remove them
+				foreach($existing_log_list as $log){
+					if($log->status != 'pending'){
+						throw Exception('Cannot delete a non pending punishment!');
+					} else {
+						$log->delete();
+					}
+				}
+			}
+		}
 	}
 }
 

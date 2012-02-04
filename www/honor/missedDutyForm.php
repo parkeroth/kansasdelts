@@ -2,9 +2,8 @@
 session_start();
 $authUsers = array('brother');
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
-include_once('../php/login.php');
-
-$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/Member.php';
+include_once 'classes/Infraction_Log.php';
 
 include_once('snippets.php');
 
@@ -15,60 +14,18 @@ include_once('snippets.php');
 if($_SERVER['REQUEST_METHOD'] == "POST") {
 	
 	$type = $_POST[type];
-	$status = 'pending';
-	
-	$now = date("Y-m-d H:i:s");
 	$occured = strtotime($_POST[dateOccured]);
-	$dateOccured = date("Y-m-d", $occured);
+	$date_occured = date("Y-m-d", $occured);
 	
-	$add_sql = "INSERT INTO infractionLog (offender, reporter, type, dateReported, dateOccured, description, status) 
-				VALUES ('$_POST[offender]', '$_SESSION[username]', '$type', '$now', '$dateOccured', '$_POST[description]', '$status')";
-				
-				
-	$add_res = mysqli_query($mysqli, $add_sql);
-	header("location: ../success.php?page=MissedDuty");
+	$infraction_log = new Infraction_Log();
+	$infraction_log->offender_id = $_POST[offender];
+	$infraction_log->reporter_id = $session->member_id;
+	$infraction_log->type = $type;
+	$infraction_log->date_occured = $date_occured;
+	$infraction_log->description = $_POST[description];
+	$infraction_log->insert();
 	
-	
-	/*require 'class.phpmailer.php';
-		
-	try {
-		$mail = new PHPMailer(true); //New instance, with exceptions enabled
-	
-		$mail->IsSMTP();                           			// tell the class to use SMTP
-		$mail->SMTPAuth   = true;                  			// enable SMTP authentication
-		$mail->Port       = 25;                    			// set the SMTP server port
-		$mail->Host       = "smtp.gmail.com"; 				// SMTP server
-		$mail->Username   = "dtdadmin@kansasdelts.org";     // SMTP server username
-		$mail->Password   = "DTD1856GammaTau";           	// SMTP server password
-	
-		$mail->IsSendmail();  								// tell the class to use Sendmail
-	
-		$mail->From       = "noreply@kansasdelts.org";
-		$mail->FromName   = "Delt Website";
-		
-		
-		$toQuery = "SELECT username, type FROM notifications where accountType LIKE '%|".$position[$i]."%' LIMIT 1";
-		$getTo = mysqli_query($mysqli, $toQuery);
-		$toArray = mysqli_fetch_array($getTo, MYSQLI_ASSOC);
-		
-		$mail->AddAddress($to, 'Webmaster');
-		
-		
-		
-		$mail->Subject  = "New Honor Board Write Up";
-	
-		$mail->WordWrap   = 80; // set word wrap
-	
-		$mail->MsgHTML($body);
-	
-		$mail->IsHTML(true); // send as HTML
-	
-		$mail->Send();
-	} catch (phpmailerException $e) {
-		echo $e->errorMessage();
-	}*/
-	
-	//header("location: ../account.php?from=writeUp");
+	//header("location: ../success.php?page=MissedDuty");
 
 } 
 
@@ -82,7 +39,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");?>
 
 	<h2 align="center">Missed Duty Form</h2>
     
-    <form name="passwordChange" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+    <form name="missedDuty" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
     	<table border="0" cellpadding="4" align="center">
     		<tr>
     			<th>Party Responsible for Infraction: </th>
@@ -90,20 +47,12 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");?>
     				<option value="select">Select One</option>
     				
     				<?php
-		
-		$userData = "
-			SELECT * 
-			FROM members
-			ORDER BY lastName";
-		$getUserData = mysqli_query($mysqli, $userData);
-		
-			while($userDataArray = mysqli_fetch_array($getUserData, MYSQLI_ASSOC))
-			{
-				echo "<option value=\"$userDataArray[username]\">$userDataArray[firstName] $userDataArray[lastName]</option>";
-			}
-		
-		
-		?>
+		$member_manager = new Member_Manager();
+		$all_members = $member_manager->get_all_members();
+		foreach($all_members as $member){
+			echo "<option value=\"$member->id\">$member->first_name $member->last_name</option>";
+		}
+				?>
     				
     				</select></td>
     			</tr>
@@ -113,19 +62,11 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");?>
     				<select name="type">
     					<option value="select">Select One</option>
 						
-						<?php 
-							$infractionQuery = "
-								SELECT * 
-								FROM infractionTypes
-								ORDER BY ID";
-							$getInfraction = mysqli_query($mysqli, $infractionQuery);
-							
-							while($infractionArray = mysqli_fetch_array($getInfraction, MYSQLI_ASSOC))
-							{
-								echo "<option value=\"$infractionArray[code]\">$infractionArray[name]";
-							}
-							
-						?>
+				<?php 
+		foreach(Infraction_Log::$INFRACTION_TYPES as $type => $title){
+			echo "<option value=\"$type\">$title</option>";
+		}
+				?>
 						
     					</select>
     				</td>
