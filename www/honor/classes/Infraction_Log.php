@@ -2,6 +2,7 @@
 
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/util.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/DB_Table.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 
 /**
  * This table holds the information related to a single offence for a punishment set in the punishments table
@@ -67,6 +68,67 @@ class Infraction_Log extends DB_Table {
 		$this->date_reported = date('Y-m-d');
 		$this->status = 'pending';
 		parent::insert();
+	}
+	
+	public function apply_punishment(){
+		$punishment = $this->get_punishment();
+		$offender = new Member($this->offender_id);
+		if($punishment->fine > 0)
+		{
+			$query = "	INSERT INTO fines (amount, username, status, date, description)
+						VALUES ('$punishment->fine', '$offender->username', 'pending', '$this->date_occured', 
+								'".Infraction_Log::$INFRACTION_TYPES[$this->type].": $occurance_num')";
+			$result = $this->connection->query($query);
+		}
+
+		// Apply Hours to account
+		if($punishment->hours > 0)
+		{
+			$query = "	INSERT INTO hourLog (username, term, year, hours, type, eventID, dateAdded, notes)
+						VALUES ('$offender->username', '$sem->term', '$sem->year', '-$punishment->hours', '$punishment->hour_type',
+								'0', '$this->date_occured', '".Infraction_Log::$INFRACTION_TYPES[$this->type].": $occurance_num')";
+			$result = $this->connection->query($query);
+		}
+		if($punishment->suspension != 'none' && $punishment->suspension != 'NULL')
+		{
+			echo "Apply suspension<br>";
+		}
+		if($punishment->expel)
+		{
+			echo "Apply expel<br>";
+		}	
+
+		$this->status = 'approved';
+		$this->save();
+	}
+	
+	public function revert_punishment(){
+		$punishment = $this->get_punishment();
+		$offender = new Member($this->offender_id);
+		
+		if($punishment->fine > 0)
+		{
+			$query = "	INSERT INTO fines (amount, username, status, date, description)
+						VALUES ('-$punishment->fine', '$offender->username', 'pending', '$this->date_occured', 'SAA Correction')";
+			$result = $this->connection->query($query);
+		}
+		if($punishment->hours > 0)
+		{
+			$query = "	INSERT INTO hourLog (username, term, year, hours, type, eventID, dateAdded, notes)
+						VALUES ('$offender->username', '$sem->term', '$sem->year', '$punishment->hours', '$punishment->hour_type',
+								'0', '$this->date_occured', 'SAA Correction')";
+			$result = $this->connection->query($query);
+		}
+
+		$this->status = 'reverted';
+		$this->save();
+	}
+	
+	public function get_punishment(){
+		$occurance_num = $this->get_occurance_num();
+		$punishment_manager = new Punishment_Manager();
+		$list = $punishment_manager->get_by_type($infraction->type, $offence_num);
+		return $list[0];
 	}
 	
 	public function get_occurance_num(){
