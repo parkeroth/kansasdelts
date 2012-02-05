@@ -9,7 +9,7 @@ class Study_Hour_Logs extends DB_Table
         public $proctorIn = NULL;
         public $proctorOut = NULL;
         public $duration = NULL;
-        public $sessionID = NULL;
+        public $id = NULL;
         public $timeIn = NULL;
         public $open = NULL;
         public $userID = NULL;
@@ -42,15 +42,7 @@ class Study_Hour_Logs extends DB_Table
 		return $this->insert();
         }
 
-        public function end_sh_session($shUser, $timeCompleted) {
-                //they were in, so we have work to do
-
-		//The easiest way to do this is to search for any logs with the
-		//"open" status, close them, and calculate the duration
-		//NOTE: this will cause problems if more them one session is open, but
-		//that shouldn't be the case.  working the solution another way will be more
-		//time/resource comsuming, so i'll just do it the "drity" way until it causes problems
-
+        public function end_sh_session() {
         	$this->proctorOut = $_SESSION['userID'];
 		$curTime = time();
 
@@ -60,8 +52,8 @@ class Study_Hour_Logs extends DB_Table
 
 		//Now set up our update query
                $this->open = 'no';                                   //close out the open session
-               $this->save();          //and update the database
-               return $this->duration;                  //return duration of current session back to caller
+               $this->save();                                           //and update the database
+               return $this->duration;                            //return duration of current session back to caller
         }
 
         public function delete_sh_log() {
@@ -107,7 +99,13 @@ class Study_Hour_Requirements extends DB_Table
 
         public function update_hrs_completed($newHrs) {
                 //can both add and subtract hours if adjustments need to be made
+                //pass in a negative value to subtract hours
                 $this->hoursCompleted += $newHrs;
+                return $this->save();
+        }
+
+        public function set_user_status($newStatus) {
+                $this->status = $newStatus;
                 return $this->save();
         }
 
@@ -155,6 +153,14 @@ class Study_Hour_Manager extends DB_Manager
                 $new_sh_user->status = 'out';
 		return $new_sh_user->add_sh_user();
         }
+
+        public function get_user_sh_requirements($userID) {
+                $where = "userID = '$userID'";
+                $shList = $this->get_sh_user_list($where);
+                //should only return one result, so just return the first
+                //instance of Study_Hour_Requirements
+                return $shList[0];
+        }
 }
 
 class Study_Hour_Log_Manager extends DB_Manager
@@ -194,7 +200,14 @@ class Study_Hour_Log_Manager extends DB_Manager
                 return $retVal;
         }
 
-        public function get_current_week_data($userID) {
+        public function get_week_data($userID, $week_offset = 0) {
+                $weekStart = mktime(1, 0, 0, date('m'), date('d')-date('w'), date('Y'));        //start of current week
+                $weekStart = $weekStart - ($week_offset * 7 * 24 * 60 * 60);                    //subtract week offset
+                $where = "WHERE YEARWEEK(timeIn) = YEARWEEK($weekStart)";
+                return $this->get_user_sessions($userID, $where);
+        }
+
+        /*public function get_current_week_data($userID) {
                 $retVal = -1;
                 $curWeekBlockQ =
                     "SELECT COUNT(*) AS rows
@@ -207,8 +220,7 @@ class Study_Hour_Log_Manager extends DB_Manager
 			$retVal = $data[row];
 		}
 		return $retVal;
-        }
-
+        }*/
 }
 
 ?>

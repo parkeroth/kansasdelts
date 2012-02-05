@@ -4,6 +4,7 @@ include_once($_SERVER['DOCUMENT_ROOT'].'/php/login.php');
 $authUsers = array('admin', 'academics', 'pledgeEd');
 include_once($_SERVER['DOCUMENT_ROOT'].'/php/authenticate.php');
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/studyHours.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 
 include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 ?>
