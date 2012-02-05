@@ -37,8 +37,6 @@ class Infraction_Log extends DB_Table {
 	public $id = NULL;
 	public $offender_id = NULL;
 	public $reporter_id = NULL;
-	public $offender = NULL;			//REMVOE Deprecated
-	public $reporter = NULL;			//REMVOE Deprecated
 	public $type = NULL;
 	public $date_reported = NULL;
 	public $date_occured = NULL;
@@ -51,8 +49,6 @@ class Infraction_Log extends DB_Table {
 		$this->table_mapper = array('id' => 'ID',
 							'offender_id' => 'offender_id',
 							'reporter_id' => 'reporter_id',
-							'offender' => 'offender',
-							'reporter' => 'reporter',
 							'type' => 'type',
 							'date_reported' => 'dateReported',
 							'date_occured' => 'dateOccured',
