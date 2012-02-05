@@ -25,7 +25,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 	$infraction_log->description = $_POST[description];
 	$infraction_log->insert();
 	
-	//header("location: ../success.php?page=MissedDuty");
+	header("location: ../success.php?page=MissedDuty");
 
 } 
 

@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `infractionlog` (
  * 
  */
 class Infraction_Log extends DB_Table {
-	public static $INFRACTION_STATUS = array('approved', 'reverted', 'rejected');
+	public static $INFRACTION_STATUS = array('approved', 'reverted', 'rejected', 'pending');
 	public static $INFRACTION_TYPES = array(	'missedDaily' => 'Missed Daily',
 									'missedCleaning' => 'Missed Cleanings',
 									'unexcusedChapter' => 'Unexcused Chapter Absence',
