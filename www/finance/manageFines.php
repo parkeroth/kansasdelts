@@ -1,10 +1,28 @@
 <?php
 session_start();
-include_once('php/login.php');
-$authUsers = array('admin', 'saa', 'honorBoard');
-include_once('php/authenticate.php');
+$authUsers = array('admin', 'treasurer', 'pres');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
+include_once 'classes/Fine.php';
 
-include_once('snippet/missedDuties.php');
+$action = $_GET[action];
+
+if($action == 'accept')
+{
+	$query = "	UPDATE fines SET status='applied' WHERE ID = '$_GET[id]'";
+	$result = mysqli_query($mysqli, $query);
+	
+	header("location: ../manageFines.php");
+	
+}
+else if($action == 'reject')
+{
+	$query = "	UPDATE fines SET status='rejected' WHERE ID = '$_GET[id]'";
+	$result = mysqli_query($mysqli, $query);
+	
+	header("location: ../manageFines.php");
+	
+}
 
 include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 
@@ -22,12 +40,12 @@ $(document).ready(function(){
 	
 	$(".accept").click(function(){
 		var id = $(this).attr('id');
-		window.location = 'php/fines.php?action=accept&id=' + id;	
+		window.location = 'manageFines.php?action=accept&id=' + id;	
 	});
 	
 	$(".reject").click(function(){
 		var id = $(this).attr('id');
-		window.location = 'php/fines.php?action=reject&id=' + id;	
+		window.location = 'manageFines.php?action=reject&id=' + id;	
 	});
 });
 
@@ -37,7 +55,7 @@ $(document).ready(function(){
 
 <h2>Pending Missed Duties</h2>
 	<?php
-		$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
+		$fine_manager = new Fine_Manager();
 		
 		$pendingFines = "
 			SELECT f.ID, m.firstName, m.lastName, f.description, f.amount, f.description, f.date
