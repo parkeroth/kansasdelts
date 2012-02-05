@@ -3,6 +3,7 @@
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/util.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/DB_Table.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
+include_once 'Punishment.php';
 
 /**
  * This table holds the information related to a single offence for a punishment set in the punishments table
@@ -26,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `infractionlog` (
  * 
  */
 class Infraction_Log extends DB_Table {
-	public static $INFRACTION_STATUS = array('approved', 'reverted', 'rejected', 'reverted');
+	public static $INFRACTION_STATUS = array('approved', 'reverted', 'rejected');
 	public static $INFRACTION_TYPES = array(	'missedDaily' => 'Missed Daily',
 									'missedCleaning' => 'Missed Cleanings',
 									'unexcusedChapter' => 'Unexcused Chapter Absence',
@@ -43,7 +44,6 @@ class Infraction_Log extends DB_Table {
 	public $date_occured = NULL;
 	public $status = NULL;
 	public $description = NULL;
-	public $num_occurance = NULL;		//REMOVE Deprecated
 	public $meeting_id = NULL;
 	
 	function __construct($record_id) {
@@ -58,7 +58,6 @@ class Infraction_Log extends DB_Table {
 							'date_occured' => 'dateOccured',
 							'status' => 'status',
 							'description' => 'description',
-							'num_occurance' => 'numOccurance',
 							'meeting_id' => 'meeting_id');
 		$params = array('id' => $record_id);
 		parent::__construct($params);
