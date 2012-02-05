@@ -13,23 +13,17 @@ session_start();
 $authUsers = array('admin');
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/records/classes/Chapter_Attendance.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/honor/classes/Infraction_Log.php';
 
-
-$meeting_ids = array(7, 15, 16);
-
-$attendance_manager = new Chapter_Attendance_Manager();
-foreach($meeting_ids as $meeting_id){
-	
-	echo 'MEETING id: '.$meeting_id.'<br>';
-	$attendance_list = $attendance_manager->get_list_by_meeting($meeting_id, $sort = false);
-	foreach($attendance_list as $record){
-		echo 'MEMBER username: '.$record->username.'<br>';
-		$member = new Member(NULL, $record->username);
-		echo 'MEMBER id: '.$member->id.'<br>';
-		$record->member_id = $member->id;
-		$record->save();
-	}
-	echo '<br>';
+$log_manager = new Infraction_Log_Manager();
+$log_list = $log_manager->get_all();
+foreach($log_list as $log){
+	$offender = new Member(NULL, $log->offender);
+	echo $offender->first_name.'<br>';
+	$reporter = new Member(NULL, $log->reporter);
+	$log->reporter_id = $reporter->id;
+	$log->offender_id = $offender->id;
+	$log->save();
 }
+
 ?>

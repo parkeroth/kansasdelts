@@ -1,13 +1,14 @@
 <?php
 session_start();
-include_once('../php/login.php');
 $authUsers = array('admin', 'saa', 'pres');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/util.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
+include_once 'classes/Infraction_Log.php';
 
 $super_list = array('admin', 'saa');
 $haz_super_powers = $session->isAuth($super_list);
 
-include_once('snippets.php');
 
 include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 
@@ -27,15 +28,15 @@ $(document).ready(function(){
 		
 		var id = $(this).attr('id');
 		
-		$.get('dutyPopup.php?type=eval&ID=' + id, function(data){
+		$.get('popup/dutyPopup.php?type=eval&ID=' + id, function(data){
 			$("#popupBody").html(data);
 			
 			$(".auth").click(function(){
-				window.location = 'missedDuty.php?type=auth&status=approved&id=' + id;
+				window.location = 'popup/missedDuty.php?type=auth&status=approved&id=' + id;
 			});
 			
 			$(".reject").click(function(){
-				window.location = 'missedDuty.php?type=auth&status=rejected&id=' + id;
+				window.location = 'popup/missedDuty.php?type=auth&status=rejected&id=' + id;
 			});
 		});
 		
@@ -64,52 +65,32 @@ $(document).ready(function(){
 
 <h2>Pending Missed Duties</h2>
 	<?php
-		$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
+		$log_manager = new Infraction_Log_Manager();
+		$pending_list = $log_manager->get_pending();
 		
-		$pendingMisses = "
-			SELECT l.ID, t.name, m.firstName, m.lastName, l.dateOccured, l.type, l.offender
-			FROM infractionLog l
-			JOIN infractionTypes t
-			ON l.type = t.code
-			JOIN members m
-			ON l.offender = m.username
-			WHERE status='pending'";
-		$getPending = mysqli_query($mysqli, $pendingMisses);
-		
-		$numRWR=0;
-		$first=true;
-		
-		$month = date('n');
-		$year = date('Y');
-		
-		if($month < 6){
-			$startDate = "$year-01-01";
-			$endDate = "$year-05-31";
-		} else {
-			$startDate = "$year-08-01";
-			$endDate = "$year-12-31";
-		}
+		$sem = new Semester();
 				
 		echo "<table>\n";
-		while ($pendingArray = mysqli_fetch_array($getPending, MYSQLI_ASSOC)){
-			$numRWR++;
-			
-			if($first)
-			{
-				echo "<tr style=\"font-weight: bold;\"><td width=\"150\">Party Responible</td><td width=\"160\">Date of Occurance</td><td>Type</td><td>Occurance #</td><td></td></tr>\n";
+		$first = true;
+		foreach($pending_list as $record){
+			if($first){
+				echo "<tr style=\"font-weight: bold;\"><td width=\"150\">Party Responible</td><td width=\"160\">Date of Occurance</td><td>Type</td><td>Occurance</td><td></td></tr>\n";
 				$first = false;
 			}
-			
-			$numOccurance = 1 + checkOccurance($mysqli, $pendingArray[type], $pendingArray[offender], $startDate, $endDate);
+			$offender = new Member($record->offender_id);
+			$occurance_number = $record->get_occurance_num();
 			
 			echo "<tr>\n";
-			echo "<td>$pendingArray[firstName] $pendingArray[lastName]</td><td>$pendingArray[dateOccured]</td><td>$pendingArray[name]</td><td style=\"text-align:center;\">$numOccurance</td>";
-			echo "<td><input id=\"$pendingArray[ID]\" class=\"eval\" type=\"button\" value=\"Evaluate\" /></td>";
+			echo "<td>$offender->first_name $offender->last_name</td>";
+			echo "<td>$record->date_occured</td>";
+			echo "<td>".Infraction_Log::$INFRACTION_TYPES[$record->type]."</td>";
+			echo "<td style=\"text-align:center;\">$occurance_number</td>";
+			echo "<td><input id=\"$record->id\" class=\"eval\" type=\"button\" value=\"Evaluate\" /></td>";
 			echo "</tr>\n";
 		}
 		echo "</table>\n";
 		
-		if($numRWR == 0)
+		if(count($pending_list) == 0)
 		{
 			echo "<p>No pending missed duties.</p>";
 		} ?>
