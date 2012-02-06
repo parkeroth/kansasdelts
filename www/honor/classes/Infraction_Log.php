@@ -3,6 +3,7 @@
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/util.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/DB_Table.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/finance/classes/Fine.php';
 include_once 'Punishment.php';
 
 /**
@@ -70,10 +71,12 @@ class Infraction_Log extends DB_Table {
 		$offender = new Member($this->offender_id);
 		if($punishment->fine > 0)
 		{
-			$query = "	INSERT INTO fines (amount, username, status, date, description)
-						VALUES ('$punishment->fine', '$offender->username', 'pending', '$this->date_occured', 
-								'".Infraction_Log::$INFRACTION_TYPES[$this->type].": $occurance_num')";
-			$result = $this->connection->query($query);
+			$fine = new Fine();
+			$fine->amount = $punishment->fine;
+			$fine->member_id = $this->offender_id;
+			$fine->date = $this->date_occured;
+			$fine->description = Infraction_Log::$INFRACTION_TYPES[$this->type].": $occurance_num";
+			$fine->insert();
 		}
 
 		// Apply Hours to account
@@ -103,9 +106,12 @@ class Infraction_Log extends DB_Table {
 		
 		if($punishment->fine > 0)
 		{
-			$query = "	INSERT INTO fines (amount, username, status, date, description)
-						VALUES ('-$punishment->fine', '$offender->username', 'pending', '$this->date_occured', 'SAA Correction')";
-			$result = $this->connection->query($query);
+			$fine = new Fine();
+			$fine->amount = $punishment->fine * -1;
+			$fine->member_id = $this->offender_id;
+			$fine->date = $this->date_occured;
+			$fine->description = "SAA Correction";
+			$fine->insert();
 		}
 		if($punishment->hours > 0)
 		{
