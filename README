@@ -12,6 +12,8 @@ Goals of this refactoring are as follows:
 	- Remove all "non logical" files (images, styles) from core site code
 	
 Working code for review can be found in the following directories:
-	- management
+	- finance
+	- records
+	- honor
 	- core
 	- recruitment (in progress)
