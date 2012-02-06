@@ -16,7 +16,6 @@ class Fine extends DB_Table {
 	
 	public $id = NULL;
 	public $amount = NULL;
-	public $username = NULL;		//REMOVE after running script
 	public $member_id = NULL;
 	protected $status = NULL;
 	public $date = NULL;
@@ -28,7 +27,6 @@ class Fine extends DB_Table {
 		$this->table_mapper = array('id' => 'ID',
 							'amount' => 'amount',
 							'member_id' => 'member_id',
-							'username' => 'username',	//REMOVE after running script
 							'status' => 'status',
 							'date' => 'date',
 							'description' => 'description',
