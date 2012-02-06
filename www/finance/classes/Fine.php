@@ -40,6 +40,7 @@ class Fine extends DB_Table {
 		$this->table_mapper = array('id' => 'ID',
 							'amount' => 'amount',
 							'member_id' => 'member_id',
+							'username' => 'username',
 							'status' => 'status',
 							'date' => 'date',
 							'description' => 'description',
@@ -70,7 +71,7 @@ class Fine_Manager extends DB_Manager {
 			SELECT ID FROM fines
 			$where
 			ORDER BY date 
-			$limit"; //echo $query.'<br>';
+			$limit"; echo $query.'<br>';
 		$result = mysqli_query($this->connection, $query);
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Fine($data[ID]);
