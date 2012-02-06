@@ -9,7 +9,7 @@ define("TABLE", "punishments");
  *
  * @author Parker Roth
  *
- * Schema Updated: 2011-02-02
+ * Schema Updated: 2011-02-05
  * 
 CREATE TABLE IF NOT EXISTS `punishments` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
@@ -20,7 +20,6 @@ CREATE TABLE IF NOT EXISTS `punishments` (
   `hourType` varchar(20) NOT NULL,
   `suspension` varchar(20) NOT NULL,
   `expel` tinyint(1) NOT NULL,
-  `saaApproval` tinyint(1) NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=32 ;
  * 
@@ -37,7 +36,6 @@ class Punishment extends DB_Table {
 	public $hour_type = NULL;
 	public $suspension = NULL;
 	public $expel = NULL;
-	public $saa_approval = NULL;		// My be useless at this point
 	
 	function __construct($punishment_id) {
 		$this->table_name = TABLE;
@@ -48,8 +46,7 @@ class Punishment extends DB_Table {
 							'hours' => 'hours',
 							'hour_type' => 'hourType',
 							'suspension' => 'suspension',
-							'expel' => 'expel',
-							'saa_approval' => 'saaApproval');
+							'expel' => 'expel');
 		$params = array('id' => $punishment_id);
 		parent::__construct($params);
 	}

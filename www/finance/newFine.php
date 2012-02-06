@@ -1,11 +1,9 @@
 <?php
 session_start();
-$authUsers = array('brother');
+$authUsers = array('admin', 'pres', 'saa', 'treasurer');
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/Member.php';
-include_once 'classes/Infraction_Log.php';
-
-include_once('snippets.php');
+include_once 'classes/Fine.php';
 
 /**
  * Processing Section
@@ -13,19 +11,13 @@ include_once('snippets.php');
 
 if($_SERVER['REQUEST_METHOD'] == "POST") {
 	
-	$type = $_POST[type];
-	$occured = strtotime($_POST[dateOccured]);
-	$date_occured = date("Y-m-d", $occured);
+	$fine = new Fine();
+	$fine->amount = $_POST[amount];
+	$fine->member_id = $_POST[payer];
+	$fine->description = $_POST[description];
+	$fine->insert();
 	
-	$infraction_log = new Infraction_Log();
-	$infraction_log->offender_id = $_POST[offender];
-	$infraction_log->reporter_id = $session->member_id;
-	$infraction_log->type = $type;
-	$infraction_log->date_occured = $date_occured;
-	$infraction_log->description = $_POST[description];
-	$infraction_log->insert();
-	
-	header("location: ../success.php?page=MissedDuty");
+	//header("location: ../success.php?page=fine");
 
 } 
 
@@ -37,13 +29,15 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");?>
 
 <?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php");?>
 
-	<h2 align="center">Missed Duty Form</h2>
+	<h2 align="center">Fine Submission Form</h2>
     
-    <form name="missedDuty" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+	<p style="text-align: center">Please include the date of the infraction in the reason.</p>
+	
+    <form name="newFine" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
     	<table border="0" cellpadding="4" align="center">
     		<tr>
-    			<th>Party Responsible for Infraction: </th>
-    			<td><select name="offender">
+    			<th>Payer: </th>
+    			<td><select name="payer">
     				<option value="select">Select One</option>
     				
     				<?php
@@ -57,33 +51,12 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");?>
     				</select></td>
     			</tr>
 			<tr>
-    			<th>Infraction Type: </th>
+    			<th>Amount: </th>
     			<td>
-    				<select name="type">
-    					<option value="select">Select One</option>
-						
-				<?php 
-		foreach(Infraction_Log::$INFRACTION_TYPES as $type => $title){
-			echo "<option value=\"$type\">$title</option>";
-		}
-				?>
-						
-    					</select>
-    				</td>
-    			</tr>
-				
-    		<script type="text/javascript">
-			$(function() {
-				$("#datepicker").datepicker();
-			});
-			</script>
-    		
-    		<tr>
-    			<th>Date of Infraction: </th>
-    			<td><input name="dateOccured" type="text" id="datepicker" size="10" /></td>
+    				<input type="text" name="amount" />
     			</tr>
     		<tr>
-    			<th>Additional Information: </th>
+    			<th>Reason: </th>
     			<td><textarea name="description" cols="40" rows="10"></textarea></td>
     			</tr>
     		<tr>

@@ -7,20 +7,8 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/DB_Table.php';
  *
  * @author Parker Roth
  *
- * Schema Updated: 2011-02-02
+ * Schema Updated: 2011-02-05
  * 
-CREATE TABLE IF NOT EXISTS `punishments` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `offenceNum` int(5) NOT NULL,
-  `type` varchar(20) NOT NULL,
-  `fine` int(10) NOT NULL,
-  `hours` int(5) NOT NULL,
-  `hourType` varchar(20) NOT NULL,
-  `suspension` varchar(20) NOT NULL,
-  `expel` tinyint(1) NOT NULL,
-  `saaApproval` tinyint(1) NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=32 ;
  * 
  */
 class Fine extends DB_Table {
@@ -28,9 +16,9 @@ class Fine extends DB_Table {
 	
 	public $id = NULL;
 	public $amount = NULL;
-	public $username = NULL;
+	public $username = NULL;		//REMOVE after running script
 	public $member_id = NULL;
-	public $status = NULL;
+	protected $status = NULL;
 	public $date = NULL;
 	public $description = NULL;
 	public $infraction_id = NULL;
@@ -40,6 +28,7 @@ class Fine extends DB_Table {
 		$this->table_mapper = array('id' => 'ID',
 							'amount' => 'amount',
 							'member_id' => 'member_id',
+							'username' => 'username',	//REMOVE after running script
 							'status' => 'status',
 							'date' => 'date',
 							'description' => 'description',
@@ -48,12 +37,32 @@ class Fine extends DB_Table {
 		parent::__construct($params);
 	}
 	
+	public function accept(){
+		$this->status = 'approved';
+		$this->save();
+	}
+	
+	public function reject(){
+		$this->status = 'rejected';
+		$this->save();
+	}
+	
+	public function insert(){
+		$this->date = date('Y-m-d');
+		$this->status = 'pending';
+		parent::insert();
+	}
+	
 	function __destruct() {
 		parent::__destruct();
 	}
 }
 
 class Fine_Manager extends DB_Manager {
+	
+	public function get_number_pending(){
+		return count($this->get_all('pending'));
+	}
 	
 	public function get_all($status = NULL){
 		if($status){

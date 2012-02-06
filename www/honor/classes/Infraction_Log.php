@@ -3,6 +3,7 @@
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/util.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/DB_Table.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/finance/classes/Fine.php';
 include_once 'Punishment.php';
 
 /**
@@ -10,24 +11,24 @@ include_once 'Punishment.php';
  *
  * @author Parker Roth
  *
- * Schema Updated: 2011-02-02
+ * Schema Updated: 2011-02-05
  * 
-CREATE TABLE IF NOT EXISTS `infractionlog` (
+CREATE TABLE IF NOT EXISTS `infractionLog` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `offender` varchar(6) NOT NULL,
-  `reporter` varchar(6) NOT NULL,
+  `offender_id` int(11) NOT NULL,
+  `reporter_id` int(11) DEFAULT NULL,
   `type` varchar(50) NOT NULL,
   `dateReported` date NOT NULL,
   `dateOccured` date NOT NULL,
-  `status` varchar(50) NOT NULL,
-  `description` text NOT NULL,
-  `numOccurance` int(4) DEFAULT NULL,
+  `status` set('approved','reverted','rejected','pending') NOT NULL,
+  `description` text,
+  `meeting_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=113 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=119 ;
  * 
  */
 class Infraction_Log extends DB_Table {
-	public static $INFRACTION_STATUS = array('approved', 'reverted', 'rejected');
+	public static $INFRACTION_STATUS = array('approved', 'reverted', 'rejected', 'pending');
 	public static $INFRACTION_TYPES = array(	'missedDaily' => 'Missed Daily',
 									'missedCleaning' => 'Missed Cleanings',
 									'unexcusedChapter' => 'Unexcused Chapter Absence',
@@ -70,10 +71,12 @@ class Infraction_Log extends DB_Table {
 		$offender = new Member($this->offender_id);
 		if($punishment->fine > 0)
 		{
-			$query = "	INSERT INTO fines (amount, username, status, date, description)
-						VALUES ('$punishment->fine', '$offender->username', 'pending', '$this->date_occured', 
-								'".Infraction_Log::$INFRACTION_TYPES[$this->type].": $occurance_num')";
-			$result = $this->connection->query($query);
+			$fine = new Fine();
+			$fine->amount = $punishment->fine;
+			$fine->member_id = $this->offender_id;
+			$fine->date = $this->date_occured;
+			$fine->description = Infraction_Log::$INFRACTION_TYPES[$this->type].": $occurance_num";
+			$fine->insert();
 		}
 
 		// Apply Hours to account
@@ -103,9 +106,12 @@ class Infraction_Log extends DB_Table {
 		
 		if($punishment->fine > 0)
 		{
-			$query = "	INSERT INTO fines (amount, username, status, date, description)
-						VALUES ('-$punishment->fine', '$offender->username', 'pending', '$this->date_occured', 'SAA Correction')";
-			$result = $this->connection->query($query);
+			$fine = new Fine();
+			$fine->amount = $punishment->fine * -1;
+			$fine->member_id = $this->offender_id;
+			$fine->date = $this->date_occured;
+			$fine->description = "SAA Correction";
+			$fine->insert();
 		}
 		if($punishment->hours > 0)
 		{
