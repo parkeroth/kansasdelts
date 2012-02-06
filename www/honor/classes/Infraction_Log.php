@@ -128,7 +128,8 @@ class Infraction_Log extends DB_Table {
 	public function get_punishment(){
 		$occurance_num = $this->get_occurance_num();
 		$punishment_manager = new Punishment_Manager();
-		$list = $punishment_manager->get_by_type($infraction->type, $offence_num);
+		$list = $punishment_manager->get_by_type($this->type, $occurance_num);
+		echo count($list);
 		return $list[0];
 	}
 	

@@ -6,7 +6,6 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 include_once '../classes/Infraction_Log.php';
 include_once '../classes/Punishment.php';
 
-include_once('snippets.php');		//REMOVE
 
 $super_list = array('admin', 'saa');
 $haz_super_powers = $session->isAuth($super_list);
