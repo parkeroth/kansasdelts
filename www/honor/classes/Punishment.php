@@ -36,7 +36,6 @@ class Punishment extends DB_Table {
 	public $hour_type = NULL;
 	public $suspension = NULL;
 	public $expel = NULL;
-	public $saa_approval = NULL;		// My be useless at this point
 	
 	function __construct($punishment_id) {
 		$this->table_name = TABLE;
@@ -47,8 +46,7 @@ class Punishment extends DB_Table {
 							'hours' => 'hours',
 							'hour_type' => 'hourType',
 							'suspension' => 'suspension',
-							'expel' => 'expel',
-							'saa_approval' => 'saaApproval');
+							'expel' => 'expel');
 		$params = array('id' => $punishment_id);
 		parent::__construct($params);
 	}
