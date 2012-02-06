@@ -18,7 +18,7 @@ class Fine extends DB_Table {
 	public $amount = NULL;
 	public $username = NULL;		//REMOVE after running script
 	public $member_id = NULL;
-	public $status = NULL;
+	protected $status = NULL;
 	public $date = NULL;
 	public $description = NULL;
 	public $infraction_id = NULL;
@@ -49,6 +49,7 @@ class Fine extends DB_Table {
 	
 	public function insert(){
 		$this->date = date('Y-m-d');
+		$this->status = 'pending';
 		parent::insert();
 	}
 	
@@ -58,6 +59,10 @@ class Fine extends DB_Table {
 }
 
 class Fine_Manager extends DB_Manager {
+	
+	public function get_number_pending(){
+		return count($this->get_all('pending'));
+	}
 	
 	public function get_all($status = NULL){
 		if($status){

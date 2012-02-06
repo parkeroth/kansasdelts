@@ -65,7 +65,7 @@ $(document).ready(function(){
 						
 			echo "<tr>\n";
 			echo "<td>$offender->first_name $offender->last_name</td>";
-			echo "<td>$$record->amount.00</td>";
+			echo "<td>$".number_format($record->amount, 2)."</td>";
 			echo "<td>$record->description</td>";
 			echo "<td>".date('M j, Y', strtotime($record->date))."</td>";
 			echo "<td>";

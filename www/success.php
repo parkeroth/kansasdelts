@@ -54,7 +54,12 @@
 			echo "<strong>";
 			echo "<p style=\"text-align: center;\">Missed duty was successfully reported.</p>";
 			echo "</strong>";
-		}else {
+		} else if($_GET['page'] == "fine"){
+			echo "<p>&nbsp;</p>";
+			echo "<strong>";
+			echo "<p style=\"text-align: center;\">Fine submission was successful.</p>";
+			echo "</strong>";
+		} else {
 			echo "<p>&nbsp;</p>";
 			echo '<p style="text-align: center;">How did you get here?</p>';
 		}

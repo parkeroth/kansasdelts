@@ -1,5 +1,6 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/finance/classes/Fine.php';
 
 $user_position_ids = $session->positions;
 
@@ -228,15 +229,17 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 				
 			<?php }
 			
-			$auth_list = array('admin', 'treasurer');
-			if($session->isAuth($auth_list)){  ?>
+			$auth_list = array('admin', 'treasurer', 'pres');
+			if($session->isAuth($auth_list)){  
+				$fine_manager = new Fine_Manager();
+				$num_pending = $fine_manager->get_number_pending();
+				?>
 				
 				<li>
-					<a href="#">Manage Finances</a>
+					<a <?php if($num_pending){ echo "class=\"notify\""; } ?> href="#">Manage Finances</a>
 					<ul>
-						<li><a href="manageFines.php">View Fines</a></li>
-						<li><a href="newApparelForm.php">New Apparel Order</a></li>
-						<li><a href="manageApparelOrders.php">Apparel Orders</a></li>
+						<li><a href="/finance/newFine.php">Fine Form</a></li>
+						<li><a href="/finance/manageFines.php">View Fines <?php if($num_pending){ echo "<span class=\"redHeading\">(".$num_pending.")</span>";} ?></a></li>
 					</ul>
 				</li>
 				
@@ -311,6 +314,7 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 							
 						<li><a href="/core/chooseCommittee.php?committee=honor-board">Select Honor Board</a></li>
 						<li><a href="honor/setPunishments.php">Set Punishments</a></li>
+						<li><a href="/finance/newFine.php">Fine Form</a></li>
 						
 						<?php }  if($session->isAuth($pres_list)){ ?>
 						
