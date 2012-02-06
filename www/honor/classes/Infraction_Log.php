@@ -10,20 +10,20 @@ include_once 'Punishment.php';
  *
  * @author Parker Roth
  *
- * Schema Updated: 2011-02-02
+ * Schema Updated: 2011-02-05
  * 
-CREATE TABLE IF NOT EXISTS `infractionlog` (
+CREATE TABLE IF NOT EXISTS `infractionLog` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `offender` varchar(6) NOT NULL,
-  `reporter` varchar(6) NOT NULL,
+  `offender_id` int(11) NOT NULL,
+  `reporter_id` int(11) DEFAULT NULL,
   `type` varchar(50) NOT NULL,
   `dateReported` date NOT NULL,
   `dateOccured` date NOT NULL,
-  `status` varchar(50) NOT NULL,
-  `description` text NOT NULL,
-  `numOccurance` int(4) DEFAULT NULL,
+  `status` set('approved','reverted','rejected','pending') NOT NULL,
+  `description` text,
+  `meeting_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=113 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=119 ;
  * 
  */
 class Infraction_Log extends DB_Table {
