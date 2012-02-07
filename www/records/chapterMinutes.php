@@ -82,7 +82,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 		$previous_minutes->save();
 	}
 	
-	header('location: manageChapter.php');
+	//header('location: manageChapter.php');
 }
 
 $meeting_id = $_GET[id];
