@@ -119,12 +119,12 @@ function print_meeting_row($meeting){
 		$date_str = date('M j, Y', strtotime($meeting->date));
 		echo '<tr>';
 		echo '<td width="120"><strong>'.$date_str.'</strong></td>';
-		if(!$meeting->has_past() && $REQUIRE_NOT_PASSED){
+		if($meeting->has_past() && $REQUIRE_NOT_PASSED){
+			echo '<td><input id="'.$meeting->id.'" class="edit-minutes" type="button" value="Edit Minutes" /></td>';
+		} else {
 			echo '<td><input id="'.$meeting->id.'" class="edit-agenda" type="button" value="Edit Agenda" /></td>';
 			echo '<td><input id="'.$meeting->id.'" class="excuse-member" type="button" value="Excuse Members" /></td>';
 			echo '<td><input id="'.$meeting->id.'" class="take-attendance" type="button" value="Take Attendance" /></td>';
-			echo '<td><input id="'.$meeting->id.'" class="edit-minutes" type="button" value="Edit Minutes" /></td>';
-		} else {
 			echo '<td><input id="'.$meeting->id.'" class="edit-minutes" type="button" value="Edit Minutes" /></td>';
 		}
 		echo '</tr>';
