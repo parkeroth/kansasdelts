@@ -42,6 +42,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 	}
 	
 	$_GET[id] = $meeting_id;
+	header('location: manageChapter.php');
 }
 	
 

@@ -154,7 +154,8 @@ class Member_Manager extends DB_Manager
 		$query = "
 			SELECT COUNT(ID) as total 
 			FROM members
-			WHERE memberStatus = 'active'"; //echo $query.'<br>';
+			WHERE memberStatus = 'active'
+			AND residency != 'limbo'"; //echo $query.'<br>';
 		$result = $this->connection->query($query);
 		$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
 		return $data[total];
@@ -162,12 +163,12 @@ class Member_Manager extends DB_Manager
 
 	public function get_members_by_position($position_type){
 		$where = "WHERE accountType LIKE '%|$position_type%'
-						AND memberStatus != 'limbo'";
+						AND residency != 'limbo'";
 		return $this->get_member_list($where);
 	}
 	
 	public function get_all_members(){
-		$where = "WHERE memberStatus != 'limbo'";
+		$where = "WHERE residency != 'limbo'";
 		return $this->get_member_list($where);
 	}
 
