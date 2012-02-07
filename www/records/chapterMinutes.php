@@ -31,6 +31,8 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 	$internal_meeting = $meeting_manager->get_meetings_by_chapter($chapter_meeting->id, 'internal');
 	$external_meeting = $meeting_manager->get_meetings_by_chapter($chapter_meeting->id, 'external');
 	
+	$prev_minutes = $minutes_manager->get_by_meeting($previous_meeting->id);
+	
 	$minutes = $minutes_manager->get_by_meeting($chapter_id);
 	$needs_insert = false;
 	if($minutes == NULL){
@@ -76,10 +78,9 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 		}*/
 	}
 
-	if($previous_meeting != NULL){
-		$previous_minutes = $minutes_manager->get_by_meeting($previous_meeting->id);
-		$previous_minutes->unfinished_business = $_POST[old-business];
-		$previous_minutes->save();
+	if($prev_minutes != NULL){
+		$prev_minutes->unfinished_business = $_POST[old-business];
+		$prev_minutes->save();
 	}
 	
 	header('location: manageChapter.php');
