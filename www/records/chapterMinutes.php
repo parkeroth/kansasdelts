@@ -78,7 +78,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 	}
 
 	if($prev_minutes != NULL){
-		$prev_minutes->unfinished_business = $_POST[old-business];
+		$prev_minutes->unfinished_business = $_POST['old-business'];
 		$prev_minutes->save();
 	}
 	
