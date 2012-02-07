@@ -3,6 +3,7 @@ session_start();
 include_once('../php/login.php');
 $authUsers = array('admin', 'saa');
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
+include_once 'classes/Infraction_Log.php';
 
 /**
  * Processing Section
@@ -158,20 +159,15 @@ $(document).ready(function(){
 		
 		$tableHeader = '<tr class="tableHeader"><td>Offence #</td><td>Fine</td><td>Hours</td><td>Hour Type</td><td>Suspension</td><td>Expel</td><td></td></tr>';
 		
-		$punishmentCategory = "
-			SELECT code, name 
-			FROM infractionTypes ";
-		$getCategories = mysqli_query($mysqli, $punishmentCategory);
-		
-		while($categoryArray = mysqli_fetch_array($getCategories, MYSQLI_ASSOC))
+		foreach(Infraction_Log::$INFRACTION_TYPES as $type => $title)
 		{
-			echo "<h2>$categoryArray[name]</h2>";
+			echo "<h2>$title</h2>";
 			echo '<table cellspacing="0">';
 			
 			$punishmentData = "
 				SELECT * 
 				FROM punishments
-				WHERE type = '$categoryArray[code]'
+				WHERE type = '$type'
 				ORDER BY offenceNum";
 				
 			$getPunishments = mysqli_query($mysqli, $punishmentData);

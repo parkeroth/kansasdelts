@@ -53,7 +53,6 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 		$task_list = $_POST[tasks];
 		$report->agenda = $agenda;
 		$report->status = $status;
-		echo 'TAG1 :'.$report->status.'|';
 		$report->save();
 		
 		foreach($previous_tasks as $task){
