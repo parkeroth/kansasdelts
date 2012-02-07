@@ -236,7 +236,6 @@ class Meeting_Manager extends DB_Manager
 			LIMIT 1";
 		$result = $this->connection->query($query); //echo $query;
 		if($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
-			echo 'TAG';
 			return new Meeting($data[id]);
 		} else {
 			return NULL;
