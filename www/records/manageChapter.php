@@ -9,6 +9,8 @@ require_once 'classes/Meeting.php';
 
 include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 
+$REQUIRE_NOT_PASSED = false;
+
 if($_SERVER['REQUEST_METHOD'] == "POST") {
 	
 	if($_POST[action] == 'meeting_add'){
@@ -117,7 +119,7 @@ function print_meeting_row($meeting){
 		$date_str = date('M j, Y', strtotime($meeting->date));
 		echo '<tr>';
 		echo '<td width="120"><strong>'.$date_str.'</strong></td>';
-		if(!$meeting->has_past()){
+		if(!$meeting->has_past() && $REQUIRE_NOT_PASSED){
 			echo '<td><input id="'.$meeting->id.'" class="edit-agenda" type="button" value="Edit Agenda" /></td>';
 			echo '<td><input id="'.$meeting->id.'" class="excuse-member" type="button" value="Excuse Members" /></td>';
 			echo '<td><input id="'.$meeting->id.'" class="take-attendance" type="button" value="Take Attendance" /></td>';
