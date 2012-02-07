@@ -49,7 +49,6 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 	$minutes->good_of_order = addslashes($_POST['good-of-order']);
 	
 	if($needs_insert){
-		echo 'asdf';
 		$minutes->insert();
 	} else {
 		$minutes->save();
