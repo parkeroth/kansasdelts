@@ -128,23 +128,22 @@ if(empty($_GET) || !isset($_GET['uid']))
 
         echo '</table>';
 
-        if($weeklyHrs < $user_requirements->hoursRequired)
+        if($weeklyHrs < $user_requirements->week_required)
 	{
 		//didn't meet the requirement
-		$hrStatement = '<h3 style="color: #E00000 !important;">User Short '.round(floatval($user_requirements->hoursRequired-$weeklyHrs),2).' Hours</h3>';
+		$hrStatement = '<h3 style="color: #E00000 !important;">User Short '.round(floatval($user_requirements->week_required-$weeklyHrs),2).' Hours</h3>';
 	} else {
 		//did meet the requirement
-		$hrStatement = '<h3 style="color: #00CC33 !important;">User Over '.round(floatval($weeklyHrs-$user_requirements->hoursRequired),2).' Hours</h3>';
+		$hrStatement = '<h3 style="color: #00CC33 !important;">User Over '.round(floatval($weeklyHrs-$user_requirements->week_required),2).' Hours</h3>';
 	}
 	//lets echo the hour information out to the user
 	echo "
-		<h3>Hours for the Week: ".$weeklyHrs."</h3>
-		<h3>Required Hours per Week: ".$user_requirements->hoursRequired."</h3>
+		<h3>Completed for Week: ".$weeklyHrs."</h3>
+		<h3>Required per Week: ".$user_requirements->week_required."</h3>
 		".$hrStatement."<br />";
 
         echo '<p style="text-align: center;"><a href="memberLog.php?uid='.$userID.'&amp;week_offset='.($week_offset+1).'">Previous Week</a></p>';
 }   //end if(empty($_GET) || !isset($_GET['uid']))
 ?>
-
 
 <?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/footer.php"); ?>

@@ -16,8 +16,6 @@
                 $sh_manager = new Study_Hour_Manager();
                 $user_requirements = $sh_manager->get_user_sh_requirements($member);
 
-		$timeCompleted = 0.0;
-
                        //we're going to check and see if the user was set to be checked in
 			if($action == "in")
 			{
@@ -44,6 +42,8 @@
 				//time/resource comsuming, so i'll just do it the "drity" way until it causes
                                 //ideally i'll do some error checking on study hour session start to make sure
                                 //their's not already an active session
+
+                                $timeCompleted = 0.0;
 
                                 //first close the open session, storing session duration in the temp var
                                 $open_sessions = $sh_log_manager->get_open_sessions($member);

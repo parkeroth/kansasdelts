@@ -63,24 +63,24 @@ class Study_Hour_Logs extends DB_Table
 
 class Study_Hour_Requirements extends DB_Table
 {
-        public $userID = NULL;
-        public $startDate = NULL;
-        public $stopDate = NULL;
-        public $weeklyHrs = NULL;
-        public $hoursCompleted = NULL;
-        public $hoursRequired = NULL;
+        public $member_id = NULL;
+        public $start_date = NULL;
+        public $stop_date = NULL;
+        public $week_required = NULL;
+        public $week_complete = NULL;
+        public $total_complete = NULL;
         public $status  = NULL;
         public $id = NULL;
 
 	function __construct ($in_id = NULL) {
 		$this->table_name = 'studyHourRequirements';
 		$this->table_mapper = array(
-                        'userID' => 'userID',
+                        'member_id' => 'member_id',
                         'id' => 'ID',
-			'startDate' => 'startDate',
-			'stopDate' => 'stopDate',
-			'hoursRequired' => 'hoursRequired',
-			'hoursCompleted' => 'hoursCompleted',
+			'start_date' => 'start_date',
+			'stop_date' => 'stop_date',
+			'week_required' => 'week_required',
+			'total_complete' => 'total_complete',
 			'status' => 'status'
 		);
 
@@ -92,15 +92,10 @@ class Study_Hour_Requirements extends DB_Table
 		parent::__construct($params);
 	}
 
-        public function add_sh_user() {
-                //set all class variables externally and then call this
-		return $this->insert();
-        }
-
         public function update_hrs_completed($newHrs) {
                 //can both add and subtract hours if adjustments need to be made
                 //pass in a negative value to subtract hours
-                $this->hoursCompleted += $newHrs;
+                $this->total_complete += $newHrs;
                 return $this->save();
         }
 
@@ -109,7 +104,7 @@ class Study_Hour_Requirements extends DB_Table
                 return $this->save();
         }
 
-        public function remove_sh_user($shUser, $timeCompleted) {
+        public function remove_sh_user() {
                 return $this->delete();
         }
 }
@@ -125,7 +120,7 @@ class Study_Hour_Manager extends DB_Manager
 		$query = "
 			SELECT ID FROM studyHourRequirements
 			$where
-			ORDER BY userID ASC";
+			ORDER BY member_id ASC";
 		$result = $this->connection->query($query);
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Study_Hour_Requirements($data[ID]);
@@ -143,23 +138,34 @@ class Study_Hour_Manager extends DB_Manager
                 return $this->get_sh_user_list($where);
         }
 
-        public function add_sh_user($userID, $weeklyHrs, $startDate, $stopDate) {
+        public function add_sh_user($userID, $week_required, $start_date, $stop_date) {
                 $new_sh_user = new Study_Hour_Requirements();
-                $new_sh_user->userID = $userID;
-                $new_sh_user->hoursRequired = $weeklyHrs;
-                $new_sh_user->startDate = $startDate;
-                $new_sh_user->stopDate = $stopDate;
-                $new_sh_user->hoursCompleted = 0;
+                $new_sh_user->member_id = $userID;
+                $new_sh_user->week_required = $week_required;
+                $new_sh_user->start_date = $start_date;
+                $new_sh_user->stop_date = $stop_date;
+                $new_sh_user->total_complete = 0;
                 $new_sh_user->status = 'out';
 		return $new_sh_user->add_sh_user();
         }
 
         public function get_user_sh_requirements($userID) {
-                $where = "userID = '$userID'";
+                $where = "member_id = '$userID'";
                 $shList = $this->get_sh_user_list($where);
                 //should only return one result, so just return the first
                 //instance of Study_Hour_Requirements
                 return $shList[0];
+        }
+        
+        public function is_in_table($member_id) {
+                //$query  = "SELECT EXISTS(SELECT 1 FROM studyHourRequirements WHERE member_id='$member_id')";
+                $query = "SELECT member_id FROM studyHourRequirements WHERE member_id='$member_id'";
+                $rows = mysqli_num_rows($this->connection->query($query));
+                if($rows > 0) {
+                    return true;
+                } else {
+                    return false;
+                }
         }
 }
 
@@ -195,7 +201,7 @@ class Study_Hour_Log_Manager extends DB_Manager
         }
 
         public function get_open_sessions($userID = false) {
-                $where = "WHERE open='yes";
+                $where = "WHERE open='yes'";
                 $retVal = $userID ? $this->get_session_list($where) : $this->get_user_sessions($userID, $where);
                 return $retVal;
         }
@@ -207,20 +213,34 @@ class Study_Hour_Log_Manager extends DB_Manager
                 return $this->get_user_sessions($userID, $where);
         }
 
-        /*public function get_current_week_data($userID) {
-                $retVal = -1;
-                $curWeekBlockQ =
-                    "SELECT COUNT(*) AS rows
+        public function get_weekly_block_complete($userID, $week_offset = 0) {
+                $weekStart = mktime(1, 0, 0, date('m'), date('d')-date('w'), date('Y'));        //start of current week
+                $weekStart = $weekStart - ($week_offset * 7 * 24 * 60 * 60);                    //subtract week offset
+                $query = "
+                    SELECT COUNT(*) AS count
                     FROM studyHourLogs
-                    WHERE YEARWEEK(timeIn) = YEARWEEK(CURRENT_DATE)
-                        AND userID='$userID'
-                ";
-                $result = $this->connection->query($curWeekBlockQ);
-		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
-			$retVal = $data[row];
-		}
-		return $retVal;
-        }*/
+                    WHERE userID='$userID'
+                        AND duration > 2.5
+                        AND YEARWEEK(timeIn) = YEARWEEK($weekStart)
+                    GROUP BY userID";
+                $result = $this->connection->query($query);
+                $row = mysql_fetch_row($result);
+                return $row[0];
+        }
+
+        public function get_weekly_total_complete($userID, $week_offset = 0) {
+                $weekStart = mktime(1, 0, 0, date('m'), date('d')-date('w'), date('Y'));        //start of current week
+                $weekStart = $weekStart - ($week_offset * 7 * 24 * 60 * 60);                    //subtract week offset
+                $query = "
+                    SELECT SUM(duration) AS count
+                    FROM studyHourLogs
+                    WHERE userID='$userID'
+                        AND YEARWEEK(timeIn) = YEARWEEK($weekStart)
+                    GROUP BY userID";
+                $result = $this->connection->query($query);
+                $row = mysql_fetch_row($result);
+                return $row[0];
+        }
 }
 
 ?>

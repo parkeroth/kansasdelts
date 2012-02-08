@@ -63,7 +63,7 @@ function timedRefresh(timeoutPeriod) {
         Use the datepicker to pick the time period for the required study hours.</p>
 		<p>&nbsp;</p>
 
-		<form enctype="multipart/form-data" id="shUsers" name="shUsers" method="post" action="'.$_SERVER['PHP_SELF'].'" onSubmit="return Confirm();">
+                <form enctype="multipart/form-data" id="shUsers" name="shUsers" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" onSubmit="return Confirm();">
 		<table border="1">
                     <tr>
 			<th style="width: 100px;">
@@ -73,7 +73,7 @@ function timedRefresh(timeoutPeriod) {
 				Required?
 			</th>
 			<th style="width: 30px;">
-				Study<br />Hours/Week
+				Blocks/Week
 			</th>
 			<th style="width: 120px;">
 				Start Date
@@ -86,27 +86,29 @@ function timedRefresh(timeoutPeriod) {
                     $memManager = new Member_Manager();
                     $memList = $memManager->get_all_members();
 
+                    $sh_manager = new Study_Hour_Manager();
+
                     foreach($memList as $member) {
-                        $userSHData = new Study_Hour_Requirements($member->id);
 			echo "<tr>
 					<td>
 						<label>$member->first_name $member->last_name</label>
 					</td>\n";
-			if ($userSHData->hoursRequired != 0 || $userSHData->hoursRequired != NULL || $userSHData->hoursRequired != '')
+			if ($sh_manager->is_in_table($member->id))
 			{
 				//User DOES have required hours, so study hour stuff should be set up
+                                $userSHData = $sh_manager->get_user_sh_requirements($member->id);
 				echo '
 					<td>
 						<input type="checkbox" name="'.$member->id.'" id="'.$member->id.'" value="Y" checked="checked" />
 					</td>
 					<td>
-						<input type="text" name="'.$member->id.'_hrs" id="'.$member->id.'_hrs" value="'.$userSHData[$i]['hoursRequired'].'" size="5" />
+						<input type="text" name="'.$member->id.'_week" id="'.$member->id.'_week" value="'.$userSHData->week_required.'" size="5" />
 					</td>
 					<td>
-						<input type="text" name="'.$member->id.'_start" id="datepicker" value="'.$userSHData->startDate.'" size="10" readonly="readonly" /> <input type="button" value="    " onclick="scwShow('.$member->id.'_start,event);" />
+						<input type="text" name="'.$member->id.'_start" id="datepicker" value="'.$userSHData->start_date.'" size="10" readonly="readonly" /> <input type="button" value="    " onclick="scwShow('.$member->id.'_start,event);" />
 					</td>
 					<td>
-						<input type="text" name="'.$member->id.'_stop" id="datepicker" value="'.$userSHData->stopDate.'" size="10" readonly="readonly" /> <input type="button" value="    " onclick=scwShow('.$member->id.'_stop,event);" />
+						<input type="text" name="'.$member->id.'_stop" id="datepicker" value="'.$userSHData->stop_date.'" size="10" readonly="readonly" /> <input type="button" value="    " onclick=scwShow('.$member->id.'_stop,event);" />
 					</td>
 					';
 			} else {
@@ -115,7 +117,7 @@ function timedRefresh(timeoutPeriod) {
 						<input type="checkbox" name="'.$member->id.'" id="'.$member->id.'" value="Y" />
 					</td>
 					<td>
-						<input type="text" name="'.$member->id.'_hrs" id="'.$member->id.'_hrs" value=""size="5" />
+						<input type="text" name="'.$member->id.'_week" id="'.$member->id.'_week" value=""size="5" />
 					</td>
 					<td>
 						<input type="text" name="'.$member->id.'_start" id="datepicker" size="10" readonly="readonly" /> <input type="button" value="    " onclick="scwShow('.$member->id.'_start,event);" />
@@ -140,94 +142,50 @@ function timedRefresh(timeoutPeriod) {
             foreach($memList as $member) {
                 if(isset($_POST[$member->id]))
                 {
-                    $userSHData = new Study_Hour_Requirements($member->id);
-                }
-            }
-        }
-        ?>
-
-        <?php
-	//Now process the shit that needs updating
-	if(isset($_POST['submit']))
-	{
-		//gotta loop through and get our data
-		//may as well use the $userSHData array since it's already got the usernames
-		for($x=1; $x < $memberCount; $x++)
-		{
-			//the UPDATE statement we'll run will be based on whether or not
-			//a user is checked
-			$memberUName = $userSHData[$x]['username'];
-			if(isset($_POST[$memberUName]))
+                    //user has required hours
+                    //check to make sure other fields are okay
+                    if(!isset($_POST[$member->id.'_week']) || !isset($_POST[$member->id.'_start']) || !isset($_POST[$member->id.'_stop']))
+                    {
+                        //required variables not set, echo message to user
+			$dataErrorMsg = '<p class="dataError">Error: study hour data for '.$member->first_name.' '.$member->last_name.' is incompletely filled out</p>';
+			echo $dataErrorMsg;
+                    } else {
+                        //things check out, data all filled
+			//did user have study hours before? this will determine if we run
+			//an update or an insert
+			if ($sh_manager->is_in_table($member->id))
 			{
-				//user has required hours
-				//check to make sure other fields are okay
-				if(!isset($_POST[$memberUName.'_hrs']) || !isset($_POST[$memberUName.'_start']) || !isset($_POST[$memberUName.'_stop']))
-				{
-					//required variables not set, echo message to user
-					$dataErrorMsg = '<p class="dataError">Error: study hour data for '.$userSHData[$x]['firstName'].' '.$userSHData[$x]['lastName'].' is incompletely filled out</p>';
-					echo $dataErrorMsg;
-				} else {
-					//things check out, data all filled
-					//did user have study hours before? this will determine if we run
-					//an update or an insert
-					if ($userSHData[$x]['hoursRequired'] != 0 || $userSHData[$x]['hoursRequired'] != NULL || $userSHData[$x]['hoursRequired'] != '')
-					{
-						//user did have study hours, so an update is needed
-						$studyHourQuery = '
-							UPDATE studyHourRequirements
-							SET startDate="'.$_POST[$memberUName.'_start'].'", stopDate="'.$_POST[$memberUName.'_stop'].'", hoursRequired="'.$_POST[$memberUName.'_hrs'].'"
-							WHERE username="'.$memberUName.'"
-							';
-							echo 'Upating DB<br />Query: '.$studyHourQuery;
-					} else {
-						//user had no study hours, so an insertino is needed
-						$studyHourQuery = "
-							INSERT INTO studyHourRequirements
-							(username, startDate, stopDate, hoursRequired, hoursCompleted, status)
-							VALUES (\"".$memberUName."\", \"".$_POST[$memberUName.'_start']."\", \"".$_POST[$memberUName.'_stop']."\", ".$_POST[$memberUName.'_hrs'].", 0, \"out\")";
-							echo 'Inserting into DB<br />Query: '.$studyHourQuery;
-
-					}
-					//have query. now execute that shit
-					$writeToDB = mysqli_query($mysqli, $studyHourQuery);
-					if(!$writeToDB)
-					{
- 						$dataErrorMsg = '<p class="dataError">Error: failed to write data for '.$userSHData[$x]['firstName'].' '.$userSHData[$x]['lastName'].'.  Database error.  Probably should look into that.  We love you anyway.<br />
-						Error message thrown: '.mysqli_error().'</p>';
-						echo $dataErrorMsg;
-					}
-				}
+                            //user did have study hours, so an update is needed
+                            $userSHData = $sh_manager->get_user_sh_requirements($member->id);         //grab sh info
+                            $userSHData->start_date = $_POST[$member->id.'_start'];
+                            $userSHData->stop_date = $_POST[$member->id.'_stop'];
+                            $userSHData->week_required = $_POST[$member->id.'_week'];
+                            $userSHData->save();
 			} else {
-				//user doesn't have required hours
-				//so other fields don't matter. FUCK THEM.
+                            //user had no study hours, so an insertion is needed
+                            $sh_manager->add_sh_user($member->id, $_POST[$member->id.'_week'], $_POST[$member->id.'_start'], $_POST[$member->id.'_stop']);
+                        }
+                    }
+		} else {
+                    //user doesn't have required hours
+                    //so other fields don't matter.
 
-				//member uName is NOT set, so they're NOT checked
-				//we need to see if we need to delete the user from studyHourRequirements
-				//or if the user already isn't in there, in which case we don't need to
-				//do anything
-				if ($userSHData[$x]['hoursRequired'] != 0 || $userSHData[$x]['hoursRequired'] != NULL || $userSHData[$x]['hoursRequired'] != '')
-				{
-					//user used to have required hours, so we need to delete them
-					//from the studyHourRequirements table
-					$deleteSHUser = '
-						DELETE FROM studyHourRequirements
-						WHERE username="'.$memberUName.'"
-						';
-					echo 'Removing from DB<br />Query: '.$deleteSHUser;
-					//and execute the query
-					$clrUserFromDB = mysqli_query($mysqli, $deleteSHUser);
-					if(!$clrUserFromDB)
-					{
- 						$dataErrorMsg = '<p class="dataError">Error: failed to remove study hour user '.$userSHData[$x]['firstName'].' '.$userSHData[$x]['lastName'].'.  Database error.  Probably should look into that.  We love you anyway.<br />
-						Error message thrown: '.mysqli_error().'</p>';
-						echo $dataErrorMsg;
-					} //end error message if
-				} //end if there ARE hoursRequired
-				//no need for an else statement, cause we don't need to do anything if the user isn't in there
-			}
-		}
-		echo '<body onload="javascript:timedRefresh(500);">';
-	} //End if(issset
+                    //member id is NOT set, so they're NOT checked
+                    //we need to see if we need to delete the user from studyHourRequirements
+                    //or if the user already isn't in there, in which case we don't need to
+                    //do anything
+                    if ($sh_manager->is_in_table($member->id))
+                    {
+                        //user used to have required hours, so we need to delete them
+			//from the studyHourRequirements table
+			$user_requirements = $sh_manager->get_user_sh_requirements($member->id);
+                        $user_requirements->remove_sh_user();
+                    } //end if there ARE hoursRequired
+                    //no need for an else statement, cause we don't need to do anything if the user isn't in there
+                }
+            }   //end foreach
+        } //end if(isset
+        ?>
 
 	//boom goes the dynamite
 ?>

@@ -67,18 +67,14 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
                 $userList = $sh_manager->get_all_sh_users();
 
                 foreach($userList as $shUser) {
-                        if(!$shUser->hoursRequired || $shUser->hoursRequired == 0 || $shUser->hoursRequired == '') {
-                                //User has no required study hours.
-				//don't need to do anything!
-                        } else {
                                 $user_info = new Member($shUser->id);
-                                $week_completed = $sh_log_manager->get_current_week_data($shUser->id);
-                                if($week_completed < $shUser->hoursRequired){
+                                $week_completed = $sh_log_manager->get_weekly_block_complete($shUser->member_id);
+                                if($week_completed < $shUser->week_required){
                                         //not met requirement
-                                        $overUnder = '<span style="color: #E00000;">'.round($shUser->hoursRequired-$week_completed).'</span>';
+                                        $overUnder = '<span style="color: #E00000;">'.round($shUser->week_required-$week_completed).'</span>';
                                 } else {
                                         //met requirement
-                                        $overUnder = '<span style="color: #00CC33;">'.round($week_completed-$shUser->hoursRequired).'</span>';
+                                        $overUnder = '<span style="color: #00CC33;">'.round($week_completed-$shUser->week_required).'</span>';
                                 }
                                 echo "<tr>
 						<td>
@@ -86,7 +82,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 						</td>\n";
 				echo '
 						<td>
-							'.round($shUser->hoursRequired,2).'
+							'.round($shUser->week_required,2).'
 						</td>
 						<td>
 							'.round($week_completed,2).'
@@ -95,19 +91,18 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 							'.$overUnder.'
 						</td>
 						<td>
-							'.round($shUser->totalHrs,2).'
+							'.round($shUser->total_complete,2).'
 						</td>
 						<td>
-							'.$shUser->startDate.'<br />
-							'.$shUser->stopDate.'
+							'.$shUser->start_date.'<br />
+							'.$shUser->stop_date.'
 						</td>
 						<td>
-							<input type="button" name="'.$shUser->userID.'" value="View Log" class="studyHrButton" onclick="javascript: window.location.href=\'memberLog.php?uid='.$shUser->userID.'\'" />
+							<input type="button" name="'.$shUser->member_id.'" value="View Log" class="studyHrButton" onclick="javascript: window.location.href=\'memberLog.php?uid='.$shUser->member_id.'\'" />
 						</td>
 						';
 				echo '</tr>';
-                        }
                 }
                 ?>
-		</table>
+        </table>
 <?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/footer.php"); ?>
