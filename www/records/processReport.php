@@ -158,7 +158,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 				<th>Tasks from <strong>last</strong> week:</th>
 				<td style="text-align: center;">
 <?php
-	$previous_tasks = $task_manager->get_previous_tasks($report->meeting_id);
+	$previous_tasks = $task_manager->get_previous_tasks($report->meeting_id, $position->id);
 	if($previous_tasks){
 		echo '<table cellspacing="0" align="center">';
 		foreach($previous_tasks as $task){
