@@ -9,6 +9,6 @@
 	
 	<title>Delta Tau Delta Fraternity: Gamma Tau Chapter</title>
 	
-	<link rel="icon" type="image/vnd.microsoft.icon" href="favicon.ico" />
+	<link rel="icon" type="image/vnd.microsoft.icon" href="/favicon.ico" />
 	<link rel="stylesheet" href="/styles/style.css" type="text/css" />
 	<link rel="stylesheet" href="/styles/dropDown.css" type="text/css" />
