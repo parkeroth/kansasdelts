@@ -13,8 +13,8 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 //this just handles hour adjustment.  opening and closing sessions is NOT handled on this page
 if($_SERVER['REQUEST_METHOD'] == "POST") {
         $new_session = new Study_Hour_Logs();
-        $new_session->proctorIn = $_SESSION[uid];
-        $new_session->proctorIn = $_SESSION[uid];
+        $new_session->proctorIn = $session->member_id;
+        $new_session->proctorIn = $session->member_id;
         $new_session->timeIn = date( 'Y-m-d H:i:s', strtotime( $_POST['date'] ) );
         $new_session->duration = $_POST[hours];
         $new_session->open = 'no';

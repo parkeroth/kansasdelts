@@ -50,13 +50,13 @@ class Study_Hour_Logs extends DB_Table
         public function start_sh_session() {
                 $curTime = time();
                 $this->timeIn = date('Y-m-d H:i:s', $curTime);
-                $this->proctorIn = $_SESSION['userID'];
+                $this->proctorIn = $session->member_id;
                 $this->open = "yes";
 		return $this->insert();
         }
 
         public function end_sh_session() {
-        	$this->proctorOut = $_SESSION['userID'];
+        	$this->proctorOut = $session->member_id;
 		$curTime = time();
 
 		$timeDiff = $curTime - strtotime($this->timeIn);
@@ -173,7 +173,7 @@ class Study_Hour_Manager extends DB_Manager
                 $new_sh_user->stop_date = $stop_date;
                 $new_sh_user->total_complete = 0;
                 $new_sh_user->status = 'out';
-		return $new_sh_user->add_sh_user();
+		return $new_sh_user->insert();
         }
 
         public function get_user_sh_requirements($userID) {
