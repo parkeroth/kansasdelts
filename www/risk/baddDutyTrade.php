@@ -21,6 +21,6 @@ $month = date("n", strtotime($info['date'])) +1;
 $year = date("Y", strtotime($info['date']));
 
 
-header("location: ../baddDutyDates.php?month=$month&year=$year");
+header("location: baddDutyDates.php?month=$month&year=$year");
 
 ?>
