@@ -2,7 +2,7 @@
 	include_once($_SERVER['DOCUMENT_ROOT'].'/php/login.php');
 	$authUsers = array('admin', 'academics', 'proctor');
 	include_once($_SERVER['DOCUMENT_ROOT'].'/php/authenticate.php');
-        include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/studyHours.php';
+        include_once 'classes/studyHours.php';
         include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 
 	//Lets do our post procesing here

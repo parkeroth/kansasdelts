@@ -3,10 +3,71 @@ session_start();
 include_once($_SERVER['DOCUMENT_ROOT'].'/php/login.php');
 $authUsers = array('admin', 'academics');
 include_once($_SERVER['DOCUMENT_ROOT'].'/php/authenticate.php');
-include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/studyHours.php';
+include_once 'classes/studyHours.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 
-include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
+?>
+
+       <?php
+        $memManager = new Member_Manager();
+        $memList = $memManager->get_all_members();
+
+        $sh_manager = new Study_Hour_Manager();
+       
+       //Now process the shit that needs updating
+	if(isset($_POST['submit']))
+        {
+            foreach($memList as $member) {
+                if(isset($_POST[$member->id]))
+                {
+                    //user has required hours
+                    //check to make sure other fields are okay
+                    if(!isset($_POST[$member->id.'_week']) || !isset($_POST[$member->id.'_start']) || !isset($_POST[$member->id.'_stop']))
+                    {
+                        //required variables not set, echo message to user
+			$dataErrorMsg = '<p class="dataError">Error: study hour data for '.$member->first_name.' '.$member->last_name.' is incompletely filled out</p>';
+			echo $dataErrorMsg;
+                    } else {
+                        //things check out, data all filled
+			//did user have study hours before? this will determine if we run
+			//an update or an insert
+			if ($sh_manager->is_in_table($member->id))
+			{
+                            //user did have study hours, so an update is needed
+                            $userSHData = $sh_manager->get_user_sh_requirements($member->id);         //grab sh info
+                            $userSHData->start_date = $_POST[$member->id.'_start'];
+                            $userSHData->stop_date = $_POST[$member->id.'_stop'];
+                            $userSHData->week_required = $_POST[$member->id.'_week'];
+                            $userSHData->save();
+			} else {
+                            //user had no study hours, so an insertion is needed
+                            $sh_manager->add_sh_user($member->id, $_POST[$member->id.'_week'], $_POST[$member->id.'_start'], $_POST[$member->id.'_stop']);
+                        }
+                    }
+		} else {
+                    //user doesn't have required hours
+                    //so other fields don't matter.
+
+                    //member id is NOT set, so they're NOT checked
+                    //we need to see if we need to delete the user from studyHourRequirements
+                    //or if the user already isn't in there, in which case we don't need to
+                    //do anything
+                    if ($sh_manager->is_in_table($member->id))
+                    {
+                        //user used to have required hours, so we need to delete them
+			//from the studyHourRequirements table
+			$user_requirements = $sh_manager->get_user_sh_requirements($member->id);
+                        $user_requirements->remove_sh_user();
+                    } //end if there ARE hoursRequired
+                    //no need for an else statement, cause we don't need to do anything if the user isn't in there
+                }
+            }   //end foreach
+        } //end if(isset
+
+	//boom goes the dynamite
+        ?>
+
+<?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 
 <script type="text/javascript" src="/js/simpleCalendarWidget.js"></script>
 
@@ -83,11 +144,6 @@ function timedRefresh(timeoutPeriod) {
 			</th>
                     </tr>
                 <?php
-                    $memManager = new Member_Manager();
-                    $memList = $memManager->get_all_members();
-
-                    $sh_manager = new Study_Hour_Manager();
-
                     foreach($memList as $member) {
 			echo "<tr>
 					<td>
@@ -134,60 +190,5 @@ function timedRefresh(timeoutPeriod) {
 		<p>&nbsp;</p>
 		<div style="text-align: center;"><input type="submit" name="submit" id="submit" value="  Submit  " /></div>
 	</form>
-
-        <?php
-       //Now process the shit that needs updating
-	if(isset($_POST['submit']))
-        {
-            foreach($memList as $member) {
-                if(isset($_POST[$member->id]))
-                {
-                    //user has required hours
-                    //check to make sure other fields are okay
-                    if(!isset($_POST[$member->id.'_week']) || !isset($_POST[$member->id.'_start']) || !isset($_POST[$member->id.'_stop']))
-                    {
-                        //required variables not set, echo message to user
-			$dataErrorMsg = '<p class="dataError">Error: study hour data for '.$member->first_name.' '.$member->last_name.' is incompletely filled out</p>';
-			echo $dataErrorMsg;
-                    } else {
-                        //things check out, data all filled
-			//did user have study hours before? this will determine if we run
-			//an update or an insert
-			if ($sh_manager->is_in_table($member->id))
-			{
-                            //user did have study hours, so an update is needed
-                            $userSHData = $sh_manager->get_user_sh_requirements($member->id);         //grab sh info
-                            $userSHData->start_date = $_POST[$member->id.'_start'];
-                            $userSHData->stop_date = $_POST[$member->id.'_stop'];
-                            $userSHData->week_required = $_POST[$member->id.'_week'];
-                            $userSHData->save();
-			} else {
-                            //user had no study hours, so an insertion is needed
-                            $sh_manager->add_sh_user($member->id, $_POST[$member->id.'_week'], $_POST[$member->id.'_start'], $_POST[$member->id.'_stop']);
-                        }
-                    }
-		} else {
-                    //user doesn't have required hours
-                    //so other fields don't matter.
-
-                    //member id is NOT set, so they're NOT checked
-                    //we need to see if we need to delete the user from studyHourRequirements
-                    //or if the user already isn't in there, in which case we don't need to
-                    //do anything
-                    if ($sh_manager->is_in_table($member->id))
-                    {
-                        //user used to have required hours, so we need to delete them
-			//from the studyHourRequirements table
-			$user_requirements = $sh_manager->get_user_sh_requirements($member->id);
-                        $user_requirements->remove_sh_user();
-                    } //end if there ARE hoursRequired
-                    //no need for an else statement, cause we don't need to do anything if the user isn't in there
-                }
-            }   //end foreach
-        } //end if(isset
-        ?>
-
-	//boom goes the dynamite
-?>
 
 <?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/footer.php"); ?>

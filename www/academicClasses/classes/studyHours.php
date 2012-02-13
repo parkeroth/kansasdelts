@@ -4,6 +4,19 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/DB_Manager.php';
 
 class Study_Hour_Logs extends DB_Table
 {
+    /*
+        CREATE TABLE IF NOT EXISTS `studyHourLogs` (
+          `ID` int(11) NOT NULL AUTO_INCREMENT,
+          `member_id` int(11) NOT NULL,
+          `proctor_in` int(11) NOT NULL,
+          `proctor_out` int(11) NOT NULL,
+          `time_in` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          `duration` float DEFAULT NULL,
+          `open` enum('yes','no','limbo') NOT NULL,
+          PRIMARY KEY (`ID`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Inividual Study Hour Logs' AUTO_INCREMENT=1 ;
+     */
+
         public static $LOG_STATUS = array('yes', 'no', 'limbo');
 
         public $proctorIn = NULL;
@@ -17,11 +30,11 @@ class Study_Hour_Logs extends DB_Table
         function __construct ($log_id = NULL) {
 		$this->table_name = 'studyHourLogs';
 		$this->table_mapper = array(
-                        'userID' => 'userID',
                         'id' => 'ID',
-			'timeIn' => 'timeIn',
-                        'proctorIn' => 'proctorIn',
-                        'proctorOut' => 'proctorOut',
+                        'userID' => 'member_id',
+			'timeIn' => 'time_in',
+                        'proctorIn' => 'proctor_in',
+                        'proctorOut' => 'proctor_out',
 			'open' => 'open',
 			'duration' => 'duration'
 		);
@@ -63,6 +76,20 @@ class Study_Hour_Logs extends DB_Table
 
 class Study_Hour_Requirements extends DB_Table
 {
+    /*
+        CREATE TABLE IF NOT EXISTS `studyHourRequirements` (
+          `ID` int(11) NOT NULL AUTO_INCREMENT,
+          `member_id` int(11) NOT NULL,
+          `start_date` date NOT NULL,
+          `stop_date` date NOT NULL,
+          `week_required` tinyint(4) NOT NULL,
+          `total_complete` smallint(6) NOT NULL DEFAULT '0',
+          `status` enum('in','out','limbo') NOT NULL,
+          PRIMARY KEY (`ID`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='requirements for anyone with study hours' AUTO_INCREMENT=1 ;
+     */
+
+
         public $member_id = NULL;
         public $start_date = NULL;
         public $stop_date = NULL;
