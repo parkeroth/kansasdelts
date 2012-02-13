@@ -398,7 +398,7 @@ function MM_openBrWindow(theURL,winName,features) { //v2.0
 	
 	<div id="popupNotificationClose"><a href="#">x</a></div>
 	
-	<form name="trade" id="trade" action="php/baddDutyTrade.php" method="post">
+	<form name="trade" id="trade" action="baddDutyTrade.php" method="post">
 	<p>
 		
 		<select id="userSelect" name="newPerson">
