@@ -1,9 +1,9 @@
 <?php
 session_start();
 $authUsers = array('admin', 'drm');
-include_once('authenticate.php');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 	
-include_once('login.php');
+include_once('../php/login.php');
 
 $query = "SELECT date FROM baddDutyDays WHERE ID = '$_POST[id]'";
 $result = mysqli_query($mysqli, $query);
