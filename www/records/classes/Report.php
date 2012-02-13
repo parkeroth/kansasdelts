@@ -2,14 +2,8 @@
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/DB_Table.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/DB_Manager.php';
 
-/*
- * Number of seconds reports are due before date of meeting
- * Set As: 12 noon day of meeting (+12 hrs)
- */
 require_once 'Task.php';
 require_once 'Meeting.php';
-
-$deadline = 43200;
 
 /**
  * This table contains all the relavent information a weekly report. Each position on a given board is expected
@@ -82,7 +76,7 @@ class Report extends DB_Table
 
 	public function is_late(){
 		$meeting = new Meeting($this->meeting_id);
-		$time_due = strtotime($meeting->date) + $deadline;
+		$time_due = strtotime($meeting->date) + (15 * 60 * 60);
 		$time_submitted = strtotime($this->date_submitted);
 		return $time_submitted > $time_due;
 	}
