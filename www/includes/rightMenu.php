@@ -66,7 +66,7 @@ foreach($user_position_ids as $position_ids){
 			}
 		}
 	}
-	$auth_list = array('admin', 'houseManager');
+	$auth_list = array('admin', 'houseManager', 'vpInternal');
 	if($session->isAuth($auth_list)){
 		$query = "
 			SELECT COUNT(username), type
