@@ -152,6 +152,7 @@ foreach($errors as $error){
 	echo '<p class="redHeading" style="font-weight: bold;">'.$error.'</p>';
 }
 ?>
+<?php if(count($board_meeting_dates) > 0) { ?>
 <p>Be sure to select the correct date of the applicable series of board meetings. This is usually the day prior to the chapter meeting.</p>
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
 	<table>
@@ -186,5 +187,8 @@ foreach($errors as $error){
 		</tr>
 	</table>
 </form>
+<?php } else {
+	echo '<p>There are no new board meetings. You cannot add a chapter meeting without an accompanying exec/admin meeting. <a href="manageBoard.php">Click here</a> to add exec/admin meetings.</p>';
+}?>
 
 <?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/footer.php"); ?>
