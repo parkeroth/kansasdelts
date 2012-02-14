@@ -64,7 +64,9 @@ class Hour_Log_Manager extends DB_Manager
 			AND username = '$username'
 			AND notes = '".Hour_Log::$carry_over_notes."'";
 		//echo $query;
-		$result = mysqli_query($this->connection, $query);
+		$this->connect();
+		$result = $this->connection->query($query);
+		$this->disconnect();
 	}
 	
 	//TODO: change username to member_id
@@ -89,7 +91,9 @@ class Hour_Log_Manager extends DB_Manager
 			ORDER BY dateAdded ASC";
 		if($limit)
 			$query .= "LIMIT $limit"; //echo $query.'<br>';
-		$result = mysqli_query($this->connection, $query);
+		$this->connect();
+		$result = $this->connection->query($query);
+		$this->disconnect();
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Hour_Log($data[ID]);
 		}

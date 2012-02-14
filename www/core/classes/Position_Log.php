@@ -119,7 +119,9 @@ class Position_Log_Manager extends DB_Manager
 			SELECT ID FROM position_log
 			$where
 			ORDER BY ID ASC"; //echo $query.'<br>';
+		$this->connect();
 		$result = $this->connection->query($query);
+		$this->disconnect();
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Position_Log($data[ID], $term, $year);
 		}

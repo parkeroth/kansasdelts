@@ -65,7 +65,9 @@ class Report extends DB_Table
 			FROM reports
 			WHERE position_id= '$position_id'
 			AND meeting_date='$meeting_date'"; //echo $query.'<br>';
-		$result = mysqli_query($this->connection, $query);
+		$this->connect();
+		$result = $this->connection->query($query);
+		$this->disconnect();
 		$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
 		if($data){
 			return $data[ID];
@@ -90,7 +92,7 @@ class Report extends DB_Table
 	}
 	
 	public function get_tasks($status){
-		$task_manager = new TaskManager($this->connection);
+		$task_manager = new TaskManager();
 		return $task_manager->get_tasks_by_report_id($this->id, $status);
 	}
 	
@@ -174,7 +176,9 @@ class ReportManager extends DB_Manager
 			SELECT ID FROM reports
 			$where
 			ORDER BY ID DESC"; //echo $query.'<br>';
-		$result = mysqli_query($this->connection, $query);
+		$this->connect();
+		$result = $this->connection->query($query);
+		$this->disconnect();
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Report($data[ID]);
 		}

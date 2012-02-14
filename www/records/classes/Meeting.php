@@ -172,7 +172,9 @@ class Meeting_Manager extends DB_Manager
 				WHERE chapter_id IS NULL
 				AND type != 'chapter'
 				ORDER BY date DESC";
-		$result = $this->connection->query($query); //echo $query;
+		$this->connect();
+		$result = $this->connection->query($query);
+		$this->disconnect();
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = $data[date];
 		}
@@ -203,7 +205,9 @@ class Meeting_Manager extends DB_Manager
 			AND type = '$board'
 			ORDER BY date ASC
 			LIMIT 1";
-		$result = $this->connection->query($query); //echo $query;
+		$this->connect();
+		$result = $this->connection->query($query);
+		$this->disconnect();
 		$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
 		if($data){
 			return new Meeting($data[id]);
@@ -234,7 +238,9 @@ class Meeting_Manager extends DB_Manager
 			AND type = '$current_meeting->type'
 			ORDER BY date DESC
 			LIMIT 1";
-		$result = $this->connection->query($query); //echo $query;
+		$this->connect();
+		$result = $this->connection->query($query);
+		$this->disconnect();
 		if($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			return new Meeting($data[id]);
 		} else {
@@ -252,7 +258,9 @@ class Meeting_Manager extends DB_Manager
 			$where
 			ORDER BY date DESC
 			LIMIT $limit"; //echo $query.'<br>';
-		$result = mysqli_query($this->connection, $query);
+		$this->connect();
+		$result = $this->connection->query($query);
+		$this->disconnect();
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Meeting($data[id]);
 		}

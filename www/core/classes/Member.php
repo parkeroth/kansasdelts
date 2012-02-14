@@ -156,7 +156,9 @@ class Member_Manager extends DB_Manager
 			FROM members
 			WHERE memberStatus = 'active'
 			AND residency != 'limbo'"; //echo $query.'<br>';
+		$this->connect();
 		$result = $this->connection->query($query);
+		$this->disconnect();
 		$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
 		return $data[total];
 	}
@@ -178,7 +180,9 @@ class Member_Manager extends DB_Manager
 			SELECT ID FROM members
 			$where
 			ORDER BY lastName ASC"; //echo $query.'<br>';
+		$this->connect();
 		$result = $this->connection->query($query);
+		$this->disconnect();
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$member = new Member($data[ID]);
 			$list[] = $member;

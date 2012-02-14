@@ -18,6 +18,10 @@ class DB {
 	protected $connection = NULL;
     
 	function __construct(){
+		
+	}
+	
+	protected function connect(){
 		$this->connection = new mysqli($this->host, $this->username, $this->password, $this->database);
 		
 		if(mysqli_connect_errno()){
@@ -26,8 +30,12 @@ class DB {
 		}
 	}
 	
-	function __destruct() {
+	protected function disconnect(){
 		$this->connection->close();
+	}
+	
+	function __destruct() {
+		
 	}
 }
 

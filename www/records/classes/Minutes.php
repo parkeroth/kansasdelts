@@ -82,7 +82,9 @@ class Minutes_Manager extends DB {
 			$where
 			ORDER BY meeting_id DESC
 			$limit"; //echo $query.'<br>';
-		$result = mysqli_query($this->connection, $query);
+		$this->connect();
+		$result = $this->connection->query($query);
+		$this->disconnect();
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Minutes($data[ID]);
 		}

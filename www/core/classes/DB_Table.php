@@ -41,7 +41,9 @@ class DB_Table extends DB{
 					SELECT *
 					FROM $this->table_name
 					WHERE $where";
+				$this->connect();
 				$result = $this->connection->query($query); //echo $query;
+				$this->disconnect();
 				$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
 				// Fill the new objects member variables with the information from the database
 				foreach($this->table_mapper as $member_var => $table_field){
@@ -72,7 +74,9 @@ class DB_Table extends DB{
 		$id_field = $this->table_mapper[id];
 		$query .= " WHERE $id_field = '$this->id'";
 		//echo $query.'<br>';
+		$this->connect();
 		$this->connection->query($query);
+		$this->disconnect();
 	}
 	
 	/**
@@ -127,7 +131,9 @@ class DB_Table extends DB{
 		}
 		$id_field = $this->table_mapper[id];
 		$query .= ' ) '; //echo $query;
+		$this->connect();
 		$this->connection->query($query);
+		$this->disconnect();
 		// Find the proper value for the id of the newly inserted object
 		$this->id = $this->connection->insert_id;
 	}
@@ -145,7 +151,9 @@ class DB_Table extends DB{
 		$query =	"DELETE FROM $this->table_name 
 				WHERE ".$this->table_mapper[id]." = '$this->id'";
 		//echo $query;
+		$this->connect();
 		$this->connection->query($query);
+		$this->disconnect();
 		unset($this); // Could be a problem?
 	}
 	
