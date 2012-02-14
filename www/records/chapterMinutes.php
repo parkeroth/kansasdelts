@@ -102,6 +102,9 @@ $exec_meeting = $meeting_manager->get_meetings_by_chapter($chapter_meeting->id, 
 $internal_meeting = $meeting_manager->get_meetings_by_chapter($chapter_meeting->id, 'internal');
 $external_meeting = $meeting_manager->get_meetings_by_chapter($chapter_meeting->id, 'external');
 
+if($exec_meeting == NULL || $internal_meeting == NULL || $external_meeting == NULL)
+	header('location: ../error.php?page=board-assign');
+
 $minutes_manager = new Minutes_Manager();
 $current_minutes = $minutes_manager->get_by_meeting($meeting_id);
 
