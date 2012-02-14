@@ -245,42 +245,51 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 				
 			<?php }
 			
-			$auth_list = array('admin', 'communityService');
+			$auth_list = array('admin', 'pres', 'vpInternal', 'vpExternal', 'houseManager', 'communityService', 'philanthropy');
 			if($session->isAuth($auth_list)){  ?>
 				
 				<li>
-					<a href="#">Manage Community Service</a>
+					<a href="#">Manage Hours</a>
 					<ul>
-						<li><a href=" javascript:MM_openBrWindow('AddCalEvent.php?type=communityService','','width=500,height=400, scrollbars=1');">Add Event</a></li>
-						<li><a href="manageEvents.php?type=communityService">View Events</a></li>
-						<li><a href="changeHoursForm.php?type=communityService">Change Service Hours</a></li>
+						<?php $auth_list = array('admin', 'pres', 'vpInternal', 'houseManager');
+						if($session->isAuth($auth_list)){ ?>
+						<li><a href="hours/changeForm.php?type=house">House Hours</a></li>
+							
+						<?php } $auth_list = array('admin', 'pres', 'vpInternal', 'communityService');
+						if($session->isAuth($auth_list)){ ?>
+						<li><a href="hours/changeForm.php?type=service">Service Hours</a></li>
+						
+						<?php } $auth_list = array('admin', 'pres', 'vpExternal', 'philanthropy');
+						if($session->isAuth($auth_list)){ ?>
+						<li><a href="hours/changeForm.php?type=philanthropy">Philanthropies</a></li></li>
+						<?php } ?>
 					</ul>
 				</li>
 				
 			<?php }
 			
-			$auth_list = array('admin', 'publicRel', 'philanthropy');
-			if($session->isAuth($auth_list)){ ?>
+			$auth_list = array('admin', 'pres', 'vpInternal', 'vpExternal', 'houseManager', 'communityService', 'philanthropy', 'brotherhood');
+			if($session->isAuth($auth_list)){  ?>
 				
 				<li>
-					<a href="#">Manage Philanthopies</a>
+					<a href="#">Manage Events</a>
 					<ul>
-						<li><a href="javascript:MM_openBrWindow('AddCalEvent.php?type=philanthropy','','width=500,height=400, scrollbars=1');">Add Event</a></li>
-						<li><a href="manageEvents.php?type=philanthropy">View Events</a></li>
-						<li><a href="changeHoursForm.php?type=philanthropy">Change Service Hours</a></li>
-					</ul>
-				</li>
-				
-			<?php }
-			
-			$auth_list = array('admin', 'brotherhood');
-			if($session->isAuth($auth_list)){ ?>
-				
-				<li>
-					<a href="#">Manage Brotherhood</a>
-					<ul>
-						<li><a href=" javascript:MM_openBrWindow('AddCalEvent.php?type=brotherhood','','width=500,height=400, scrollbars=1');">Add Event</a></li>
-						<li><a href="manageEvents.php?type=brotherhood">View Events</a></li>
+						<?php $auth_list = array('admin', 'pres', 'vpInternal', 'houseManager');
+						if($session->isAuth($auth_list)){ ?>
+						<li><a href="manageEvents.php?type=house">House Cleanings</a></li>
+							
+						<?php } $auth_list = array('admin', 'pres', 'vpInternal', 'communityService');
+						if($session->isAuth($auth_list)){ ?>
+						<li><a href="manageEvents.php?type=communityService">Service Events</a></li>
+						
+						<?php } $auth_list = array('admin', 'pres', 'vpInternal', 'brotherhood');
+						if($session->isAuth($auth_list)){ ?>
+						<li><a href="manageEvents.php?type=brotherhood">Brotherhood Events</a></li>
+						
+						<?php } $auth_list = array('admin', 'pres', 'vpExternal', 'philanthropy');
+						if($session->isAuth($auth_list)){ ?>
+						<li><a href="manageEvents.php?type=philanthropy">Philanthropies</a></li>
+						<?php } ?>
 					</ul>
 				</li>
 				
@@ -292,11 +301,8 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 				<li>
 					<a <?php if($numBroken){ echo "class=\"notify\""; } ?> href="#">Manage House Work</a>
 					<ul>
-						<li><a href=" javascript:MM_openBrWindow('AddCalEvent.php?type=house','','width=500,height=400, scrollbars=1');">Add Event</a></li>
-						<li><a href="manageEvents.php?type=house">View Events</a></li>
 						<li><a href="manageVolunteers.php">View Volunteers <?php if($numVol){ echo "<span class=\"redHeading\">(".$numVol.")</span>";} ?></a></li>
 						<li><a href="manageBrokenItems.php">View Broken Items <?php if($numBroken){ echo "<span class=\"redHeading\">(".$numBroken.")</span>";} ?></a></li>
-						<li><a href="changeHoursForm.php?type=house">Change House Hours</a></li>
 					</ul>
 				</li>
 				
