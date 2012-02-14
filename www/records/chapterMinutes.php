@@ -81,6 +81,8 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 		$prev_minutes->unfinished_business = $_POST['old-business'];
 		$prev_minutes->save();
 	}
+
+	$_GET[id] = $chapter_id;
 	
 	header('location: manageChapter.php');
 }
