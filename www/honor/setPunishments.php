@@ -121,7 +121,7 @@ $(document).ready(function(){
 		html += '<tr><th>Offence #: </th><td class="left"><input type="text" size="2" name="offenceNum" /></td></tr>';
 		html += '<tr><th>Fine: </th><td class="left"><input type="text" size="3" name="fine" /></td></tr>';
 		html += '<tr><th>Hours: </th><td class="left"><input type="" size="2" name="hours" /></td></tr>';
-		html += '<tr><th>Hour Type: </th><td class="left"><select name="hourType"><option value="select">Select One</option><option value="NULL">N/A</option><option value="houseHours">House</option><option value="serviceHours">Service</option></td></tr>';
+		html += '<tr><th>Hour Type: </th><td class="left"><select name="hourType"><option value="select">Select One</option><option value="NULL">N/A</option><option value="house">House</option><option value="service">Service</option></td></tr>';
 		html += '<tr><th>Suspension: </th><td class="left"><select name="suspension"><option value="select">Select One</option><option value="none">None</option><option value="social">Social</option><option value="financial">Financial</option></td></tr>';
 		html += '<tr><th>Expel: </th><td class="left"><select name="expel"><option value="select">Select One</option><option value="1">Yes</option><option value="0">No</option></td></tr>';
 		html += '<tr><th>&nbsp;</th><td class="left"></td></tr>';
@@ -187,9 +187,9 @@ $(document).ready(function(){
 				echo "<td>$punishmentArray[hours]</td>";
 				echo "<td>";
 				
-					if($punishmentArray[hourType] == 'houseHours') {
+					if($punishmentArray[hourType] == 'house') {
 						echo "House";
-					} else if($punishmentArray[hourType] == 'serviceHours') {
+					} else if($punishmentArray[hourType] == 'service') {
 						echo "Service";
 					} else if($punishmentArray[hourType] == 'NULL') {
 						echo "N/A";

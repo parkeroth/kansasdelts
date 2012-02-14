@@ -4,10 +4,10 @@
 			$serviceHoursQuery = "
 			SELECT hours 
 			FROM hourLog 
-			WHERE type='serviceHours'
+			WHERE type='service'
 			AND term ='$term'
 			AND year = '$year'
-			AND username = '".$_SESSION['username']."'";
+			AND member_id = '".$session->member_id."'";
 		$getEventData = mysqli_query($mysqli, $serviceHoursQuery);
 		$serviceHours = 0;
 		
@@ -19,10 +19,10 @@
 		$houseHoursQuery = "
 			SELECT hours 
 			FROM hourLog 
-			WHERE type='houseHours'
+			WHERE type='house'
 			AND term ='$term'
 			AND year = '$year'
-			AND username = '".$_SESSION['username']."'";
+			AND member_id = '".$session->member_id."'";
 		$getEventData = mysqli_query($mysqli, $houseHoursQuery);
 		$houseHours = 0;
 		
@@ -34,10 +34,10 @@
 		$philanthropyQuery = "
 			SELECT hours 
 			FROM hourLog 
-			WHERE type='philanthropyHours'
+			WHERE type='philanthropy'
 			AND term ='$term'
 			AND year = '$year'
-			AND username = '".$_SESSION['username']."'";
+			AND member_id = '".$session->member_id."'";
 		$getPhilData = mysqli_query($mysqli, $philanthropyQuery);
 		$philanthropies = 0;
 		

@@ -391,21 +391,21 @@ include('widgets/apparelOrders.php');
 	<h2>Service Hours</h2>
 	<div id="popupServiceHourClose"><a href="#">x</a></div>
 
-	<?php hourPopUp("serviceHours", $term, $year, $mysqli);?>
+	<?php hourPopUp("service", $term, $year, $mysqli);?>
 </div>
 
 <div id="popupHouseHours">
 	<h2>House Hours</h2>
 	<div id="popupHouseHoursClose"><a href="#">x</a></div>
 
-	<?php hourPopUp("houseHours", $term, $year, $mysqli);?>
+	<?php hourPopUp("house", $term, $year, $mysqli);?>
 </div>
 
 <div id="popupPhilanthropyHours">
 	<h2>Philanthropies</h2>
 	<div id="popupPhilanthropyHoursClose"><a href="#">x</a></div>
 
-	<?php hourPopUp("philanthropyHours", $term, $year, $mysqli);?>
+	<?php hourPopUp("philanthropy", $term, $year, $mysqli);?>
 </div>
 
 <div id="backgroundPopup"></div>

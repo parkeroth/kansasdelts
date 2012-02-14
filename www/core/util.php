@@ -1,4 +1,7 @@
 <?php
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';
+
 
 class Semester {
 	public static $TERMS = array('spring', 'fall');
@@ -61,5 +64,19 @@ class Semester {
 			$this->term = 'spring';
 		}
 	}
+}
+
+function second_stage_auth($page_auth, $key, $member_id){
+	$AUTHORIZED = false;
+	
+	$member = new Member($member_id);
+	$position_slugs = $page_auth[$key];
+	foreach($position_slugs as $slug){
+		$position = new Position(NULL, $slug);
+		if($member->is_position($position->id)){
+			$AUTHORIZED = true;
+		}
+	}
+	return $AUTHORIZED;
 }
 ?>

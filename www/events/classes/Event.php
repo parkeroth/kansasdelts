@@ -1,6 +1,6 @@
 <?php
 
-require_once 'DB_Table.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/DB.php';
 
 class Event extends DB_Table {
 	public $id = NULL;

@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `punishments` (
  */
 class Punishment extends DB_Table {
 	public static $PUNISHMENT_TYPES = array('missedDaily', 'missedCleaning', 'unexcusedChapter', 'missedBaddDuty','missedTailgateDuty');
-	public static $HOUR_TYPES = array('houseHours', 'serviceHours');
+	public static $HOUR_TYPES = array('house', 'service');
 	
 	public $id = NULL;
 	public $offence_num = NULL;
@@ -62,6 +62,11 @@ class Punishment_Manager extends DB_Manager {
 		$where = "WHERE type = '$type'";
 		if($offence_num)
 			$where .= " AND offenceNum = '$offence_num'";
+		return $this->get_punishment_list($where);
+	}
+	
+	public function get_all(){
+		$where = "WHERE 1=1";
 		return $this->get_punishment_list($where);
 	}
 	

@@ -4,6 +4,29 @@ $authUsers = array('admin', 'communityService', 'houseManager', 'philanthropy', 
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/util.php';
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';
+include_once 'classes/Hour_Log.php';
+
+if(isset($_GET[type])){
+	$type = $_GET[type];
+} else if(isset($_POST[type])){
+	$type = $_POST[type];
+} else {
+	header('location: ../error.php');
+}
+
+$page_auth = array(	'house' => array('admin', 'houseManager', 'vpInternal', 'pres'),
+				'service' => array('admin', 'communityService', 'vpInternal', 'pres'),
+				'philanthropy' => array('admin', 'philanthropy', 'vpExternal', 'pres'));
+$authorized = second_stage_auth($page_auth, $type, $session->member_id);
+
+if($authorized == false){
+	header('location: ../error.php?page=unauthorized');
+}
+
+$hour_manager = new Hour_Log_Manager();
+$member_manager = new Member_Manager();
+$member_list = $member_manager->get_all_members($sem);
 
 /**
  * Processing Section
@@ -13,73 +36,37 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 	
 	$descriptionError = false;
 
-	$type = $_POST[type];
 	$year = $_POST[year];
 	$term = $_POST[term];
 	
+	$sem = new Semester();
+	$sem->year = $year;
+	$sem->term = $term;
+	
 	$_GET[type] = $type;
 	
-	$date = date("Y-m-d");
-	
-	if($type == "communityService"){
-		$hourType = "serviceHours";
-	} else if($type == "house"){
-		$hourType = "houseHours";
-	} else if($type == "philanthropy"){
-		$hourType = "philanthropyHours";
-	}
-	
-	include_once("snippet/setTermYear.php");
-	
-	if($term == "fall")
+	foreach($member_list as $member)
 	{
-		$dateAdded = $year."-10-01";
-	}
-	else
-	{
-		$dateAdded = $year."-04-01";
-	}
-	
-	$userData = "
-		SELECT * 
-		FROM members
-		WHERE dateAdded <= '$dateAdded'
-		ORDER BY lastName";
-	$getUserData = mysqli_query($mysqli, $userData);
-	
-	$memberCount = 0;
-	while($userDataArray = mysqli_fetch_array($getUserData, MYSQLI_ASSOC))
-	{
-		$members[$memberCount]['username'] = $userDataArray['username'];
-		$members[$memberCount]['firstName'] = $userDataArray['firstName'];
-		$members[$memberCount]['lastName'] = $userDataArray['lastName'];
-		$members[$memberCount]['accountType'] = $userDataArray['accountType'];
-		$members[$memberCount]['class'] = $userDataArray['class'];
-		$members[$memberCount]['major'] = $userDataArray['major'];
-		$memberCount++;
-	}
-	
-	for($i = 0; $i < $memberCount; $i++)
-	{
-		$change = $_POST[$members[$i]['username']];
+		$change = $_POST[$member->id];
 		
 		if( $change != NULL )
 		{
-			if($change != 0 && $_POST[$members[$i]['username']."Description"] == ""){
+			if($change != 0 && $_POST[$member->id."Description"] == ""){
 				$descriptionError = true;
-				$errors[] = "<b>".$members[$i]['firstName']." ".$members[$i]['lastName']."'s</b> hours were not changed. Need a description.<br>";
+				$errors[] = "<b>".$member->first_name." ".$member->last_name."'s</b> hours were not changed. Need a description.<br>";
 			} else {
-				$description = $_POST[$members[$i]['username']."Description"];
-				$modify = "INSERT INTO hourLog
-					(username, term, year, hours, type, eventID, dateAdded, notes)
-					VALUES
-					('".$members[$i]['username']."', '$term', '$year', '$change', '$hourType', 'NULL', '$date', '$description')";
-				$doModification = mysqli_query($mysqli, $modify);
+				$description = $_POST[$member->id."Description"];
+				$hour_log = new Hour_Log();
+				$hour_log->member_id = $member->id;
+				$hour_log->term = $term;
+				$hour_log->year = $year;
+				$hour_log->hours = $change;
+				$hour_log->type = $type;
+				$hour_log->notes = $description;
+				$hour_log->insert();
 			}
-			
 		}
 	}
-	
 }
 	
 
@@ -88,14 +75,10 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 /**
  * Form Section
  */
- 
- 	if(isset($_GET['type'])){
-		$type = $_GET['type'];
-	} else {
-		$type = "ERROR";
-	}
 	
-	if(isset($_GET['term']) || isset($_GET['year'])){
+	if(isset($sem)){
+		// Do nothing
+	} else if(isset($_GET['term']) || isset($_GET['year'])){
 		$sem = new Semester();
 		$sem->term = $_GET['term'];
 		$sem->year = $_GET['year'];
@@ -103,34 +86,17 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 		$sem = new Semester();
 	}
 	
-	$member_manager = new Member_Manager();
-	$member_list = $member_manager->get_all_members();
-	
-	// Set headers and types
-	if($type == 'communityService')
-	{
-		$pageHeader = "Community Service Hours";
-		$queryType = "serviceHours";
-	}
-	else if($type == 'house')
-	{
-		$pageHeader = "House Hours";
-		$queryType = "houseHours";
-	}
-	else if($type == 'philanthropy')
-	{
-		$pageHeader = "Philanthropies";
-		$queryType = "philanthropyHours";
-	}
+	$total_hours = $hour_manager->get_total($type, $sem);
+	$hours_per_man = round($total_hours/count($member_list), 2);
 
 include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 
-<link type="text/css" href="styles/ui-lightness/jquery-ui-1.8.1.custom.css" rel="stylesheet" />
-<link type="text/css" href="styles/popUp.css" rel="stylesheet" />
+<link type="text/css" href="../styles/ui-lightness/jquery-ui-1.8.1.custom.css" rel="stylesheet" />
+<link type="text/css" href="../styles/popUp.css" rel="stylesheet" />
 
-<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="js/jquery-ui-1.8.1.custom.min.js"></script>
-<script type="text/javascript" src="js/popup.js"></script>
+<script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../js/jquery-ui-1.8.1.custom.min.js"></script>
+<script type="text/javascript" src="../js/popup.js"></script>
 
 <script>
 
@@ -141,7 +107,7 @@ $(document).ready(function(){
 		
 		var id = $(this).attr('id');
 		
-		$.get('snippet/popupBody.php?type=hours&hourType=<?php echo $queryType; ?>&username=' + id + '&year=<?php echo $year; ?>&term=<?php echo $season; ?>', function(data){
+		$.get('popup/details.php?type=<?php echo $type; ?>&member_id=' + id + '&year=<?php echo $sem->year; ?>&term=<?php echo $sem->term; ?>', function(data){
 			$("#popupBody").html(data);
 		});
 		
@@ -170,37 +136,17 @@ $(document).ready(function(){
 <?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php"); ?>
 
 <div style="text-align:center;">
-	<?php
-	
-	// Get total number of hours for the term
-	$query = "	SELECT SUM(hours) AS total 
-				FROM hourLog 
-				WHERE year='$year' 
-				AND term='$season' 
-				AND type='$queryType'";
-				
-	if($result = mysqli_query($mysqli, $query)){
-		
-		$row = mysqli_fetch_object($result);
-		$totalHours = $row->total;
-		
-		$hoursPerMan = round($totalHours/$numMembers, 2);
-		
-		mysqli_free_result($result);
-	}
-	
-	echo "<h2>$pageHeader - ".ucwords($season)." ".$year."</h2>";
-	?>
+	<?php echo '<h2>'.Hour_Log::$HOUR_TYPES[$type].' - '.ucwords($sem->term).' '.$sem->year.'</h2>'; ?>
 	
 	<table width="600" border="0" cellspacing="0" cellpadding="0" align="center">
 		<tr> 
 			<td><div align="right"><a href="<? 
 	  		
-			if($season == "fall"){
-				echo "changeHoursForm.php?year=$year&amp;season=spring&amp;type=$type"; 
+			if($sem->term == "fall"){
+				echo "changeForm.php?year=$sem->year&amp;term=spring&amp;type=$type"; 
 			} else {
-				$lastYear = $year-1;
-				echo "changeHoursForm.php?year=$lastYear&amp;season=fall&amp;type=$type"; 
+				$lastYear = $sem->year-1;
+				echo "changeForm.php?year=$lastYear&amp;term=fall&amp;type=$type"; 
 			}
 			
 			?>">&lt;&lt;</a></div></td>
@@ -208,37 +154,36 @@ $(document).ready(function(){
 				
 				<select name="season" id="month" onChange="MM_jumpMenu('parent',this,0)">
 					<?
-			if($season == "fall"){
-		  		echo "<option value=\"changeHoursForm.php?year=$year&amp;season=spring&amp;type=$type\" >Spring</option>\n";
-				echo "<option value=\"changeHoursForm.php?year=$year&amp;season=fall&amp;type=$type\" selected>Fall</option>\n";
+			if($sem->term == "fall"){
+		  		echo "<option value=\"changeForm.php?year=$sem->year&amp;term=spring&amp;type=$type\" >Spring</option>\n";
+				echo "<option value=\"changeForm.php?year=$sem->year&amp;term=fall&amp;type=$type\" selected>Fall</option>\n";
 			} else {
-				echo "<option value=\"changeHoursForm.php?year=$year&amp;season=spring&amp;type=$type\" selected>Spring</option>\n";
-				echo "<option value=\"changeHoursForm.php?year=$year&amp;season=fall&amp;type=$type\" >Fall</option>\n";
+				echo "<option value=\"changeForm.php?year=$sem->year&amp;term=spring&amp;type=$type\" selected>Spring</option>\n";
+				echo "<option value=\"changeForm.php?year=$sem->year&amp;term=fall&amp;type=$type\" >Fall</option>\n";
 			}
 			?>
 					</select>
 				<select name="year" id="year" onChange="MM_jumpMenu('parent',this,0)">
 					<?
-		  $yearLoop = date("Y");
 		  
-		  for ($i = $yearLoop+1; $i >= $yearLoop-3; $i--) {
+		  for ($i = $sem->year +1; $i >= $sem->year - 3; $i--) {
 		  	if($i == $year){
 				$selected = "selected";
 			} else {
 				$selected = "";
 			}
-		  	echo "<option value=\"changeHoursForm.php?season=$season&amp;year=$i&amp;type=$type\" $selected>$i</option>\n";
+		  	echo "<option value=\"changeForm.php?term=$sem->term&amp;year=$i&amp;type=$type\" $selected>$i</option>\n";
 		  }
 		  ?>
 					</select>
 				</div></td>
 			<td><div align="left"><a href="<? 
 	  	
-		if($season == "fall"){
-				$nextYear = $year+1;
-				echo "changeHoursForm.php?year=$nextYear&amp;season=spring&amp;type=$type"; 
+		if($sem->term == "fall"){
+				$nextYear = $sem->year+1;
+				echo "changeForm.php?year=$nextYear&amp;term=spring&amp;type=$type"; 
 			} else {
-				echo "changeHoursForm.php?year=$year&amp;season=fall&amp;type=$type"; 
+				echo "changeForm.php?year=$sem->year&amp;term=fall&amp;type=$type"; 
 			}
 		
 		?>">&gt;&gt;</a></div></td>
@@ -246,7 +191,7 @@ $(document).ready(function(){
 		</table>
 		
 	<p style="text-align:center;">
-		Total hours per member: <b><?php echo $hoursPerMan; ?></b>
+		Total hours per member: <b><?php echo $hours_per_man; ?></b>
 	</p>
 	
 	<p style="text-align:center;">
@@ -271,67 +216,29 @@ $(document).ready(function(){
 				<td><strong>Member</strong></td><td width="100"px><strong>Hours</strong></td><td width="100"px><strong>Adjustment</strong></td><td><strong>Description</strong></td></tr>
 			<?php 
 			
-		include_once('php/login.php');
-		$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
-		
-		//include_once("snippet/setTermYear.php");
-		
-		if($season == "fall")
-		{
-			$dateAdded = $year."-10-01";
-		}
-		else
-		{
-			$dateAdded = $year."-05-01";
-		}
-		
-		$userData = "
-			SELECT * 
-			FROM members
-			WHERE dateAdded <= '$dateAdded'
-			AND residency != 'limbo'
-			ORDER BY lastName";
-		$getUserData = mysqli_query($mysqli, $userData);
-		
-		while($userDataArray = mysqli_fetch_array($getUserData, MYSQLI_ASSOC)){
+		foreach($member_list as $member){
 			
-			$hourData = "
-				SELECT hours
-				FROM hourLog
-				WHERE username = '".$userDataArray['username']."'
-				AND year='$year'
-				AND term='$season'
-				AND type='$queryType'";
-			$getHourData = mysqli_query($mysqli, $hourData);
-			$hours=0;
+			$hours = $hour_manager->get_total($type, $sem, $member->id);
 			
-			while($hourDataArray = mysqli_fetch_array($getHourData, MYSQLI_ASSOC))
-			{
-				$hours += $hourDataArray[hours];
-			}
-			
-			if($hours <= 0)
-			{
+			if($hours <= 0){
 				$class="redHeading";
-			}
-			else
-			{
+			} else {
 				$class="normal";
 			}
 			
 			echo "<tr>";
 			echo "<td style=\"text-align: left;\">";
-			echo 	"<label>".$userDataArray['firstName']." ".$userDataArray['lastName']." </td>\n";
-			echo "<td class=\"$class\"><a class=\"hour\" id=\"$userDataArray[username]\" href=\"#\">$hours</a></td>\n";
-			echo "<td><input type=\"text\" name=\"".$userDataArray['username']."\" size=\"2\"/></label></td>";
-			echo "<td><input type=\"text\" name=\"".$userDataArray['username']."Description\" size=\"24\"/></td>";
+			echo 	"<label>".$member->first_name." ".$member->last_name." </td>\n";
+			echo "<td class=\"$class\"><a class=\"hour\" id=\"$member->id\" href=\"#\">$hours</a></td>\n";
+			echo "<td><input type=\"text\" name=\"".$member->id."\" size=\"2\"/></label></td>";
+			echo "<td><input type=\"text\" name=\"".$member->id."Description\" size=\"24\"/></td>";
 			echo "</tr>\n";
 		}
 	?>
 			</table>
 		<p style="text-align:center;">
-			<input  type="hidden" name="term" value="<?php echo $season; ?>" />
-			<input  type="hidden" name="year" value="<?php echo $year; ?>" />
+			<input  type="hidden" name="term" value="<?php echo $sem->term; ?>" />
+			<input  type="hidden" name="year" value="<?php echo $sem->year; ?>" />
 			<input type="hidden" name="type" value="<?php echo $type; ?>" />
 			<input type="submit" name="submit" id="submit" value="Submit" />
 			<label>

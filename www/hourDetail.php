@@ -37,7 +37,7 @@
 	
 	echo "<h2>";
 	
-	if($type == "serviceHours"){
+	if($type == "service"){
 		echo "Community Service Hours";	
 	}
 	else if($type == "house"){
