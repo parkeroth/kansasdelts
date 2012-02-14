@@ -13,7 +13,7 @@ session_start();
 $authUsers = array('admin');
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
-require_once 'Hour_Logs.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/hours/classes/Hour_Log.php';
 
 
 $REQUIRED_HOURS = array('houseHours' => 5, 'serviceHours' => 10);

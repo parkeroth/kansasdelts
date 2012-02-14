@@ -9,6 +9,7 @@ require_once 'DB.php';
 class DB_Table extends DB{
 	protected $table_name = NULL;
 	protected $table_mapper = NULL;
+	protected $is_new = true;
 	
 	/**
 	 * This constructor takes a set of parameters and initializes the object either as empty or fill with information

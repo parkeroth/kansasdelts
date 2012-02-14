@@ -28,7 +28,8 @@ class Hour_Log extends DB_Table {
 		$this->table_name = 'hourLog';
 		$this->table_mapper = array(
 			'id' => 'ID',
-			'username' => 'username',
+			'member_id' => 'member_id',
+			'username' => 'username',		//Deprecated
 			'term' => 'term',
 			'year' => 'year',
 			'hours' => 'hours',
@@ -75,16 +76,19 @@ class Hour_Log_Manager extends DB_Manager
 		return $this->get_log_list($where, 100);
 	}
 	
+	public function get_all(){
+		$where = "WHERE 1=1";
+		return $this->get_log_list($where);
+	}
+	
 	private function get_log_list($where, $limit = NULL){
-		if(!$limit){
-			$limit = 20;
-		}
 		$list = array();
 		$query = "
 			SELECT ID FROM hourLog
 			$where
-			ORDER BY dateAdded ASC
-			LIMIT $limit"; //echo $query.'<br>';
+			ORDER BY dateAdded ASC";
+		if($limit)
+			$query .= "LIMIT $limit"; //echo $query.'<br>';
 		$result = mysqli_query($this->connection, $query);
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Hour_Log($data[ID]);

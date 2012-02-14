@@ -13,11 +13,11 @@ session_start();
 $authUsers = array('admin');
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/finance/classes/Fine.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/hours/classes/Hour_Log.php';
 
-$fine_manager = new Fine_Manager();
-$fine_list = $fine_manager->get_all();
-foreach($fine_list as $record){
+$hour_manager = new Hour_Log_Manager();
+$hour_list = $hour_manager->get_all();
+foreach($hour_list as $record){
 	echo $record->username;
 	$member = new Member(NULL, $record->username);
 	$record->member_id =  $member->id;

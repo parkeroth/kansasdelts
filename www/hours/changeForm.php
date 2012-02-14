@@ -1,8 +1,9 @@
 <?php
 session_start();
-include_once('php/login.php');
-$authUsers = array('admin', 'communityService', 'houseManager');
-include_once('php/authenticate.php');
+$authUsers = array('admin', 'communityService', 'houseManager', 'philanthropy', 'vpInternal', 'vpExternal', 'pres');
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/util.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 
 /**
  * Processing Section
@@ -11,8 +12,6 @@ include_once('php/authenticate.php');
 if($_SERVER['REQUEST_METHOD'] == "POST") {
 	
 	$descriptionError = false;
-	
-	$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
 
 	$type = $_POST[type];
 	$year = $_POST[year];
@@ -90,39 +89,22 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
  * Form Section
  */
  
- 	if(isset($_GET['type']))
-	{
+ 	if(isset($_GET['type'])){
 		$type = $_GET['type'];
-	}
-	else
-	{
+	} else {
 		$type = "ERROR";
 	}
 	
-	if(isset($_GET['season']) && isset($_GET['year']))
-	{
-		$year = $_GET['year'];
-		$season = $_GET['season'];
+	if(isset($_GET['term']) || isset($_GET['year'])){
+		$sem = new Semester();
+		$sem->term = $_GET['term'];
+		$sem->year = $_GET['year'];
 	} else {
-		$year = date(Y);
-		$month = date(n);
-		
-		if($month > 0 && $month < 7){
-			$season = "spring";
-		} else if($month > 7 && $month < 13){
-			$season = "fall";
-		}
+		$sem = new Semester();
 	}
 	
-	// Get number of members in roster
-	$query = "SELECT COUNT(username) AS numUsers FROM members WHERE residency != 'limbo'";
-	if($result = mysqli_query($mysqli, $query)){
-		
-		$row = mysqli_fetch_object($result);
-		$numMembers = $row->numUsers;
-		
-		mysqli_free_result($result);
-	}
+	$member_manager = new Member_Manager();
+	$member_list = $member_manager->get_all_members();
 	
 	// Set headers and types
 	if($type == 'communityService')
