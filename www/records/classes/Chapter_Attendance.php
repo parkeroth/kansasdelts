@@ -113,7 +113,9 @@ class Chapter_Attendance_Manager extends DB_Manager {
 				WHERE a.meeting_id = '$meeting_id'
 				AND a.status = '$status' 
 				$restrict_str"; //echo $query;
-		$result = mysqli_query($this->connection, $query);
+		$this->connect();
+		$result = $this->connection->query($query);
+		$this->disconnect();
 		$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
 		
 		return $data[total];
@@ -133,7 +135,9 @@ class Chapter_Attendance_Manager extends DB_Manager {
 					WHERE meeting_id ='$meeting_id'";
 		}
 		// echo $query;
-		$result = mysqli_query($this->connection, $query);
+		$this->connect();
+		$result = $this->connection->query($query);
+		$this->disconnect();
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Chapter_Attendance($data[ID]);
 		}
@@ -159,7 +163,9 @@ class Chapter_Attendance_Manager extends DB_Manager {
 			SELECT ID FROM attendance
 			$where
 			LIMIT $limit"; //echo $query.'<br>';
-		$result = mysqli_query($this->connection, $query);
+		$this->connect();
+		$result = $this->connection->query($query);
+		$this->disconnect();
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Chapter_Attendance($data[ID]);
 		}

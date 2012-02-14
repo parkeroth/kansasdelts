@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `punishments` (
  */
 class Punishment extends DB_Table {
 	public static $PUNISHMENT_TYPES = array('missedDaily', 'missedCleaning', 'unexcusedChapter', 'missedBaddDuty','missedTailgateDuty');
-	public static $HOUR_TYPES = array('houseHours', 'serviceHours');
+	public static $HOUR_TYPES = array('house', 'service');
 	
 	public $id = NULL;
 	public $offence_num = NULL;
@@ -65,6 +65,11 @@ class Punishment_Manager extends DB_Manager {
 		return $this->get_punishment_list($where);
 	}
 	
+	public function get_all(){
+		$where = "WHERE 1=1";
+		return $this->get_punishment_list($where);
+	}
+	
 	private function get_punishment_list($where, $limit = NULL){
 		$list = array();
 		$query = "
@@ -72,7 +77,9 @@ class Punishment_Manager extends DB_Manager {
 			$where
 			ORDER BY offenceNum 
 			$limit"; //echo $query.'<br>';
-		$result = mysqli_query($this->connection, $query);
+		$this->connect();
+		$result = $this->connection->query($query);
+		$this->disconnect();
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Punishment($data[ID]);
 		}

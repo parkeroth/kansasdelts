@@ -18,11 +18,11 @@ $getEventData = mysqli_query($mysqli, $eventData);
 $eventDataArray = mysqli_fetch_array($getEventData, MYSQLI_ASSOC);
 
 if($eventDataArray['type'] == "communityService"){
-	$hourType = "serviceHours";
+	$hourType = "service";
 } else if($eventDataArray['type'] == "house"){
-	$hourType = "houseHours";
+	$hourType = "house";
 } else if($eventDataArray['type'] == "philanthropy"){
-	$hourType = "philanthropyHours";
+	$hourType = "philanthropy";
 }
 
 $rawTerm = $eventDataArray[term];
@@ -46,7 +46,7 @@ $getUserData = mysqli_query($mysqli, $userData);
 $memberCount = 0;
 while($userDataArray = mysqli_fetch_array($getUserData, MYSQLI_ASSOC))
 {
-	$members[$memberCount]['username'] = $userDataArray['username'];
+	$members[$memberCount]['id'] = $userDataArray['ID'];
 	$members[$memberCount]['firstName'] = $userDataArray['firstName'];
 	$members[$memberCount]['lastName'] = $userDataArray['lastName'];
 	$members[$memberCount]['accountType'] = $userDataArray['accountType'];
@@ -60,9 +60,9 @@ for($i = 0; $i < $memberCount; $i++)
 	if( isset($_POST[$members[$i]['username']]) && $_POST[$members[$i]['username']] == "true" )
 	{
 		$modify = "INSERT INTO hourLog
-			(username, term, year, hours, type, eventID, dateAdded)
+			(member_id, term, year, hours, type, eventID, dateAdded)
 			VALUES
-			('".$members[$i]['username']."', '$term', '$year', '$hours', '$hourType', '$ID', '$date')";
+			('".$members[$i]['id']."', '$term', '$year', '$hours', '$hourType', '$ID', '$date')";
 		$doModification = mysqli_query($mysqli, $modify);
 	}
 }

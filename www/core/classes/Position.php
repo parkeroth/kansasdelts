@@ -78,7 +78,9 @@ class Position extends DB_Table
 			FROM positions
 			WHERE type = '$position_slug'
 			ORDER BY ID"; //echo $query.'<br>';
-		$result = $db->connection->query($query); //echo $query;
+		$this->connect();
+		$result = $this->connection->query($query);
+		$this->disconnect();
 		$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
 		return $data[ID];
 	}
@@ -120,7 +122,9 @@ class Position_Manager extends DB_Manager
 			SELECT ID FROM positions
 			$where
 			ORDER BY $sort_field ASC"; //echo $query.'<br>';
-		$result = $this->connection->query($query); //echo $query;
+		$this->connect();
+		$result = $this->connection->query($query);
+		$this->disconnect();
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Position($data[ID]);
 		}

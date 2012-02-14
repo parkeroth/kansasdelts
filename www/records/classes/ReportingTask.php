@@ -51,9 +51,11 @@ class ReportingTaskManager extends DB_Manager
 			SELECT ID FROM reportingTask
 			$where
 			ORDER BY ID ASC"; //echo $query.'<br>';
-		$result = mysqli_query($this->connection, $query);
+		$this->connect();
+		$result = $this->connection->query($query);
+		$this->disconnect();
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
-			$list[] = new ReportingTask($this->connection, $data[ID]);
+			$list[] = new ReportingTask($data[ID]);
 		}
 		return $list;
 	}

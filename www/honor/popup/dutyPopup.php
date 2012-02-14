@@ -71,9 +71,9 @@ if($type == 'eval'){
 			
 			if($punishment->hours > 0)
 			{
-				if($punishment->hour_type == 'houseHours'){
+				if($punishment->hour_type == 'house'){
 					$hourType = 'House';
-				} else if($punishment->hour_type == 'serviceHours'){
+				} else if($punishment->hour_type == 'service'){
 					$hourType = 'Service';
 				}
 

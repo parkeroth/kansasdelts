@@ -186,7 +186,9 @@ class TaskManager extends DB_Manager
 			SELECT ID FROM tasks
 			$where
 			ORDER BY deadline ASC"; //echo $query.'<br>';
-		$result = mysqli_query($this->connection, $query);
+		$this->connect();
+		$result = $this->connection->query($query);
+		$this->disconnect();
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Task($data[ID]);
 		}

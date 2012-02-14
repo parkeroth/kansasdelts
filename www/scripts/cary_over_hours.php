@@ -13,10 +13,10 @@ session_start();
 $authUsers = array('admin');
 include_once $_SERVER['DOCUMENT_ROOT'].'/core/authenticate.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
-require_once 'Hour_Logs.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/hours/classes/Hour_Log.php';
 
 
-$REQUIRED_HOURS = array('houseHours' => 5, 'serviceHours' => 10);
+$REQUIRED_HOURS = array('house' => 5, 'service' => 10);
 
 
 $type = $_GET[type];
@@ -54,7 +54,7 @@ if(!isset($revert)){
 	
 	$previous_hours = array();
 	foreach($member_list as $member){
-		$log_list = $hour_log_manager->get_by_term($member->username, $type, $term, $year);
+		$log_list = $hour_log_manager->get_by_term($member->id, $type, $term, $year);
 		$previous_hours[$member->id] = get_total_hours($log_list);
 	}
 	
@@ -66,7 +66,7 @@ if(!isset($revert)){
 			echo $member->first_name.' '.$member->last_name.' - '.$missing.'<br>';
 			
 			$new_log = new Hour_Log();
-			$new_log->username = $member->username;	//TODO: change to member_id
+			$new_log->member_id = $member->id;
 			$new_log->notes = Hour_Log::$carry_over_notes;
 			$new_log->term = $term_next;
 			$new_log->type = $type;
@@ -83,7 +83,7 @@ else
 	$hour_log_manager = new Hour_Log_Manager();
 	
 	foreach($member_list as $member){
-		$hour_log_manager->revert_carry_over($term_next, $year_next, $type, $member->username);
+		$hour_log_manager->revert_carry_over($term_next, $year_next, $type, $member->id);
 	}
 }
 ?>

@@ -3,6 +3,7 @@
 require_once 'DB_Table.php';
 require_once 'DB_Manager.php';
 require_once 'Position_Log.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/util.php';
 
 class Member extends DB_Table
 {
@@ -105,14 +106,8 @@ class Member extends DB_Table
 	
 	function is_position($position_id){
 		$position_log_manager = new Position_Log_Manager();
-		$month = date('n');
-		$year = date('Y');
-		if($month < 8){
-			$term = 'spring';
-		} else {
-			$term = 'fall';
-		}
-		return $position_log_manager->member_in_committee($this->id, $position_id, $term, $year);
+		$sem = new Semester();
+		return $position_log_manager->member_in_committee($this->id, $position_id, $sem->term, $sem->year);
 	}
 	
 	public function get_class(){
@@ -156,7 +151,9 @@ class Member_Manager extends DB_Manager
 			FROM members
 			WHERE memberStatus = 'active'
 			AND residency != 'limbo'"; //echo $query.'<br>';
+		$this->connect();
 		$result = $this->connection->query($query);
+		$this->disconnect();
 		$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
 		return $data[total];
 	}
@@ -167,8 +164,12 @@ class Member_Manager extends DB_Manager
 		return $this->get_member_list($where);
 	}
 	
-	public function get_all_members(){
+	public function get_all_members(Semester $sem = NULL){
 		$where = "WHERE residency != 'limbo'";
+		if($sem != NULL){
+			$start_date = $sem->get_start_date();
+			$where .= " AND dateAdded <= '$start_date'";
+		}
 		return $this->get_member_list($where);
 	}
 
@@ -178,7 +179,9 @@ class Member_Manager extends DB_Manager
 			SELECT ID FROM members
 			$where
 			ORDER BY lastName ASC"; //echo $query.'<br>';
+		$this->connect();
 		$result = $this->connection->query($query);
+		$this->disconnect();
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$member = new Member($data[ID]);
 			$list[] = $member;

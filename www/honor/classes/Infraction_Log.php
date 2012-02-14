@@ -85,7 +85,9 @@ class Infraction_Log extends DB_Table {
 			$query = "	INSERT INTO hourLog (username, term, year, hours, type, eventID, dateAdded, notes)
 						VALUES ('$offender->username', '$sem->term', '$sem->year', '-$punishment->hours', '$punishment->hour_type',
 								'0', '$this->date_occured', '".Infraction_Log::$INFRACTION_TYPES[$this->type].": $occurance_num')";
+			$this->connect();
 			$result = $this->connection->query($query);
+			$this->disconnect();
 		}
 		if($punishment->suspension != 'none' && $punishment->suspension != 'NULL')
 		{
@@ -118,7 +120,9 @@ class Infraction_Log extends DB_Table {
 			$query = "	INSERT INTO hourLog (username, term, year, hours, type, eventID, dateAdded, notes)
 						VALUES ('$offender->username', '$sem->term', '$sem->year', '$punishment->hours', '$punishment->hour_type',
 								'0', '$this->date_occured', 'SAA Correction')";
+			$this->connect();
 			$result = $this->connection->query($query);
+			$this->disconnect();
 		}
 
 		$this->status = 'reverted';
@@ -191,7 +195,9 @@ class Infraction_Log_Manager extends DB_Manager {
 			$where
 			ORDER BY dateOccured 
 			$limit"; //echo $query.'<br>';
-		$result = mysqli_query($this->connection, $query);
+		$this->connect();
+		$result = $this->connection->query($query);
+		$this->disconnect();
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Infraction_Log($data[ID]);
 		}
