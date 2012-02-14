@@ -14,12 +14,19 @@ $REQUIRE_NOT_PASSED = false;
 if($_SERVER['REQUEST_METHOD'] == "POST") {
 	
 	if($_POST[action] == 'meeting_add'){
+		$errors = array();
+		if($_POST['board_date'] == 'select')
+			$errors[] = 'Please specify the date of the correct board meeting!';
+		
 		$meeting_manager = new Meeting_Manager();
 		$chapter_date = date('Y-m-d', strtotime($_POST['chapter_date']));
-		$board_date = date('Y-m-d', strtotime($_POST['board_date']));
-		
 		$chapter_meeting = $meeting_manager->get_meeting('chapter', date('Y-m-d', strtotime($chapter_date)));
-		if(!$chapter_meeting){
+		echo $chapter_meeting->id;
+		if($chapter_meeting)
+			$errors[] = 'Meeting alreasy exists for that date!';
+		
+		if(count($errors) == 0){
+			$board_date = date('Y-m-d', strtotime($_POST['board_date']));
 			$chapter_meeting = new Meeting();
 			$chapter_meeting->date = $chapter_date;
 			$chapter_meeting->type = 'chapter';
@@ -27,7 +34,6 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 			$chapter_meeting->insert();
 			$chapter_meeting->associate_board_meetings($board_date); // Not sure this is the best place for this
 		}
-		
 	
 	} else if($_POST[action] == 'meeting_remove'){
 		$meeting_id = $_POST[id];
@@ -141,6 +147,11 @@ function print_meeting_row($meeting){
 
 <p>&nbsp;</p>
 <h3>Add Chapter Meeting</h3>
+<?php
+foreach($errors as $error){
+	echo '<p class="redHeading" style="font-weight: bold;">'.$error.'</p>';
+}
+?>
 <p>Be sure to select the correct date of the applicable series of board meetings. This is usually the day prior to the chapter meeting.</p>
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
 	<table>
