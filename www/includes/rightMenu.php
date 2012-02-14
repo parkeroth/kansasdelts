@@ -131,7 +131,7 @@ foreach($user_position_ids as $position_ids){
 					<ul>
 						<li><a href="classSearchForm.php">Search Classes</a></li>
 						<li><a href="honor/missedDutyForm.php">Report Missed Duty</a></li>
-						<li><a href="honor/writeUpForm.php">Submit Honor Board <br />Write Up</a></li>
+						<li><a href="honor/writeUpForm.php">Honor Board Write Up</a></li>
 						<li><a href="brokenItemForm.php">Report Broken Item</a></li>
 						<li><a href="ideaForm.php">Submit Idea</a></li>
 					</ul>
@@ -191,7 +191,7 @@ foreach($user_position_ids as $position_ids){
 			if($session->isAuth($auth_list)){ ?>
 			
 			<li>
-					<a href="#">Manage Meetings</a>
+					<a href="#">Manage Board Meetings</a>
 					<ul>
 <?php
 
