@@ -81,6 +81,8 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
 		$prev_minutes->unfinished_business = $_POST['old-business'];
 		$prev_minutes->save();
 	}
+
+	$_GET[id] = $chapter_id;
 	
 	header('location: manageChapter.php');
 }
@@ -101,6 +103,9 @@ $previous_meeting = $meeting_manager->get_previous_meeting($chapter_meeting->id)
 $exec_meeting = $meeting_manager->get_meetings_by_chapter($chapter_meeting->id, 'exec');
 $internal_meeting = $meeting_manager->get_meetings_by_chapter($chapter_meeting->id, 'internal');
 $external_meeting = $meeting_manager->get_meetings_by_chapter($chapter_meeting->id, 'external');
+
+if($exec_meeting == NULL || $internal_meeting == NULL || $external_meeting == NULL)
+	header('location: ../error.php?page=board-assign');
 
 $minutes_manager = new Minutes_Manager();
 $current_minutes = $minutes_manager->get_by_meeting($meeting_id);

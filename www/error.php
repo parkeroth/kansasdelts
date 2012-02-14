@@ -21,10 +21,13 @@
 			echo "<p style=\"text-align: center;\">Were you trying to look at something you weren't supposed to?</p>";
 			echo "</strong>";
 
-		} else {
+		} if($_GET['page'] == "board-assign") {
+			echo '<p>&nbsp;</p>';
+			echo '<p style="text-align: center;">Chapter meeting has no board meeting assigned to it.</p>';
+		}else {
 			echo "<p>&nbsp;</p>";
 			echo '<p style="text-align: center;">How did you get here?</p>';
-		}
+		}		
 ?>
 <p style="text-align: center;">
 <img src="img/sad_panda.png" />

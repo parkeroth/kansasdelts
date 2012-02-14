@@ -89,11 +89,11 @@ class Infraction_Log extends DB_Table {
 		}
 		if($punishment->suspension != 'none' && $punishment->suspension != 'NULL')
 		{
-			echo "Apply suspension<br>";
+			//	echo "Apply suspension<br>";
 		}
 		if($punishment->expel)
 		{
-			echo "Apply expel<br>";
+			//	echo "Apply expel<br>";
 		}	
 
 		$this->status = 'approved';
