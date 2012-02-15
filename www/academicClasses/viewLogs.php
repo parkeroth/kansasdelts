@@ -67,7 +67,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
                 $userList = $sh_manager->get_all_sh_users();
 
                 foreach($userList as $shUser) {
-                                $user_info = new Member($shUser->id);
+                                $user_info = new Member($shUser->member_id);
                                 $week_completed = $sh_log_manager->get_weekly_block_complete($shUser->member_id);
                                 if($week_completed < $shUser->week_required){
                                         //not met requirement

@@ -58,6 +58,7 @@ if(empty($_GET) || !isset($_GET['uid']))
 
         $sh_log_manager = new Study_Hour_Log_Manager();
         $user_week_data = $sh_log_manager->get_week_data($userID, $week_offset);                //get desired week data
+        $week_block_complete = $sh_log_manager->get_weekly_block_complete($userID, $week_offset);
 
         $sh_manager = new Study_Hour_Manager();
         $user_requirements = $sh_manager->get_user_sh_requirements($userID);
@@ -128,17 +129,20 @@ if(empty($_GET) || !isset($_GET['uid']))
 
         echo '</table>';
 
-        if($weeklyHrs < $user_requirements->week_required)
+
+
+        if($week_block_complete < $user_requirements->week_required)
 	{
 		//didn't meet the requirement
-		$hrStatement = '<h3 style="color: #E00000 !important;">User Short '.round(floatval($user_requirements->week_required-$weeklyHrs),2).' Hours</h3>';
+		$hrStatement = '<h3 style="color: #E00000 !important;">User Short '.round(floatval($user_requirements->week_required-$week_block_complete),2).' Blocks</h3>';
 	} else {
 		//did meet the requirement
-		$hrStatement = '<h3 style="color: #00CC33 !important;">User Over '.round(floatval($weeklyHrs-$user_requirements->week_required),2).' Hours</h3>';
+		$hrStatement = '<h3 style="color: #00CC33 !important;">User Over '.round(floatval($week_block_complete-$user_requirements->week_required),2).' Blocks</h3>';
 	}
 	//lets echo the hour information out to the user
 	echo "
-		<h3>Completed for Week: ".$weeklyHrs."</h3>
+		<h3>Completed Hours for Week: ".round($weeklyHrs,2)."</h3>
+                <h3>Completed Blocks for Week: ".$week_block_complete."</h3>
 		<h3>Required per Week: ".$user_requirements->week_required."</h3>
 		".$hrStatement."<br />";
 

@@ -9,7 +9,7 @@ class Study_Hour_Logs extends DB_Table
           `ID` int(11) NOT NULL AUTO_INCREMENT,
           `member_id` int(11) NOT NULL,
           `proctor_in` int(11) NOT NULL,
-          `proctor_out` int(11) NOT NULL,
+          `proctor_out` int(11) NULL,
           `time_in` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
           `duration` float DEFAULT NULL,
           `open` enum('yes','no','limbo') NOT NULL,
@@ -47,16 +47,17 @@ class Study_Hour_Logs extends DB_Table
 		parent::__construct($params);
 	}
 
-        public function start_sh_session() {
+        public function start_sh_session($member_id, $proctor_in) {
                 $curTime = time();
+                $this->userID = $member_id;
                 $this->timeIn = date('Y-m-d H:i:s', $curTime);
-                $this->proctorIn = $session->member_id;
-                $this->open = "yes";
+                $this->proctorIn = $proctor_in;
+                $this->open = 'yes';
 		return $this->insert();
         }
 
-        public function end_sh_session() {
-        	$this->proctorOut = $session->member_id;
+        public function end_sh_session($proctor_out) {
+        	$this->proctorOut = $proctor_out;
 		$curTime = time();
 
 		$timeDiff = $curTime - strtotime($this->timeIn);
@@ -177,11 +178,15 @@ class Study_Hour_Manager extends DB_Manager
         }
 
         public function get_user_sh_requirements($userID) {
-                $where = "member_id = '$userID'";
+                $where = "WHERE member_id = '$userID'";
                 $shList = $this->get_sh_user_list($where);
+                //make sure there's something in the array and return false if not
+                if(empty ($shList))
+                    return false;
                 //should only return one result, so just return the first
                 //instance of Study_Hour_Requirements
-                return $shList[0];
+                $userInfo = array_shift($shList);
+                return $userInfo;
         }
         
         public function is_in_table($member_id) {
@@ -207,7 +212,7 @@ class Study_Hour_Log_Manager extends DB_Manager
 		$query = "
 			SELECT ID FROM studyHourLogs
 			$where
-			ORDER BY startTime DESC
+			ORDER BY time_in DESC
                         LIMIT 50";
 		$result = $this->connection->query($query);
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
@@ -217,7 +222,7 @@ class Study_Hour_Log_Manager extends DB_Manager
 	}
 
         private function get_user_sessions($userID, $where = "") {
-                $where .= $where=="" ? "WHERE userID = '$userID'" : " AND userID = '$userID'";    //ternary if to see if where clause is empty or not
+                $where .= $where=="" ? "WHERE member_id = '$userID'" : " AND member_id = '$userID'";    //ternary if to see if where clause is empty or not
                 return $this->get_session_list($where);
         }
 
@@ -229,44 +234,55 @@ class Study_Hour_Log_Manager extends DB_Manager
 
         public function get_open_sessions($userID = false) {
                 $where = "WHERE open='yes'";
-                $retVal = $userID ? $this->get_session_list($where) : $this->get_user_sessions($userID, $where);
+                $retVal = $userID ? $this->get_user_sessions($userID, $where) : $this->get_session_list($where);
                 return $retVal;
         }
 
         public function get_week_data($userID, $week_offset = 0) {
                 $weekStart = mktime(1, 0, 0, date('m'), date('d')-date('w'), date('Y'));        //start of current week
                 $weekStart = $weekStart - ($week_offset * 7 * 24 * 60 * 60);                    //subtract week offset
-                $where = "WHERE YEARWEEK(timeIn) = YEARWEEK($weekStart)";
+                $weekStartDate = date("Y-m-d", $weekStart);
+                $where = "WHERE YEARWEEK(time_in) = YEARWEEK('$weekStartDate')";
                 return $this->get_user_sessions($userID, $where);
         }
 
         public function get_weekly_block_complete($userID, $week_offset = 0) {
                 $weekStart = mktime(1, 0, 0, date('m'), date('d')-date('w'), date('Y'));        //start of current week
                 $weekStart = $weekStart - ($week_offset * 7 * 24 * 60 * 60);                    //subtract week offset
+                $weekStartDate = date("Y-m-d", $weekStart);
                 $query = "
                     SELECT COUNT(*) AS count
                     FROM studyHourLogs
-                    WHERE userID='$userID'
+                    WHERE member_id='$userID'
                         AND duration > 2.5
-                        AND YEARWEEK(timeIn) = YEARWEEK($weekStart)
-                    GROUP BY userID";
+                        AND YEARWEEK(time_in) = YEARWEEK('$weekStartDate')
+                    GROUP BY member_id";
                 $result = $this->connection->query($query);
-                $row = mysql_fetch_row($result);
-                return $row[0];
+                $row = mysqli_fetch_row($result);
+                if(empty($row[0])) {
+                    return 0;
+                } else {
+                    return $row[0];
+                }
         }
 
         public function get_weekly_total_complete($userID, $week_offset = 0) {
                 $weekStart = mktime(1, 0, 0, date('m'), date('d')-date('w'), date('Y'));        //start of current week
                 $weekStart = $weekStart - ($week_offset * 7 * 24 * 60 * 60);                    //subtract week offset
+                $weekStartDate = date("Y-m-d", $weekStart);
                 $query = "
                     SELECT SUM(duration) AS count
                     FROM studyHourLogs
-                    WHERE userID='$userID'
-                        AND YEARWEEK(timeIn) = YEARWEEK($weekStart)
-                    GROUP BY userID";
+                    WHERE member_id='$userID'
+                        AND YEARWEEK(time_in) = YEARWEEK('$weekStartDate')
+                    GROUP BY member_id";
                 $result = $this->connection->query($query);
-                $row = mysql_fetch_row($result);
-                return $row[0];
+                $row = mysqli_fetch_row($result);
+                if(empty($row[0])) {
+                    return 0;
+                } else {
+                    return $row[0];
+                }
         }
 }
 

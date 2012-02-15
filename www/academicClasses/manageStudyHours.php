@@ -125,7 +125,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 
 			} else {
 				//Set up our variables for redirect
-				$URL = 'logStudyHourSession.php?user='.$cur_user->member_id.'&action=in';
+				$URL = 'logStudyHourSession.php?uid='.$cur_user->member_id.'&action=in';
 				echo '
 				<td>
 
@@ -142,9 +142,10 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 	</form>';
 
 	// Give Director of Academic Affairs the ability to make an acception on hours
+        $god_mode = new Member($session->member_id);
 
-        //TODO: parker make sure this uses the new account type checker
-	if(strpos($session->accountType, 'academics') /*|| strpos($session->accountType, 'admin') */) {
+        //TODO: don't hard code position ids, look them up first
+	if($god_mode->is_position(6) || $god_mode->is_position(1) || $god_mode->is_position(33)) {      //if academics or prez or admin
 
 	?>
 		<h2>Make Adjustment</h2>

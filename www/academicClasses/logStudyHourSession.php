@@ -26,7 +26,7 @@
 				//let's make a new log in our studyHourLogs with the data
 				//from this study hour session
                                 $new_log = new Study_Hour_Logs();
-                                $new_log->start_sh_session();
+                                $new_log->start_sh_session($member, $session->member_id);
 
                                 //now set them their status to 'in'
                                 $user_requirements->set_user_status('in');
@@ -48,11 +48,12 @@
                                 //first close the open session, storing session duration in the temp var
                                 $open_sessions = $sh_log_manager->get_open_sessions($member);
                                 foreach($open_sessions as $curSession) {
-                                        $timeCompleted += $curSession->end_sh_session();
+                                        $timeCompleted += $curSession->end_sh_session($session->member_id);
                                 }
 
                                 //now update hours completed
                                 $user_requirements->update_hrs_completed($timeCompleted);
+                                echo $timeCompleted;
 
                                 //and set status to 'out'
                                 $user_requirements->set_user_status('out');
