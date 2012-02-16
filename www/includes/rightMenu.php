@@ -1,10 +1,13 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/finance/classes/Fine.php';
 
 $user_position_ids = $session->positions;
 
 $user_position = NULL;
+
+$logged_in_user = new Member($session->member_id);
 
 foreach($user_position_ids as $position_ids){
 	$position = new Position($position_ids);
@@ -212,7 +215,8 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 				<li>
 					<a href="#">Manage Academics</a>
 					<ul>
-						<?php if( strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "academics") ){ ?>
+						<?php $auth_list = array('admin', 'academics');
+						if($session->isAuth($auth_list)){{ ?>
 							
 						<li><a href="viewCourseHours.php">View Course Hours</a></li>
 						<li><a href="changeGradesForm.php">Update Grades</a></li>
