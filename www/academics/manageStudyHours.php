@@ -142,10 +142,17 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 	</form>';
 
 	// Give Director of Academic Affairs the ability to make an acception on hours
-        $god_mode = new Member($session->member_id);
+        $logged_in_user = new Member($session->member_id);
+		
+	/*
+	 * $auth_positions = array('admin', 'pres', 'academics');
+	 * if($logged_in_user->is_a($auth_positions){
+	 *	//Do your shit
+	 * }
+	 */
 
-        //TODO: don't hard code position ids, look them up first
-	if($god_mode->is_position(6) || $god_mode->is_position(1) || $god_mode->is_position(33)) {      //if academics or prez or admin
+        $auth_list = array('admin', 'pres', 'academics');
+	if($session->is_auth($auth_list)) {      //if academics or prez or admin
 
 	?>
 		<h2>Make Adjustment</h2>
