@@ -149,7 +149,9 @@ class Study_Hour_Manager extends DB_Manager
 			SELECT ID FROM studyHourRequirements
 			$where
 			ORDER BY member_id ASC";
+                $this->connect();
 		$result = $this->connection->query($query);
+                $this->disconnect();
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Study_Hour_Requirements($data[ID]);
 		}
@@ -192,7 +194,9 @@ class Study_Hour_Manager extends DB_Manager
         public function is_in_table($member_id) {
                 //$query  = "SELECT EXISTS(SELECT 1 FROM studyHourRequirements WHERE member_id='$member_id')";
                 $query = "SELECT member_id FROM studyHourRequirements WHERE member_id='$member_id'";
+                $this->connect();
                 $rows = mysqli_num_rows($this->connection->query($query));
+                $this->disconnect();
                 if($rows > 0) {
                     return true;
                 } else {
@@ -214,7 +218,9 @@ class Study_Hour_Log_Manager extends DB_Manager
 			$where
 			ORDER BY time_in DESC
                         LIMIT 50";
+                $this->connect();
 		$result = $this->connection->query($query);
+                $this->disconnect();
 		while($data = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 			$list[] = new Study_Hour_Logs($data[ID]);
 		}
@@ -257,7 +263,9 @@ class Study_Hour_Log_Manager extends DB_Manager
                         AND duration > 2.5
                         AND YEARWEEK(time_in) = YEARWEEK('$weekStartDate')
                     GROUP BY member_id";
+                $this->connect();
                 $result = $this->connection->query($query);
+                $this->disconnect();
                 $row = mysqli_fetch_row($result);
                 if(empty($row[0])) {
                     return 0;
@@ -276,7 +284,9 @@ class Study_Hour_Log_Manager extends DB_Manager
                     WHERE member_id='$userID'
                         AND YEARWEEK(time_in) = YEARWEEK('$weekStartDate')
                     GROUP BY member_id";
+                $this->connect();
                 $result = $this->connection->query($query);
+                $this->disconnect();
                 $row = mysqli_fetch_row($result);
                 if(empty($row[0])) {
                     return 0;

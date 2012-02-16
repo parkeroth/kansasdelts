@@ -41,8 +41,7 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
                             $userSHData->save();
 			} else {
                             //user had no study hours, so an insertion is needed
-                            $tmp = $sh_manager->add_sh_user($member->id, $_POST[$member->id.'_week'], $_POST[$member->id.'_start'], $_POST[$member->id.'_stop']);
-                            echo "<br />add user query returned: $tmp";
+                            $sh_manager->add_sh_user($member->id, $_POST[$member->id.'_week'], $_POST[$member->id.'_start'], $_POST[$member->id.'_stop']);
                         }
                     }
 		} else {
