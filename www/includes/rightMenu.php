@@ -1,10 +1,13 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Position.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/finance/classes/Fine.php';
 
 $user_position_ids = $session->positions;
 
 $user_position = NULL;
+
+$logged_in_user = new Member($session->member_id);
 
 foreach($user_position_ids as $position_ids){
 	$position = new Position($position_ids);
@@ -131,7 +134,7 @@ foreach($user_position_ids as $position_ids){
 					<ul>
 						<li><a href="classSearchForm.php">Search Classes</a></li>
 						<li><a href="honor/missedDutyForm.php">Report Missed Duty</a></li>
-						<li><a href="honor/writeUpForm.php">Submit Honor Board <br />Write Up</a></li>
+						<li><a href="honor/writeUpForm.php">Honor Board Write Up</a></li>
 						<li><a href="brokenItemForm.php">Report Broken Item</a></li>
 						<li><a href="ideaForm.php">Submit Idea</a></li>
 					</ul>
@@ -191,7 +194,7 @@ foreach($user_position_ids as $position_ids){
 			if($session->isAuth($auth_list)){ ?>
 			
 			<li>
-					<a href="#">Manage Meetings</a>
+					<a href="#">Manage Board Meetings</a>
 					<ul>
 <?php
 
@@ -212,7 +215,8 @@ foreach(Position::$BOARD_ARRAY as $code => $name){
 				<li>
 					<a href="#">Manage Academics</a>
 					<ul>
-						<?php if( strpos($userDataArray['accountType'], "admin") || strpos($userDataArray['accountType'], "academics") ){ ?>
+						<?php $auth_list = array('admin', 'academics');
+						if($session->isAuth($auth_list)){ ?>
 							
 						<li><a href="viewCourseHours.php">View Course Hours</a></li>
 						<li><a href="changeGradesForm.php">Update Grades</a></li>

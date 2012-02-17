@@ -3,26 +3,27 @@
 include_once($_SERVER['DOCUMENT_ROOT'].'/php/login.php');
 $authUsers = array('admin', 'academics', 'proctor');
 include_once($_SERVER['DOCUMENT_ROOT'].'/php/authenticate.php');
+include_once 'classes/studyHours.php';
+include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 
 /**
  * Processing Section
  */
 
+//this just handles hour adjustment.  opening and closing sessions is NOT handled on this page
 if($_SERVER['REQUEST_METHOD'] == "POST") {
-	
-	$studyDate = date( 'Y-m-d H:i:s', strtotime( $_POST['date'] ) );
-	$proctor = $_SESSION[username];
-	
-	$modify = "	INSERT INTO studyHourLogs (username, timeStamp, proctorIn, proctorOut, open, duration)
-				VALUES ('$_POST[username]', '$studyDate', '$proctor', '$proctor', 'no', '$_POST[hours]')";
-	
-	$doModify = mysqli_query($mysqli, $modify);
-				
+        $new_session = new Study_Hour_Logs();
+        $new_session->proctorIn = $session->member_id;
+        $new_session->proctorIn = $session->member_id;
+        $new_session->timeIn = date( 'Y-m-d H:i:s', strtotime( $_POST['date'] ) );
+        $new_session->duration = $_POST[hours];
+        $new_session->open = 'no';
+        $new_session->insert();
+
 	$successMessage = $_POST[hours]." hour(s) added to logs.";
-		
 }
 
-include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); 
+include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 
 // This is going to be one mother of a page
 // Sit down class and take notes
@@ -30,7 +31,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 // Let's begin
 ?>
 
-<link type="text/css" href="../styles/ui-lightness/jquery-ui-1.8.1.custom.css" rel="stylesheet" />	
+<link type="text/css" href="../styles/ui-lightness/jquery-ui-1.8.1.custom.css" rel="stylesheet" />
 <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
 <script type="text/javascript" src="../js/jquery-ui-1.8.1.custom.min.js"></script>
 
@@ -39,7 +40,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 	$(function() {
 		$("#datepicker").datepicker();
 	});
-	
+
 </script>
 
 <style type="text/css">
@@ -75,121 +76,106 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 
 <h1>Manage User Study Hours</h1>
 
+<form id="chooseProctor" name="chooseProctor" method="post" action="logStudyHourSession.php" onSubmit="return Confirm();">
+<table class="proctor" border="1">
+    <tr>
+            <th style="width: 250px;">
+                    Name
+            </th>
+            <th style="width: 50px;">
+                    Required Hours
+            </th>
+            <th style="width: 60px;">
+                    Check Out
+            </th>
+            <th style="width: 60px;">
+                    Check In
+            </th>
+    </tr>
+
 <?php
-	$mysqli = mysqli_connect($db_host, $db_username, $db_password, $db_database);
-	//set up our user info
-	$getSHUsersQ = '
-		SELECT members.username, members.firstName, members.lastName, studyHourRequirements.hoursRequired, studyHourRequirements.status
-		FROM studyHourRequirements LEFT JOIN members
-		ON studyHourRequirements.username = members.username
-		WHERE "'.date('Y-m-d').'" BETWEEN studyHourRequirements.startDate AND studyHourRequirements.stopDate
-		ORDER BY members.lastName 
-		';
-	//echo $getSHUsersQ;
-	$getSHUsers = mysqli_query($mysqli, $getSHUsersQ);
-	if(!$getSHUsers)
-	{
-		//
-		$dataErrorMsg .= '<p class="dataError">Error: failed getting study hour users.  Select query failed. Database error.  Probably should look into that.  We love you anyway.<br />
-			Table: studyHourRequirements<br />
-			Error message thrown: '.mysqli_error().'</p>';
-	} else {
-		//now we can finally start with the form
-		$lineCnt = 0;
-		echo '<form id="chooseProctor" name="chooseProctor" method="post" action="logStudyHourSession.php" onSubmit="return Confirm();">';
-		echo '<table class="proctor" border="1">';
-		echo '
-			<tr>
-				<th style="width: 250px;">
-					Name
-				</th>
-				<th style="width: 50px;">
-					Required Hours
-				</th>
-				<th style="width: 60px;">
-					Check Out
-				</th>
-				<th style="width: 60px;">
-					Check In
-				</th>
-			</tr>
-			';
-		while($SHuserDataArray = mysqli_fetch_array($getSHUsers, MYSQLI_ASSOC))
-		{
-			echo '
+        //initialize some class instances here
+        $sh_log_manager = new Study_Hour_Log_Manager();
+        $sh_manager = new Study_Hour_Manager();
+
+        $sh_users = $sh_manager->get_all_sh_users();
+
+        foreach($sh_users as $cur_user) {
+                $mem_info  = new Member($cur_user->member_id);
+                echo '
 			<tr>
 				<td style="width: 250px;">
-					'.$SHuserDataArray['firstName'].' '.$SHuserDataArray['lastName'].' 
+					'.$mem_info->first_name.' '.$mem_info->last_name.'
 				</td>
 				<td style="width: 50px;">
-					'.$SHuserDataArray['hoursRequired'].'
+					'.$cur_user->week_required.'
 				</td>';
-			if($SHuserDataArray['status'] == "in")
+			if($cur_user->status == "in")
 			{
 				//Set up our variables for redirect
-				$curUser = $SHuserDataArray['username'];
-				$URL = 'logStudyHourSession.php?user='.$curUser.'&action=out';
+				$URL = 'logStudyHourSession.php?uid='.$cur_user->member_id.'&action=out';
 				echo '
 				<td>
-					<input type="button" name="'.$SHuserDataArray['username']."\" value=\"Log Out\" class=\"studyHrButton\" onclick=\"javascript: window.location.href='$URL'\" />
+					<input type="button" name="'.$cur_user->member_id."\" value=\"Log Out\" class=\"studyHrButton\" onclick=\"javascript: window.location.href='$URL'\" />
 				</td>
 				<td>
-					
+
 				</td>
 				";
-				
+
 			} else {
 				//Set up our variables for redirect
-				$curUser = $SHuserDataArray['username'];
-				$URL = 'logStudyHourSession.php?user='.$curUser.'&action=in';
+				$URL = 'logStudyHourSession.php?uid='.$cur_user->member_id.'&action=in';
 				echo '
 				<td>
-					
+
 				</td>
 				<td>
-					<input type="button" name="'.$SHuserDataArray['username']."\" value=\"Log In\" class=\"studyHrButton\" onclick=\"javascript: window.location.href='$URL'\" />
+					<input type="button" name="'.$cur_user->member_id."\" value=\"Log In\" class=\"studyHrButton\" onclick=\"javascript: window.location.href='$URL'\" />
 				</td>
 				";
 			}
-			
-			
+
 			echo "</tr>\n";
-			$lineCnt++;
-		} //end while($SHuserDataArray = mysqli_fetch_array($getSHUsers, MYSQLI_ASSOC))
+		} //end foreach($sh_users as $cur_user)
 		echo '</table>
 	</form>';
-		//echo $URL;
-		
-	} //end if(!$getSHUsers)
-	
-	
+
 	// Give Director of Academic Affairs the ability to make an acception on hours
-	
-	if(strpos($session->accountType, 'academics') /*|| strpos($session->accountType, 'admin') */) {
+        $logged_in_user = new Member($session->member_id);
 		
+	/*
+	 * $auth_positions = array('admin', 'pres', 'academics');
+	 * if($logged_in_user->is_a($auth_positions){
+	 *	//Do your shit
+	 * }
+	 */
+
+        $auth_list = array('admin', 'pres', 'academics');
+	if($session->is_auth($auth_list)) {      //if academics or prez or admin
+
 	?>
 		<h2>Make Adjustment</h2>
-		
-		<?php if(isset($successMessage)) { 
-		
+
+		<?php if(isset($successMessage)) {
 			echo "<p align=\"center\">$successMessage</p>";
-		
 		 } ?>
-		
+
 		<form name="manualAdjustment" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" >
 		<table align="center">
 			<tr>
 				<th>Name:</th>
-				<td><select name="username">
-						<option name="select">Select One</option><?php
-					
-					$getSHUsers = mysqli_query($mysqli, $getSHUsersQ);
-					while($userArray = mysqli_fetch_array($getSHUsers, MYSQLI_ASSOC))
-					{
-						echo "<option value=\"$userArray[username]\">$userArray[firstName] $userArray[lastName]</option>";
-					}
-						
-				?></select></td>
+				<td>
+                                        <select name="username">
+						<option value="select">Select One</option>
+                                                <?php
+                                                        foreach($sh_users as $cur_user) {
+                                                                $mem_info  = new Member($cur_user->member_id);
+                                                                echo "<option value=\"$cur_user->member_id\">$mem_info->first_name $mem_info->last_name</option>";
+                                                        }
+                                                ?>
+                                        </select>
+                                </td>
 			</tr>
 			<tr>
 				<th>Hour Adjustment:</th>
@@ -208,9 +194,9 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
 				<td>
 					<input name="submit" type="submit" />
 				</td>
-		</table>	
+		</table>
 		</form>
-	
-	<?php } ?>
-    
+
+	<?php } //end if(strpos($session->accountType, 'academics') ?>
+
 <?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/footer.php"); ?>

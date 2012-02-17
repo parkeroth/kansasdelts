@@ -88,7 +88,7 @@ class DB_Table extends DB{
 	 * @return returns value surrounded by single quotes
 	 */
 	private function make_null($field, $value){
-		if($value == NULL){
+		if($value === NULL){
 			return 'NULL';
 		} if(in_array($field, $this->raw_fields)){
 			return $value;
