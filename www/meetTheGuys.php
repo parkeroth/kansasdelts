@@ -53,7 +53,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php");
 			echo '<td width="127">';
 			
 			
-			echo "<img src=\"photos/composite/";
+			echo "<img width=\"125\" src=\"photos/composite/";
 			
 			if(file_exists("photos/composite/".$members[$i]['username'].".jpg"))
 			{
@@ -115,7 +115,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php");
 			echo '<td width="127">';
 			
 			
-			echo "<img src=\"photos/composite/";
+			echo "<img width=\"125\" src=\"photos/composite/";
 			
 			if(file_exists("photos/composite/".$member->username.".jpg"))
 			{
