@@ -133,9 +133,9 @@ class DB_Table extends DB{
 		$query .= ' ) '; //echo $query;
 		$this->connect();
 		$this->connection->query($query);
-		$this->disconnect();
 		// Find the proper value for the id of the newly inserted object
 		$this->id = $this->connection->insert_id;
+		$this->disconnect();
 	}
 	
 	public function close(){
