@@ -85,6 +85,7 @@ include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php");
 	  	$userData = "
 			SELECT * 
 			FROM members
+			WHERE residency != 'limbo'
 			ORDER BY lastName";
 	
 		$getUserData = mysqli_query($mysqli, $userData);
