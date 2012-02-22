@@ -47,7 +47,7 @@ class DB_Table extends DB{
 				$data = mysqli_fetch_array($result, MYSQLI_ASSOC);
 				// Fill the new objects member variables with the information from the database
 				foreach($this->table_mapper as $member_var => $table_field){
-					$this->{$member_var}  = $data[$table_field];
+					$this->{$member_var}  = stripslashes($data[$table_field]);
 				}
 			}
 		}
@@ -69,7 +69,7 @@ class DB_Table extends DB{
 			} else {
 				$query .= ', ';
 			}
-			$query .= $table_field." = '".$this->{$member_var}."'";
+			$query .= $table_field." = '".addslashes($this->{$member_var})."'";
 		}
 		$id_field = $this->table_mapper[id];
 		$query .= " WHERE $id_field = '$this->id'";
