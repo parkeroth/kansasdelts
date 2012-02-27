@@ -6,24 +6,24 @@
      * using phpFlickr::auth() from another page or if you set the remember_uri
      * argument to false.
      */
-    $api_key                 = "[your api key]";
-    $api_secret              = "[your api secret]";
+    $api_key                 = "";              //NOTE: NEED TO ENTER MANUALLY ON SERVER
+    $api_secret              = "";            //NOTE: NEED TO ENTER MANUALLY ON SERVER
     $default_redirect        = "/";
     $permissions             = "read";
     $path_to_phpFlickr_class = "./";
 
     ob_start();
     require_once($path_to_phpFlickr_class . "phpFlickr.php");
-    @unset($_SESSION['phpFlickr_auth_token']);
+    /*@unset($_SESSION['phpFlickr_auth_token']);
      
 	if ( isset($_SESSION['phpFlickr_auth_redirect']) && !empty($_SESSION['phpFlickr_auth_redirect']) ) {
 		$redirect = $_SESSION['phpFlickr_auth_redirect'];
 		unset($_SESSION['phpFlickr_auth_redirect']);
-	}
+	}*/
     
     $f = new phpFlickr($api_key, $api_secret);
  
-    if (empty($_GET['frob'])) {
+    /*if (empty($_GET['frob'])) {
         $f->auth($permissions, false);
     } else {
         $f->auth_getToken($_GET['frob']);
@@ -33,6 +33,6 @@
 		header("Location: " . $default_redirect);
     } else {
 		header("Location: " . $redirect);
-    }
+    }*/
  
 ?>
