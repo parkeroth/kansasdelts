@@ -117,7 +117,7 @@ $number_present = count($member_list) - $number_absent - $number_excused;
 
 $voting_absent = $attendance_manager->get_total_by_meeting($meeting_id, 'absent', true);
 $voting_excused = $attendance_manager->get_total_by_meeting($meeting_id, 'excused', true);
-$voting_total = $member_manager->get_total_voting();
+$voting_total = $member_manager->get_total_voting() - 1;
 $voting_present = $voting_total - $voting_absent - $voting_excused;
 
 $haz_quorum = haz_quorum($voting_present, $voting_total);
