@@ -1,7 +1,6 @@
 <?php 
 	session_start();
 	include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
-	include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php");
         include_once 'auth.php';
 
         $photo_type = $_GET['type'];            //desired photo type
@@ -13,7 +12,7 @@
         //get all photo sets for user
         $all_photo_sets = $f->photosets_getList();
 
-        foreach($all_photo_sets['photoset'] as $current_photo_set) {
+        foreach($all_photo_sets['photosets']['photoset'] as $current_photo_set) {
             $set_title = $current_photo_set['title'];
             //we only want sets of the specified type, so we'll need to check the title to see if they match or not
             if(strpos(strtolower($set_title), strtolower($photo_type)) !== false) {
@@ -22,8 +21,9 @@
             }
         }
         unset($current_photo_set);
-
 ?>
+<link rel="stylesheet" type="text/css" href="photo_styles.css" />
+<?php 	include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php"); ?>
 <div id="photo_set_links_holder">
     <ul class="photo_set_links">
     <?php

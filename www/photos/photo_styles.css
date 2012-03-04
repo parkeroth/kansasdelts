@@ -1,0 +1,49 @@
+/* 
+    Document   : photo_styles.css
+    Created on : Mar 4, 2012, 5:00:30 PM
+    Author     : dizzy
+    Description:
+        Styles for flickr photo feed
+*/
+
+.photo_image_title {
+    text-align: center;
+    font-variant: small-caps;
+    font-size: 18px;
+}
+
+#individual_photo {
+    display: block;
+    width: 525px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#photo_set_holder {
+    display: block;
+    width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+ul.photo_set_view {
+    list-style: none;
+}
+ul.photo_set_view li {
+    display: inline;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.photo_set_links {
+
+}
+
+#photo_set_links_holder {
+    display: block;
+    width: 300px;
+    padding-bottom: 20px;
+    padding-top: 20px;
+}

@@ -1,7 +1,6 @@
 <?php
 	session_start();
 	include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php");
-	include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php");
         include_once 'auth.php';
 
         $set_id = $_GET['set_id'];            //desired photo set
@@ -17,17 +16,20 @@
         echo '<h2 class="photo_set_name">'.$set_info['title'].'</h2>';
         echo '<p class="photo_set_description">'.$set_info['description'].'<p>';
 ?>
+<link rel="stylesheet" type="text/css" href="photo_styles.css" />
+<?php 	include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerLast.php"); ?>
+
 <div id="photo_set_holder">
     <ul class="photo_set_view">
         <?php
             //now loop over each picture
-            foreach ($all_set_photos['photo'] as $current_photo) {
+            foreach ($all_set_photos['photoset']['photo'] as $current_photo) {
                 $photo_id = $current_photo['id'];
                 $photo_title = $current_photo['title'];
                 $photo_sizes = $f->photo_getSizes($photo_id);
                 //get current image thumbnail
-                foreach($photo_sizes['sizes'] as $photo_size) {
-                    if($photo_size['label'] == "Thumbnail") {
+                foreach($photo_sizes['sizes']['size'] as $photo_size) {
+                    if($photo_size['label'] == "Square") {
                         $photo_thumb_url = $photo_size['source'];
                     }
                 }
