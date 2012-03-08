@@ -22,6 +22,9 @@
 	}*/
     
     $f = new phpFlickr($api_key, $api_secret);
+
+    $my_info = $f->people_findByUsername('Gamma Tau Delts');
+    $my_user_id = $my_info['id'];
  
     /*if (empty($_GET['frob'])) {
         $f->auth($permissions, false);
