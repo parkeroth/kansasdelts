@@ -70,7 +70,15 @@ include_once $_SERVER['DOCUMENT_ROOT'].'/core/classes/Member.php';
 
 <?php include_once($_SERVER['DOCUMENT_ROOT']."/includes/headerFirst.php"); ?>
 
-<script type="text/javascript" src="/js/simpleCalendarWidget.js"></script>
+<link type="text/css" href="/styles/ui-lightness/jquery-ui-1.8.1.custom.css" rel="stylesheet" />
+<script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="/js/jquery-ui-1.8.1.custom.min.js"></script>
+
+<script type="text/javascript">
+$('.datepicker').each(function(){
+    $(this).datepicker({ dateFormat: 'yy-mm-dd' });
+});
+</script>
 
 <script language="jscript" type="text/javascript">
 function Confirm()
@@ -162,10 +170,10 @@ function timedRefresh(timeoutPeriod) {
 						<input type="text" name="'.$member->id.'_week" id="'.$member->id.'_week" value="'.$userSHData->week_required.'" size="5" />
 					</td>
 					<td>
-						<input type="text" name="'.$member->id.'_start" id="datepicker" value="'.$userSHData->start_date.'" size="10" readonly="readonly" /> <input type="button" value="    " onclick="scwShow('.$member->id.'_start,event);" />
+						<input type="text" name="'.$member->id.'_start" id="'.$member->id.'_start" class="datepicker" value="'.$userSHData->start_date.'" size="10" />
 					</td>
 					<td>
-						<input type="text" name="'.$member->id.'_stop" id="datepicker" value="'.$userSHData->stop_date.'" size="10" readonly="readonly" /> <input type="button" value="    " onclick=scwShow('.$member->id.'_stop,event);" />
+						<input type="text" name="'.$member->id.'_stop" id="'.$member->id.'_stop" class="datepicker" value="'.$userSHData->stop_date.'" size="10" />
 					</td>
 					';
 			} else {
@@ -177,10 +185,10 @@ function timedRefresh(timeoutPeriod) {
 						<input type="text" name="'.$member->id.'_week" id="'.$member->id.'_week" value=""size="5" />
 					</td>
 					<td>
-						<input type="text" name="'.$member->id.'_start" id="datepicker" size="10" readonly="readonly" /> <input type="button" value="    " onclick="scwShow('.$member->id.'_start,event);" />
+						<input type="text" name="'.$member->id.'_start" id="'.$member->id.'_start" class="datepicker" size="10" />
 					</td>
 					<td>
-						<input type="text" name="'.$member->id.'_stop" id="datepicker" size="10" readonly="readonly" /> <input type="button" value="    " onclick="scwShow('.$member->id.'_stop,event);" />
+						<input type="text" name="'.$member->id.'_stop" id="'.$member->id.'_stop" class="datepicker" size="10" />
 					</td>
 					';
 			}
