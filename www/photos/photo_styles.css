@@ -52,3 +52,17 @@ ul.photo_set_view li {
     margin-left: auto;
     margin-right: auto;
 }
+
+#list_newest {
+    width: 250px;
+    display: block;
+    float: left;
+    margin: 10px;
+}
+
+#list_category {
+    width: 250px;
+    display: block;
+    float: left;
+    margin: 10px;
+}
